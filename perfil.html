@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BolãoPro — Meu Perfil</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.profile-hero{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:28px 24px;display:flex;align-items:center;gap:20px;margin-bottom:20px;}
+.profile-av-big{width:72px;height:72px;border-radius:20px;background:var(--green-lt);border:3px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--green);flex-shrink:0;}
+.profile-info{flex:1;min-width:0;}
+.profile-name{font-size:20px;font-weight:700;letter-spacing:-.4px;margin-bottom:3px;}
+.profile-email{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.profile-badges{display:flex;gap:6px;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--bg);border:1px solid var(--border);color:var(--muted);}
+.badge.green{background:var(--green-lt);border-color:var(--green-m);color:var(--green);}
+.badge.gold{background:var(--gold-lt);border-color:#FCD34D;color:var(--gold);}
+
+.stats-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.sm-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow);text-align:center;}
+.sm-num{font-size:24px;font-weight:700;letter-spacing:-1px;color:var(--text);margin-bottom:4px;}
+.sm-lbl{font-size:11px;color:var(--muted);}
+
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:20px;}
+
+.edit-section{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;}
+.edit-head{padding:16px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;}
+.edit-body{padding:20px;}
+
+.bolao-entry{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border);transition:background .15s;}
+.bolao-entry:last-child{border-bottom:none;}
+.bolao-entry:hover{background:var(--bg);}
+
+@media(max-width:900px){.two-col{grid-template-columns:1fr;}}
+@media(max-width:600px){.stats-mini{grid-template-columns:1fr 1fr;}.profile-hero{flex-direction:column;text-align:center;}.profile-badges{justify-content:center;}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="#" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card on" id="userCard" style="display:none">
+      <div class="u-av" id="sideAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- DRAWER -->
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()">✕</div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="drawerUserCard" style="display:none">
+      <div class="u-av" id="drawerAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <div class="page-title">👤 Meu Perfil</div>
+    </div>
+    <div class="topbar-right">
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- HERO -->
+    <div class="profile-hero" id="profileHero">
+      <div class="profile-av-big" id="heroAv">?</div>
+      <div class="profile-info">
+        <div class="profile-name" id="heroName">Carregando…</div>
+        <div class="profile-email" id="heroEmail"></div>
+        <div class="profile-badges">
+          <span class="badge green">⚽ Jogador</span>
+          <span class="badge gold" id="heroPlan">Free</span>
+          <span class="badge" id="heroSince"></span>
+        </div>
+      </div>
+      <button class="btn-outline" onclick="toggleEdit()" id="editToggleBtn" style="flex-shrink:0">✏️ Editar</button>
+    </div>
+
+    <!-- MINI STATS -->
+    <div class="stats-mini">
+      <div class="sm-card">
+        <div class="sm-num" id="stBoloes">—</div>
+        <div class="sm-lbl">Bolões</div>
+      </div>
+      <div class="sm-card">
+        <div class="sm-num" style="color:var(--green)" id="stWins">—</div>
+        <div class="sm-lbl">Vitórias</div>
+      </div>
+      <div class="sm-card">
+        <div class="sm-num" style="color:var(--gold)" id="stPoints">—</div>
+        <div class="sm-lbl">Pontos</div>
+      </div>
+      <div class="sm-card">
+        <div class="sm-num" style="color:var(--green)" id="stEarned">—</div>
+        <div class="sm-lbl">Ganhos</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+
+      <!-- LEFT: BOLÕES DO USUÁRIO -->
+      <div>
+        <div class="sec-head">
+          <div class="sec-title">Meus Bolões</div>
+          <a href="meus-boloes.html" class="sec-link">Ver todos →</a>
+        </div>
+        <div class="card" id="myBoloesList">
+          <div class="empty"><div class="spin"></div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: EDITAR PERFIL + RANKING -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+
+        <!-- EDIT FORM (hidden by default) -->
+        <div class="edit-section" id="editSection" style="display:none">
+          <div class="edit-head">✏️ Editar Perfil</div>
+          <div class="edit-body">
+            <div class="fl"><label>Username</label><input id="eUsername" placeholder="seu_username" maxlength="30"/></div>
+            <div class="fl"><label>Nome completo</label><input id="eFullName" placeholder="Seu Nome Completo"/></div>
+            <div class="fl"><label>Chave Pix</label><input id="ePixKey" placeholder="CPF, e-mail, telefone ou chave aleatória"/></div>
+            <div class="err-box" id="editErr"></div>
+            <button class="btn-full" id="saveBtn" onclick="saveProfile()">💾 Salvar Alterações</button>
+          </div>
+        </div>
+
+        <!-- RANKING POSITION -->
+        <div class="edit-section">
+          <div class="edit-head">🏆 Posição no Ranking</div>
+          <div class="edit-body" style="text-align:center;padding:24px 20px">
+            <div style="font-size:42px;font-weight:800;letter-spacing:-2px;color:var(--gold)" id="rankPos">—</div>
+            <div style="font-size:12px;color:var(--muted);margin-top:4px">posição global</div>
+            <a href="ranking.html" class="btn-full" style="margin-top:16px;max-width:180px;margin-left:auto;margin-right:auto">Ver Ranking →</a>
+          </div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="edit-section">
+          <div class="edit-head" style="color:var(--red)">⚠️ Conta</div>
+          <div class="edit-body">
+            <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Ações irreversíveis relacionadas à sua conta.</p>
+            <button class="btn-full" style="background:var(--red)" onclick="confirmSignOut()">🚪 Sair da Conta</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="bnav-inner">
+    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle">⚽</div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+let currentUser = null
+let editOpen = false
+
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser = await initAuth({ requireAuth: true })
+  if (!currentUser) return
+
+  hideEl('sideLogin'); showEl('sideLogout')
+  await loadProfile()
+  loadMyBoloes()
+  loadRankPos()
+})
+
+async function loadProfile() {
+  const p = await getProfile(currentUser.id)
+  if (!p) return
+
+  const name = p.username ?? currentUser.email?.split('@')[0] ?? '?'
+  const av   = name.slice(0, 2).toUpperCase()
+
+  // Hero
+  document.getElementById('heroAv').textContent    = av
+  document.getElementById('heroName').textContent  = '@' + name
+  document.getElementById('heroEmail').textContent = currentUser.email ?? ''
+  document.getElementById('heroPlan').textContent  = (p.plan ?? 'free').charAt(0).toUpperCase() + (p.plan ?? 'free').slice(1)
+
+  const since = p.created_at ? new Date(p.created_at).toLocaleDateString('pt-BR', { month:'long', year:'numeric' }) : ''
+  document.getElementById('heroSince').textContent = '📅 Desde ' + since
+
+  // Stats
+  setEl('stBoloes', (p.total_boloes ?? 0).toLocaleString())
+  setEl('stWins',   (p.total_wins   ?? 0).toLocaleString())
+  setEl('stPoints', (p.total_points ?? 0).toLocaleString())
+  document.getElementById('stEarned').textContent = 'R$ ' + Number(p.total_earned ?? 0).toLocaleString('pt-BR', { minimumFractionDigits: 0 })
+
+  // Topbar
+  setEl('topUserName', name)
+  setEl('topUserAv',   av)
+
+  // Prefill edit form
+  document.getElementById('eUsername').value = p.username ?? ''
+  document.getElementById('eFullName').value = p.full_name ?? ''
+  document.getElementById('ePixKey').value   = p.pix_key  ?? ''
+}
+
+async function loadMyBoloes() {
+  const list = await getMeusBoloes(currentUser.id)
+  const el   = document.getElementById('myBoloesList')
+  if (!list.length) {
+    el.innerHTML = '<div class="empty"><div class="empty-icon">⚽</div><p>Você ainda não participa de nenhum bolão.<br><a href="index.html" style="color:var(--green)">Explorar bolões →</a></p></div>'
+    return
+  }
+  el.innerHTML = list.slice(0, 8).map(r => {
+    const b   = r.boloes
+    if (!b) return ''
+    const cnt = b.participants?.[0]?.count ?? 0
+    return `<a href="bolao.html?id=${b.id}" style="text-decoration:none;color:inherit">
+      <div class="bolao-entry">
+        <div class="b-dot ${stDot(b.status)}"></div>
+        <div class="b-info">
+          <div class="b-name">${esc(b.name)}</div>
+          <div class="b-meta">${esc(b.competicao ?? '')} · ${cnt} participante${cnt !== 1 ? 's' : ''}</div>
+        </div>
+        <span class="st ${stClass(b.status)}">${stLabel(b.status)}</span>
+      </div></a>`
+  }).join('')
+}
+
+async function loadRankPos() {
+  const list = await getRanking(200)
+  const pos  = list.findIndex(p => p.id === currentUser.id)
+  document.getElementById('rankPos').textContent = pos >= 0 ? '#' + (pos + 1) : '—'
+}
+
+function toggleEdit() {
+  editOpen = !editOpen
+  document.getElementById('editSection').style.display = editOpen ? '' : 'none'
+  document.getElementById('editToggleBtn').textContent = editOpen ? '✕ Fechar' : '✏️ Editar'
+}
+
+async function saveProfile() {
+  const username = document.getElementById('eUsername').value.trim()
+  const fullName = document.getElementById('eFullName').value.trim()
+  const pixKey   = document.getElementById('ePixKey').value.trim()
+  const err      = document.getElementById('editErr')
+  err.style.display = 'none'
+
+  if (!username) { err.textContent = 'Username é obrigatório.'; err.style.display = 'block'; return }
+  if (!/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
+    err.textContent = 'Username deve ter 3-30 caracteres (letras, números e _).'
+    err.style.display = 'block'; return
+  }
+
+  const btn = document.getElementById('saveBtn')
+  btn.textContent = 'Salvando…'; btn.disabled = true
+
+  const { error } = await sb().from('profiles').update({
+    username, full_name: fullName || null, pix_key: pixKey || null, updated_at: new Date().toISOString()
+  }).eq('id', currentUser.id)
+
+  btn.textContent = '💾 Salvar Alterações'; btn.disabled = false
+
+  if (error) {
+    err.textContent = error.code === '23505' ? 'Este username já está em uso.' : error.message
+    err.style.display = 'block'
+    return
+  }
+
+  showToast('✅ Perfil atualizado!')
+  await loadProfile()
+  toggleEdit()
+}
+
+function confirmSignOut() {
+  if (confirm('Tem certeza que deseja sair da sua conta?')) signOut()
+}
+</script>
+</body>
+</html>
