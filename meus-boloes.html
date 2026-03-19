@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BolãoPro — Meus Bolões</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <div class="sidebar-bot"><div class="user-card" id="userCard" style="display:none"><div class="u-av" id="sideAv">?</div><div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div></div></div>
+</aside>
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()">✕</div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div><a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a></div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <div class="page-title">Meus Bolões</div>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" onclick="setTimeout(()=>document.querySelector('.btn-primary')?.click(),100);return false" class="btn-primary">+ Criar Bolão</a>
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none"><div class="top-user-av" id="topUserAv">?</div><span style="font-size:12px;font-weight:600" id="topUserName">…</span></a>
+    </div>
+  </header>
+  <div class="content" id="content">
+    <div class="empty" style="min-height:60vh"><div class="spin spin-lg"></div></div>
+  </div>
+</div>
+
+<nav class="bnav">
+  <div class="bnav-inner">
+    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle">+</div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+  </div>
+</nav>
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script><script src="app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded',async()=>{
+  const user=await initAuth()
+  if(!user){
+    document.getElementById('content').innerHTML='<div class="empty"><div class="empty-icon">🔒</div><p>Faça login para ver seus bolões</p><a href="login.html" class="btn-full" style="max-width:200px;margin-top:12px">Entrar</a></div>'
+    return
+  }
+  hideEl('sideLogin');showEl('sideLogout')
+  const p=await getProfile(user.id);const n=p?.username??user.email?.split('@')[0]??'?'
+  setEl('topUserName',n);setEl('topUserAv',n.slice(0,2).toUpperCase())
+  const data=await getMeusBoloes(user.id)
+  if(!data.length){
+    document.getElementById('content').innerHTML='<div class="empty"><div class="empty-icon">⚽</div><p>Você ainda não tem bolões.<br>Crie o primeiro!</p><a href="index.html" class="btn-full" style="max-width:220px;margin-top:14px">Criar Bolão Grátis</a></div>'
+    return
+  }
+  const cards=data.map(d=>{
+    const b=d.boloes; if(!b) return ''
+    const cnt=b.participants?.[0]?.count??0
+    const prz=(b.cota_value??0)*cnt*0.95
+    return`<a href="bolao.html?id=${b.id}" style="text-decoration:none;color:inherit;display:block;margin-bottom:10px">
+      <div class="card">
+        <div class="bolao-row" style="border:none;padding:16px 18px">
+          <div class="b-dot ${stDot(b.status)}"></div>
+          <div class="b-info">
+            <div class="b-name">${esc(b.name)}</div>
+            <div class="b-meta">${esc(b.competicao??'')} · ${cnt}/${b.max_participants??'?'} pessoas · ${b.deadline?fmtDate(b.deadline):'sem prazo'}</div>
+          </div>
+          <div class="b-prize">${fmtMoney(prz)}</div>
+          <span class="st ${stClass(b.status)}">${stLabel(b.status)}</span>
+        </div>
+      </div>
+    </a>`}).join('')
+  document.getElementById('content').innerHTML=`<div style="margin-bottom:6px"><p style="font-size:13px;color:var(--muted)">${data.length} bolão(ões) encontrado(s)</p></div>${cards}`
+})
+</script>
+</body>
+</html>

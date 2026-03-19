@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="theme-color" content="#ffffff"/>
+<title>BolãoPro — Dashboard</title>
+<link rel="stylesheet" href="shared.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item on"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="#" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="userCard" style="display:none">
+      <div class="u-av" id="sideAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- DRAWER -->
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()">✕</div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item on"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="drawerUserCard" style="display:none">
+      <div class="u-av" id="drawerAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <div class="page-title">Dashboard</div>
+    </div>
+    <div class="search-box"><span style="font-size:13px;color:var(--light)">🔍</span><input placeholder="Buscar bolão…"/></div>
+    <div class="topbar-right">
+      <a href="comunidade.html" class="icon-btn" title="Comunidade">💬</a>
+      <div class="icon-btn" onclick="openModal('criar')" title="Notificações">🔔</div>
+      <button class="btn-primary" onclick="openModal('criar')">+ Criar Bolão</button>
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card feat">
+        <div class="stat-head"><span class="stat-lbl">Total de Bolões</span><button class="stat-arrow">↗</button></div>
+        <div class="stat-num" id="st1">—</div>
+        <div class="stat-foot"><span class="stat-badge feat">↑ Ativo</span><span class="stat-foot-lbl">plataforma</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-head"><span class="stat-lbl">Ao Vivo</span><button class="stat-arrow">↗</button></div>
+        <div class="stat-num" id="st2">—</div>
+        <div class="stat-foot"><span class="stat-badge up">↑</span><span class="stat-foot-lbl">agora</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-head"><span class="stat-lbl">Participantes</span><button class="stat-arrow">↗</button></div>
+        <div class="stat-num" id="st3">—</div>
+        <div class="stat-foot"><span class="stat-badge up">↑</span><span class="stat-foot-lbl">crescendo</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-head"><span class="stat-lbl">Em Prêmios</span><button class="stat-arrow">↗</button></div>
+        <div class="stat-num" id="st4">—</div>
+        <div class="stat-foot"><span class="stat-badge gray">acumulado</span></div>
+      </div>
+    </div>
+
+    <!-- GRID -->
+    <div style="display:grid;grid-template-columns:1fr 310px;gap:20px" id="mainGrid">
+      <div>
+        <div class="sec-head">
+          <div class="sec-title"><div class="live-dot"></div>Bolões Ativos</div>
+          <a href="meus-boloes.html" class="sec-link">Ver todos →</a>
+        </div>
+        <div class="filters">
+          <button class="fil on" onclick="setFil('',this)">Todos</button>
+          <button class="fil" onclick="setFil('open',this)">Abertos</button>
+          <button class="fil" onclick="setFil('active',this)">Ao Vivo</button>
+          <button class="fil" onclick="setFil('finished',this)">Finalizados</button>
+        </div>
+        <div class="card" id="boloesCard">
+          <div class="empty"><div class="spin spin-lg"></div></div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <!-- RANKING -->
+        <div>
+          <div class="sec-head">
+            <div class="sec-title">Top Jogadores</div>
+            <a href="ranking.html" class="sec-link">Ranking →</a>
+          </div>
+          <div class="card" id="rankCard">
+            <div class="empty"><div class="spin"></div></div>
+          </div>
+        </div>
+        <!-- AFILIADOS -->
+        <div>
+          <div class="sec-head"><div class="sec-title">Parceiros</div></div>
+          <div class="aff-card">
+            <div class="aff-title">Aposte de verdade também</div>
+            <div class="aff-sub">Odds reais nas melhores casas do Brasil.</div>
+            <div class="aff-btns">
+              <a href="#" id="sbLink" target="_blank" class="aff-btn sb">⚡ Sportingbet<span class="aff-arrow">→</span></a>
+              <a href="#" id="supLink" target="_blank" class="aff-btn sup">⚡ Superbet<span class="aff-arrow">→</span></a>
+            </div>
+          </div>
+        </div>
+        <!-- PONTUAÇÃO -->
+        <div>
+          <div class="sec-head"><div class="sec-title">Sistema de Pontos</div></div>
+          <div class="card">
+            <div class="score-row"><span class="score-lbl">✅ Resultado certo</span><span class="score-pts" style="color:var(--green)">3 pts</span></div>
+            <div class="score-row"><span class="score-lbl">🎯 Placar exato</span><span class="score-pts" style="color:var(--gold)">8 pts</span></div>
+            <div class="score-row"><span class="score-lbl">⚽ Artilheiro</span><span class="score-pts" style="color:var(--green)">5 pts</span></div>
+            <div class="score-row"><span class="score-lbl">🦁 Bônus zebra</span><span class="score-pts" style="color:var(--red)">+5 pts</span></div>
+            <div class="score-row"><span class="score-lbl">💎 Rodada perfeita</span><span class="score-pts" style="color:var(--gold)">+20 pts</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="bnav-inner">
+    <a href="index.html" class="bn on"><span class="bn-icon">🏠</span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
+    <button class="bn-center" onclick="openModal('criar')"><div class="bn-circle">+</div></button>
+    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+  </div>
+</nav>
+
+<!-- MODAL: CRIAR BOLÃO -->
+<div class="ovl" id="criar" onclick="ovlClose(event,'criar')">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-head">
+      <div><div class="modal-title">Criar Bolão</div><div class="modal-sub">Configure e compartilhe em 30 segundos</div></div>
+      <button class="modal-x" onclick="closeModal('criar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="fl"><label>Nome do Bolão</label><input id="cNome" placeholder="Ex: Bolão do Trampo 2025…"/></div>
+      <div class="fl"><label>Competição</label>
+        <select id="cComp">
+          <option>Brasileirão Série A</option><option>CONMEBOL Libertadores</option>
+          <option>Copa do Brasil</option><option>Premier League</option><option>Outro</option>
+        </select>
+      </div>
+      <div class="fl"><label>Divisão do Prêmio</label>
+        <div class="split-row" id="splitRow">
+          <div class="split-opt on" onclick="selSplit(this,'100% ao 1º')">🥇 100%</div>
+          <div class="split-opt" onclick="selSplit(this,'70/30')">70/30</div>
+          <div class="split-opt" onclick="selSplit(this,'50/30/20')">50/30/20</div>
+        </div>
+      </div>
+      <div class="fl-row">
+        <div class="fl"><label>Cota (R$)</label><input id="cCota" type="number" min="5" value="20" oninput="updP()" inputmode="decimal"/></div>
+        <div class="fl"><label>Máx. Participantes</label><input id="cMax" type="number" min="2" value="20" oninput="updP()" inputmode="numeric"/></div>
+      </div>
+      <div class="fl"><label>Prazo para Entrar</label><input id="cDl" type="datetime-local"/></div>
+      <div class="prize-prev"><div class="pp-lbl">Prêmio estimado</div><div class="pp-val" id="ppVal">R$ 380</div></div>
+      <div class="err-box" id="cErr"></div>
+      <button class="btn-full" id="cBtn" onclick="submitCriar()">🚀 Criar Bolão</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SUCESSO -->
+<div class="ovl" id="sucModal">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div style="padding:32px 20px;text-align:center">
+      <div style="font-size:52px;margin-bottom:14px">🎉</div>
+      <div style="font-size:19px;font-weight:700;margin-bottom:6px">Bolão Criado!</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:22px">Compartilhe o link com seus amigos</div>
+      <div class="link-box"><div class="link-val" id="sucLink">—</div><span class="link-copy" onclick="copyLink()">📋</span></div>
+      <button class="btn-wpp" id="wppBtn">📲 Compartilhar no WhatsApp</button>
+      <button class="btn-full" onclick="irBolao()">Ver Bolão →</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script><script src="app.js"></script>
+<script>
+let curFil='', curSplit='100% ao 1º', newBolId=null
+
+document.addEventListener('DOMContentLoaded', async () => {
+  document.getElementById('sbLink').href  = CONFIG.SPORTINGBET
+  document.getElementById('supLink').href = CONFIG.SUPERBET
+  const user = await initAuth()
+  if (user) {
+    hideEl('sideLogin'); showEl('sideLogout')
+    const p = await getProfile(user.id)
+    const n = p?.username ?? user.email?.split('@')[0] ?? '?'
+    setEl('topUserName', n); setEl('topUserAv', n.slice(0,2).toUpperCase())
+  }
+  loadStats(); loadBoloes(); loadRanking()
+  // responsive grid
+  if (window.innerWidth <= 1024) {
+    document.getElementById('mainGrid').style.gridTemplateColumns = '1fr'
+  }
+})
+
+async function loadStats() {
+  try {
+    const [{count:t},{count:p},{count:l}] = await Promise.all([
+      sb().from('boloes').select('*',{count:'exact',head:true}),
+      sb().from('participants').select('*',{count:'exact',head:true}),
+      sb().from('boloes').select('*',{count:'exact',head:true}).eq('status','active'),
+    ])
+    setEl('st1',(t??0).toLocaleString('pt-BR'))
+    setEl('st2',(l??0).toLocaleString('pt-BR'))
+    setEl('st3',(p??0).toLocaleString('pt-BR'))
+    setEl('st4','R$ 0')
+  } catch { ['st1','st2','st3','st4'].forEach(id=>setEl(id,'0')) }
+}
+
+async function loadBoloes() {
+  const list = await getBoloes(curFil)
+  if (!list.length) {
+    document.getElementById('boloesCard').innerHTML = '<div class="empty"><div class="empty-icon">⚽</div><p>Nenhum bolão encontrado</p></div>'
+    return
+  }
+  document.getElementById('boloesCard').innerHTML = list.map(b => {
+    const cnt  = b.participants?.[0]?.count ?? 0
+    const prz  = (b.cota_value??0)*cnt*0.95
+    const init = (b.owner?.username??'A').slice(0,2).toUpperCase()
+    const dt   = b.data_partida ? fmtDate(b.data_partida) : b.competicao ?? '—'
+    return `<a href="bolao.html?id=${b.id}" style="text-decoration:none;color:inherit">
+      <div class="bolao-row">
+        <div class="b-dot ${stDot(b.status)}"></div>
+        <div class="b-info">
+          <div class="b-name">${esc(b.name)}</div>
+          <div class="b-meta">${esc(b.competicao??'')} · ${cnt}/${b.max_participants??'?'} pessoas</div>
+        </div>
+        <div class="b-avs"><div class="bav">${init}</div>${cnt>1?`<div class="bav more">+${cnt-1}</div>`:''}</div>
+        <div class="b-prize">${fmtMoney(prz)}</div>
+        <span class="st ${stClass(b.status)}">${stLabel(b.status)}</span>
+      </div></a>`
+  }).join('')
+}
+
+async function loadRanking() {
+  const list = await getRanking(5)
+  const M = {1:'🥇',2:'🥈',3:'🥉'}
+  document.getElementById('rankCard').innerHTML = list.length
+    ? list.map((p,i) => `<div class="rk-row">
+        <div class="rk-pos">${M[i+1]??i+1}</div>
+        <div class="rk-av">${(p.username??'?').slice(0,2).toUpperCase()}</div>
+        <div class="rk-info"><div class="rk-name">@${p.username??'Jogador'}</div><div class="rk-sub">${p.total_boloes??0} bolões</div></div>
+        <div class="rk-pts">${(p.total_points??0).toLocaleString()}</div>
+      </div>`).join('')
+    : '<div class="empty"><p>Sem dados ainda</p></div>'
+}
+
+function setFil(f,btn) {
+  curFil=f; document.querySelectorAll('.fil').forEach(b=>b.classList.remove('on')); btn.classList.add('on')
+  document.getElementById('boloesCard').innerHTML='<div class="empty"><div class="spin"></div></div>'
+  loadBoloes()
+}
+function selSplit(el,v) { document.querySelectorAll('.split-opt').forEach(b=>b.classList.remove('on')); el.classList.add('on'); curSplit=v }
+function updP() {
+  const c=parseFloat(document.getElementById('cCota').value)||0, m=parseInt(document.getElementById('cMax').value)||0
+  document.getElementById('ppVal').textContent='R$ '+(c*m*0.95).toLocaleString('pt-BR',{minimumFractionDigits:0})
+}
+
+async function submitCriar() {
+  const nome=document.getElementById('cNome').value.trim()
+  const cota=parseFloat(document.getElementById('cCota').value)
+  const max=parseInt(document.getElementById('cMax').value)
+  const dl=document.getElementById('cDl').value
+  const comp=document.getElementById('cComp').value
+  const err=document.getElementById('cErr'); err.style.display='none'
+  if(!nome){err.textContent='Digite o nome do bolão.';err.style.display='block';return}
+  if(cota<5){err.textContent='Cota mínima: R$ 5,00.';err.style.display='block';return}
+  if(max<2){err.textContent='Mínimo 2 participantes.';err.style.display='block';return}
+  const user=await getUser()
+  if(!user){location.href='login.html';return}
+  const btn=document.getElementById('cBtn'); btn.textContent='Criando…'; btn.disabled=true
+  const res=await criarBolao({nome,cota,max,split:curSplit,deadline:dl,competicao:comp},user.id)
+  btn.textContent='🚀 Criar Bolão'; btn.disabled=false
+  if(res.error){err.textContent=res.error;err.style.display='block';return}
+  newBolId=res.data.id
+  const link=`${location.origin}${location.pathname.replace('index.html','')}bolao.html?id=${newBolId}`
+  document.getElementById('sucLink').textContent=link
+  document.getElementById('wppBtn').onclick=()=>window.open(`https://wa.me/?text=${encodeURIComponent(`🏆 Entra no bolão "${nome}"!\n💰 Cota: R$ ${cota}\n${link}`)}`)
+  closeModal('criar'); setTimeout(()=>openModal('sucModal'),280)
+  loadBoloes(); loadStats()
+}
+function copyLink(){navigator.clipboard.writeText(document.getElementById('sucLink').textContent);showToast('📋 Link copiado!')}
+function irBolao(){if(newBolId)location.href=`bolao.html?id=${newBolId}`}
+</script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+================================================================
+  BOLÃOPRO — Projeto Completo
+  Plataforma de Bolões com Afiliados iGaming
+================================================================
+
+  Supabase:  https://nfqvwegyqtwbuvyfbsbe.supabase.co  ✅
+  API Key:   Configurada na Edge Function               ✅
+  Banco:     16 tabelas criadas                         ✅
+  Realtime:  Ativado                                    ✅
+
+================================================================
+  ESTRUTURA
+================================================================
+
+  /app                    → Abrir no navegador
+  ├── config.js           → Credenciais (já preenchidas) ✅
+  ├── shared.css          → Design completo
+  ├── app.js              → Funções Supabase globais
+  ├── index.html          → Dashboard principal
+  ├── bolao.html          → Detalhe do bolão + palpites
+  ├── login.html          → Login e cadastro
+  ├── ranking.html        → Ranking global com pódio
+  ├── meus-boloes.html    → Bolões do usuário
+  ├── comunidade.html     → Feed + DM + Chat em grupo
+  └── jogos.html          → Jogos ao vivo com odds
+
+  /supabase               → Execute no Supabase
+  ├── schema_completo.sql → Banco completo (já executado) ✅
+  ├── funcoes-faltando.sql→ ⚠️ EXECUTE ESTE PRIMEIRO
+  ├── cron-setup.sql      → ⚠️ EXECUTE ESTE SEGUNDO
+  └── edge-function-final.ts → ⚠️ COLE NA EDGE FUNCTION
+
+================================================================
+  PARA RODAR AGORA (em ordem)
+================================================================
+
+  1. SUPABASE — SQL Editor → New Query
+     Cole: supabase/funcoes-faltando.sql → RUN
+     Cria as funções de cálculo de pontos automático
+
+  2. SUPABASE — Edge Functions → sync-matches → Code
+     Cole: supabase/edge-function-final.ts → Deploy updates
+     Depois clique em Test → deve retornar synced > 0
+
+  3. SUPABASE — SQL Editor → New Query
+     Cole: supabase/cron-setup.sql → RUN
+     Ativa atualização automática a cada 5 minutos
+
+  4. SUPABASE — Authentication → URL Configuration
+     Site URL: http://localhost:3000
+     Redirect URLs: http://localhost:3000/index.html
+
+  5. TERMINAL — Na pasta /app
+     npx serve .
+     Acesse: http://localhost:3000
+
+  6. NETLIFY — Para publicar online
+     Acesse: netlify.com/drop
+     Arraste a pasta /app → URL grátis em 30 segundos
+     Depois atualize a URL no Supabase Authentication
+
+================================================================
+  FUNCIONALIDADES
+================================================================
+
+  ✅ Login e cadastro (Supabase Auth)
+  ✅ Criar bolões com configuração de cota e prêmio
+  ✅ Compartilhar bolão via WhatsApp
+  ✅ Palpites com placar exato e artilheiro
+  ✅ Ranking ao vivo dentro do bolão
+  ✅ Ranking global com pódio
+  ✅ Comunidade: feed público com dicas
+  ✅ Curtidas e respostas nos posts
+  ✅ Mensagens privadas (DM) em tempo real
+  ✅ Convite por link para DM
+  ✅ Chat em grupo por bolão
+  ✅ Jogos ao vivo com odds (após Edge Function rodar)
+  ✅ Cálculo automático de pontos (após jogo terminar)
+  ✅ Finalização automática de bolão
+  ✅ Links de afiliado Sportingbet + Superbet em toda jornada
+  ✅ Design mobile-first com bottom nav
+  ✅ Realtime: palpites, ranking, mensagens, placar
+
+================================================================
+  MONETIZAÇÃO
+================================================================
+
+  CPA Afiliado (principal):
+  → Sportingbet: cadastre em entainpartners.com
+  → Superbet: cadastre em affiliates.superbet.com
+  → Substitua os links em app/config.js quando aprovado:
+    SPORTINGBET: 'https://www.sportingbet.com/pt-br?ref=SEU_ID'
+    SUPERBET:    'https://superbet.com.br?ref=SEU_ID'
+
+  Taxa da plataforma (5%):
+  → Já configurada no banco (boloes.platform_fee_pct = 5)
+
+================================================================
+  LINKS DE AFILIADO ATUAIS (placeholder - substitua!)
+================================================================
+
+  SPORTINGBET: https://www.sportingbet.com/pt-br
+  SUPERBET:    https://superbet.com.br
+
+================================================================

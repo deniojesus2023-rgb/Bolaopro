@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BolãoPro — Comunidade</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.comm-layout{display:flex;height:calc(100vh - var(--topbar));overflow:hidden;}
+.feed-col{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border);min-width:0;overflow:hidden;}
+.tabs-bar{display:flex;background:var(--white);border-bottom:1px solid var(--border);padding:0 20px;flex-shrink:0;overflow-x:auto;scrollbar-width:none;}
+.tabs-bar::-webkit-scrollbar{display:none;}
+.ctab{padding:14px 16px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;}
+.ctab:hover{color:var(--text);}
+.ctab.on{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.feed-area{flex:1;overflow-y:auto;padding:16px 20px;}
+/* COMPOSE */
+.compose{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:14px;box-shadow:var(--shadow);}
+.compose-row{display:flex;gap:10px;}
+.c-av{width:34px;height:34px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--green);flex-shrink:0;}
+.c-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:9px 12px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;outline:none;resize:none;min-height:68px;transition:border-color .15s;line-height:1.5;}
+.c-input:focus{border-color:var(--green);background:var(--white);}
+.c-input::placeholder{color:var(--light);}
+.c-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;}
+.c-types{display:flex;gap:5px;flex-wrap:wrap;}
+.ctype{height:26px;padding:0 10px;border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .15s;}
+.ctype:hover,.ctype.on{background:var(--green-lt);border-color:var(--green-m);color:var(--green);}
+.c-send{height:32px;padding:0 14px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:12px;font-weight:600;transition:all .15s;}
+.c-send:hover{background:var(--green2);}
+/* POST CARD */
+.post{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px;margin-bottom:10px;box-shadow:var(--shadow);transition:box-shadow .2s;}
+.post:hover{box-shadow:var(--shadow-md);}
+.post-hd{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+.post-av{width:34px;height:34px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green);flex-shrink:0;}
+.post-author{font-size:13px;font-weight:600;}
+.post-time{font-size:11px;color:var(--light);margin-left:auto;}
+.type-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.tt-tip{background:var(--gold-lt);color:#92400E;}
+.tt-invite{background:var(--green-lt);color:var(--green);}
+.tt-result{background:var(--blue-lt,#DBEAFE);color:var(--blue,#1D4ED8);}
+.tt-general{background:var(--bg);color:var(--muted);}
+.post-body{font-size:13px;line-height:1.6;color:var(--text);margin-bottom:10px;white-space:pre-wrap;}
+.post-bolao{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 13px;display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer;transition:border-color .15s;}
+.post-bolao:hover{border-color:var(--green);}
+.pb-name{font-size:12px;font-weight:600;margin-bottom:2px;}
+.pb-meta{font-size:11px;color:var(--muted);}
+.pb-btn{font-size:11px;font-weight:600;color:var(--green);background:var(--green-lt);padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.post-actions{display:flex;border-top:1px solid var(--border);padding-top:8px;margin-top:8px;}
+.pact{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:6px;border-radius:var(--r-sm);font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;}
+.pact:hover{background:var(--bg);color:var(--text);}
+.pact.liked{color:var(--red);}
+.replies-wrap{margin-top:10px;display:none;}
+.replies-wrap.open{display:block;}
+.reply-row{display:flex;gap:8px;margin-bottom:7px;}
+.reply-av{width:26px;height:26px;border-radius:50%;background:var(--green-lt);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--green);flex-shrink:0;}
+.reply-bub{background:var(--bg);border-radius:var(--r-sm);padding:7px 11px;font-size:12px;flex:1;}
+.reply-auth{font-weight:600;font-size:10px;margin-bottom:2px;}
+.reply-compose{display:flex;gap:7px;margin-top:8px;}
+.reply-in{flex:1;height:34px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:0 11px;font-size:12px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+.reply-in:focus{border-color:var(--green);}
+.reply-send{height:34px;padding:0 12px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:12px;font-weight:600;}
+/* CHAT */
+.chat-area{display:none;flex-direction:column;flex:1;height:100%;}
+.chat-area.active{display:flex;}
+.chat-bar{padding:10px 16px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.chat-msgs{flex:1;overflow-y:auto;padding:12px 16px;}
+.cmsg{display:flex;gap:8px;margin-bottom:10px;}
+.cmsg.mine{flex-direction:row-reverse;}
+.cmsg-av{width:28px;height:28px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--green);flex-shrink:0;align-self:flex-end;}
+.cmsg-wrap{max-width:72%;}
+.cmsg-author{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:3px;}
+.cmsg.mine .cmsg-author{display:none;}
+.cmsg-bubble{padding:9px 13px;font-size:13px;line-height:1.5;border-radius:14px 14px 14px 4px;background:var(--white);border:1px solid var(--border);}
+.cmsg.mine .cmsg-bubble{background:var(--green);color:#fff;border:none;border-radius:14px 14px 4px 14px;}
+.cmsg-time{font-size:10px;color:var(--light);margin-top:4px;}
+.cmsg.mine .cmsg-time{text-align:right;color:rgba(255,255,255,.65);}
+.sys-msg{text-align:center;font-size:11px;color:var(--light);margin:8px 0;}
+.chat-input-row{padding:12px 16px;background:var(--white);border-top:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-shrink:0;}
+.chat-in{flex:1;height:40px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:0 16px;font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+.chat-in:focus{border-color:var(--green);background:var(--white);}
+.chat-in::placeholder{color:var(--light);}
+.chat-send{width:40px;height:40px;border-radius:50%;background:var(--green);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.chat-send:hover{background:var(--green2);transform:scale(1.05);}
+/* CONV COL */
+.conv-col{width:290px;background:var(--white);border-left:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;}
+.conv-head{padding:14px 14px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.conv-head-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.conv-head-title{font-size:13px;font-weight:700;}
+.conv-act{height:28px;padding:0 10px;border-radius:var(--r-sm);font-size:11px;font-weight:600;display:flex;align-items:center;gap:5px;cursor:pointer;transition:all .15s;}
+.conv-act.green{background:var(--green);color:#fff;}
+.conv-act.outline{border:1px solid var(--border);color:var(--muted);}
+.conv-act:hover.outline{border-color:var(--green);color:var(--green);}
+.conv-search{width:100%;height:32px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:0 11px;font-size:12px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+.conv-search:focus{border-color:var(--green);}
+.conv-search::placeholder{color:var(--light);}
+.conv-list{flex:1;overflow-y:auto;}
+.conv-item{display:flex;align-items:center;gap:9px;padding:11px 14px;cursor:pointer;transition:background .15s;border-bottom:1px solid var(--border);}
+.conv-item:hover{background:var(--bg);}
+.conv-item.on{background:var(--green-lt);}
+.conv-av{width:36px;height:36px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--green);flex-shrink:0;}
+.conv-info{flex:1;min-width:0;}
+.conv-name{font-size:12px;font-weight:600;margin-bottom:2px;}
+.conv-last{font-size:11px;color:var(--light);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.conv-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
+.conv-time{font-size:10px;color:var(--light);}
+.unread{background:var(--green);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center;}
+/* DM PANEL */
+.dm-panel{display:none;flex-direction:column;height:100%;}
+.dm-panel.open{display:flex;}
+.dm-head{padding:11px 14px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.dm-back{width:26px;height:26px;border-radius:6px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:background .15s;}
+.dm-back:hover{background:var(--green-lt);}
+.dm-user-av{width:32px;height:32px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green);flex-shrink:0;}
+.dm-info{flex:1;min-width:0;}
+.dm-user-name{font-size:12px;font-weight:700;}
+.dm-user-status{font-size:10px;color:var(--green);}
+.dm-inv-btn{height:26px;padding:0 9px;border-radius:var(--r-sm);font-size:10px;font-weight:600;background:var(--green-lt);color:var(--green);border:1px solid var(--green-m);cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0;}
+.dm-msgs{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:7px;}
+.dm-msg{max-width:80%;}
+.dm-msg.mine{align-self:flex-end;}
+.dm-bub{padding:8px 12px;border-radius:13px;font-size:12px;line-height:1.5;}
+.dm-msg:not(.mine) .dm-bub{background:var(--white);border:1px solid var(--border);border-radius:4px 13px 13px 13px;}
+.dm-msg.mine .dm-bub{background:var(--green);color:#fff;border-radius:13px 4px 13px 13px;}
+.dm-time{font-size:10px;color:var(--light);margin-top:3px;}
+.dm-msg.mine .dm-time{text-align:right;color:rgba(255,255,255,.6);}
+.dm-bolao-card{background:var(--white);border:1px solid var(--green-m);border-radius:var(--r-sm);padding:9px 12px;margin-bottom:3px;}
+.dm-bolao-card .dbtag{font-size:9px;font-weight:700;color:var(--green);margin-bottom:3px;}
+.dm-bolao-card .dbname{font-size:11px;font-weight:600;margin-bottom:2px;}
+.dm-bolao-card .dbmeta{font-size:10px;color:var(--muted);}
+.dm-bolao-card a{display:inline-block;margin-top:7px;height:26px;padding:0 10px;border-radius:20px;background:var(--green);color:#fff;font-size:10px;font-weight:700;line-height:26px;}
+.dm-input-row{padding:10px 14px;background:var(--white);border-top:1px solid var(--border);display:flex;gap:7px;align-items:center;flex-shrink:0;}
+.dm-in{flex:1;height:38px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:0 14px;font-size:12px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+.dm-in:focus{border-color:var(--green);background:var(--white);}
+.dm-in::placeholder{color:var(--light);}
+.dm-send{width:38px;height:38px;border-radius:50%;background:var(--green);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.dm-send:hover{background:var(--green2);}
+/* invite banner */
+.inv-banner{background:var(--green-lt);border:1px solid var(--green-m);border-radius:var(--r-lg);padding:14px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.inv-banner-info{flex:1;font-size:12px;}
+.inv-banner-info strong{font-weight:700;}
+.inv-banner-info p{font-size:11px;color:var(--muted);margin-top:2px;}
+.inv-btns{display:flex;gap:6px;flex-shrink:0;}
+.ib{height:28px;padding:0 11px;border-radius:var(--r-sm);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.ib.acc{background:var(--green);color:#fff;}
+.ib.dec{border:1px solid var(--border);color:var(--muted);}
+@media(max-width:1100px){.conv-col{width:250px;}}
+@media(max-width:900px){.conv-col{display:none;}}
+@media(max-width:768px){
+  .comm-layout{height:calc(100vh - var(--topbar) - var(--bnav));}
+  .feed-area{padding:12px 14px;}
+  .feed-col{border-right:none;}
+  .tabs-bar{padding:0 12px;}
+}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item on"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <div class="sidebar-bot"><div class="user-card" id="userCard" style="display:none"><div class="u-av" id="sideAv">?</div><div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div></div></div>
+</aside>
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()">✕</div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item on"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div><a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a></div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <div class="page-title">Comunidade</div>
+    </div>
+    <div class="topbar-right">
+      <div class="icon-btn" onclick="openModal('newDm')" title="Nova mensagem">✉️<span class="bdg" id="unreadBdg" style="display:none">0</span></div>
+      <div class="icon-btn" onclick="openModal('inviteLink')" title="Convite por link">🔗</div>
+      <button class="btn-primary" onclick="openModal('newPost')">+ Nova Dica</button>
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none"><div class="top-user-av" id="topUserAv">?</div><span style="font-size:12px;font-weight:600" id="topUserName">…</span></a>
+    </div>
+  </header>
+
+  <div class="comm-layout">
+    <!-- FEED COL -->
+    <div class="feed-col">
+      <div class="tabs-bar">
+        <div class="ctab on" onclick="switchTab('feed',this)">🌐 Feed</div>
+        <div class="ctab" onclick="switchTab('chat',this)">⚽ Chat do Bolão</div>
+      </div>
+
+      <!-- FEED -->
+      <div class="feed-area" id="feedArea">
+        <div class="inv-banner" id="invBanner" style="display:none">
+          <div class="inv-banner-info"><strong id="invFrom">@alguém</strong> quer conversar<p>Aceite para trocar mensagens privadas</p></div>
+          <div class="inv-btns"><button class="ib acc" onclick="acceptInv()">Aceitar</button><button class="ib dec" onclick="declineInv()">Recusar</button></div>
+        </div>
+        <div class="compose" id="composeBox" style="display:none">
+          <div class="compose-row">
+            <div class="c-av" id="compAv">?</div>
+            <textarea class="c-input" id="postTxt" placeholder="Compartilhe uma dica, análise ou convide para seu bolão…" maxlength="500"></textarea>
+          </div>
+          <div class="c-footer">
+            <div class="c-types">
+              <button class="ctype on" onclick="setPType('tip',this)">💡 Dica</button>
+              <button class="ctype" onclick="setPType('general',this)">💬 Geral</button>
+              <button class="ctype" onclick="setPType('invite',this)">⚽ Convite</button>
+              <button class="ctype" onclick="setPType('result',this)">🏆 Resultado</button>
+            </div>
+            <button class="c-send" id="cSendBtn" onclick="pubPost()" disabled>Publicar</button>
+          </div>
+        </div>
+        <div id="postsList"><div class="empty"><div class="spin"></div></div></div>
+      </div>
+
+      <!-- CHAT -->
+      <div class="chat-area" id="chatArea">
+        <div id="chatNone" style="display:flex;flex:1;align-items:center;justify-content:center">
+          <div class="empty"><div class="empty-icon">⚽</div><p>Selecione um bolão para o chat</p><button onclick="openModal('selectBolao')" class="btn-full" style="max-width:200px;margin-top:12px;height:38px;font-size:13px">Selecionar Bolão</button></div>
+        </div>
+        <div id="chatContent" style="display:none;flex:1;flex-direction:column;height:100%">
+          <div class="chat-bar">
+            <div style="flex:1"><div style="font-size:13px;font-weight:700" id="chatBolaoName">Bolão</div><div style="font-size:11px;color:var(--muted)" id="chatBolaoMeta">…</div></div>
+            <button onclick="openModal('selectBolao')" style="font-size:11px;color:var(--green);font-weight:600">Trocar</button>
+          </div>
+          <div class="chat-msgs" id="chatMsgs"><div class="empty"><div class="spin"></div></div></div>
+          <div class="chat-input-row">
+            <input class="chat-in" id="chatIn" placeholder="Mensagem para o grupo…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){sendGroup();event.preventDefault()}"/>
+            <button class="chat-send" onclick="sendGroup()">↑</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONV COL -->
+    <div class="conv-col">
+      <div id="convListView" style="display:flex;flex-direction:column;height:100%">
+        <div class="conv-head">
+          <div class="conv-head-row">
+            <div class="conv-head-title">Mensagens</div>
+            <div style="display:flex;gap:5px">
+              <button class="conv-act green" onclick="openModal('newDm')">+ Nova</button>
+              <button class="conv-act outline" onclick="openModal('inviteLink')" title="Convite por link">🔗</button>
+            </div>
+          </div>
+          <input class="conv-search" placeholder="Buscar conversa…" oninput="filterConvs(this.value)"/>
+        </div>
+        <div class="conv-list" id="convList"><div class="empty"><div class="spin"></div></div></div>
+      </div>
+      <div class="dm-panel" id="dmPanel">
+        <div class="dm-head">
+          <button class="dm-back" onclick="closeDm()">←</button>
+          <div class="dm-user-av" id="dmAv">?</div>
+          <div class="dm-info"><div class="dm-user-name" id="dmName">…</div><div class="dm-user-status">Online</div></div>
+          <button class="dm-inv-btn" onclick="sendBolaoInv()">⚽ Convidar</button>
+        </div>
+        <div class="dm-msgs" id="dmMsgs"><div class="empty"><div class="spin"></div></div></div>
+        <div class="dm-input-row">
+          <input class="dm-in" id="dmIn" placeholder="Mensagem privada…" onkeydown="if(event.key==='Enter'){sendDm();event.preventDefault()}"/>
+          <button class="dm-send" onclick="sendDm()">↑</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="bnav-inner">
+    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
+    <a href="comunidade.html" class="bn on"><span class="bn-icon">💬</span>Feed</a>
+    <button class="bn-center" onclick="openModal('newPost')"><div class="bn-circle">+</div></button>
+    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+  </div>
+</nav>
+
+<!-- MODAL: NOVO POST -->
+<div class="ovl" id="newPost" onclick="ovlClose(event,'newPost')">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-head"><div><div class="modal-title">Nova Publicação</div><div class="modal-sub">Compartilhe com a comunidade</div></div><button class="modal-x" onclick="closeModal('newPost')">✕</button></div>
+    <div class="modal-body">
+      <div class="fl"><label>Tipo</label>
+        <select id="mType"><option value="tip">💡 Dica de Aposta</option><option value="general">💬 Geral</option><option value="invite">⚽ Convite para Bolão</option><option value="result">🏆 Resultado</option></select>
+      </div>
+      <div class="fl"><label>Mensagem</label><textarea id="mContent" placeholder="O que você quer compartilhar?" maxlength="500" style="min-height:90px"></textarea></div>
+      <button class="btn-full" onclick="pubPostModal()">📢 Publicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: NOVA DM -->
+<div class="ovl" id="newDm" onclick="ovlClose(event,'newDm')">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-head"><div><div class="modal-title">Nova Conversa</div><div class="modal-sub">Busque um usuário</div></div><button class="modal-x" onclick="closeModal('newDm')">✕</button></div>
+    <div class="modal-body">
+      <div class="fl"><label>Buscar usuário</label><input id="dmSearch" placeholder="Digite o nome de usuário…" oninput="searchUsers(this.value)"/></div>
+      <div id="userResults" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONVITE POR LINK -->
+<div class="ovl" id="inviteLink" onclick="ovlClose(event,'inviteLink')">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-head"><div><div class="modal-title">Convite por Link</div><div class="modal-sub">Quem clicar poderá conversar com você</div></div><button class="modal-x" onclick="closeModal('inviteLink')">✕</button></div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Compartilhe esse link. Quando a pessoa aceitar, vocês poderão conversar em privado.</p>
+      <div class="link-box"><div class="link-val" id="invLinkVal">Gerando…</div><span class="link-copy" onclick="copyInvLink()">📋</span></div>
+      <button class="btn-wpp" onclick="shareInvWpp()">📲 Compartilhar no WhatsApp</button>
+      <button class="btn-full" onclick="copyInvLink()">📋 Copiar Link</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SELECT BOLÃO CHAT -->
+<div class="ovl" id="selectBolao" onclick="ovlClose(event,'selectBolao')">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-head"><div><div class="modal-title">Chat do Bolão</div><div class="modal-sub">Escolha qual bolão</div></div><button class="modal-x" onclick="closeModal('selectBolao')">✕</button></div>
+    <div class="modal-body" id="bolaoSelectList"><div class="empty"><div class="spin"></div></div></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script><script src="app.js"></script>
+<script>
+let cUser=null, convId=null, bolaoGroupId=null, ptype='tip', invCode=null, pendingInv=null, allConvs=[]
+
+document.addEventListener('DOMContentLoaded',async()=>{
+  const params=new URLSearchParams(location.search)
+  cUser=await initAuth()
+  if(cUser){
+    hideEl('sideLogin');showEl('sideLogout')
+    const p=await getProfile(cUser.id); const n=p?.username??cUser.email?.split('@')[0]??'?'
+    setEl('topUserName',n);setEl('topUserAv',n.slice(0,2).toUpperCase())
+    setEl('compAv',n.slice(0,2).toUpperCase())
+    showEl('composeBox')
+    document.getElementById('postTxt').addEventListener('input',function(){document.getElementById('cSendBtn').disabled=!this.value.trim()})
+    loadConvs(); loadBolaoSelect(); genInvLink()
+    const code=params.get('invite'); if(code) handleInvCode(code)
+  }
+  loadFeed()
+  subscribeRealtime()
+})
+
+// ── FEED ──────────────────────────────────────────────────────
+async function loadFeed(){
+  const posts=await getPosts()
+  renderFeed(posts)
+}
+function renderFeed(posts){
+  const tmap={tip:'tt-tip 💡 Dica',invite:'tt-invite ⚽ Convite',result:'tt-result 🏆 Resultado',general:'tt-general 💬 Geral'}
+  document.getElementById('postsList').innerHTML=posts.length
+    ? posts.map(p=>{
+        const auth=p.author?.username??'Usuário', av=auth.slice(0,2).toUpperCase()
+        const tag=tmap[p.type]??'tt-general 💬'
+        const [cls,...lbl]=tag.split(' ')
+        return`<div class="post" id="p_${p.id}">
+          <div class="post-hd">
+            <div class="post-av">${av}</div>
+            <div><div class="post-author">@${esc(auth)}</div></div>
+            <span class="type-tag ${cls}">${lbl.join(' ')}</span>
+            <span class="post-time">${timeAgo(p.created_at)}</span>
+          </div>
+          <div class="post-body">${esc(p.content)}</div>
+          ${p.bolao_id?`<div class="post-bolao" onclick="location.href='bolao.html?id=${p.bolao_id}'"><div><div class="pb-name">⚽ Bolão disponível</div><div class="pb-meta">Clique para participar</div></div><span class="pb-btn">Entrar →</span></div>`:''}
+          <div class="post-actions">
+            <div class="pact" onclick="toggleLike('${p.id}',this)">❤️ <span>${p.likes_count??0}</span></div>
+            <div class="pact" onclick="toggleReplies('${p.id}')">💬 <span>${p.replies_count??0}</span></div>
+            ${cUser&&p.user_id!==cUser?.id?`<div class="pact" onclick="dmFromPost('${p.user_id}','${esc(auth)}')">✉️ DM</div>`:''}
+            ${cUser&&p.user_id===cUser?.id?`<div class="pact" style="color:var(--red)" onclick="delPost('${p.id}')">🗑️</div>`:''}
+          </div>
+          <div class="replies-wrap" id="rw_${p.id}">
+            <div id="rl_${p.id}"></div>
+            ${cUser?`<div class="reply-compose"><input class="reply-in" id="ri_${p.id}" placeholder="Responder…" maxlength="300" onkeydown="if(event.key==='Enter'){pubReply('${p.id}');event.preventDefault()}"/><button class="reply-send" onclick="pubReply('${p.id}')">↑</button></div>`:''}
+          </div>
+        </div>`}).join('')
+    :`<div class="empty"><div class="empty-icon">💬</div><p>Nenhum post ainda.<br>Seja o primeiro!</p></div>`
+}
+
+function setPType(t,btn){ptype=t;document.querySelectorAll('.ctype').forEach(b=>b.classList.remove('on'));btn.classList.add('on')}
+
+async function pubPost(){
+  if(!cUser){showToast('Faça login para publicar');return}
+  const txt=document.getElementById('postTxt').value.trim(); if(!txt)return
+  const ok=await publishPost(cUser.id,txt,ptype,null)
+  if(ok){document.getElementById('postTxt').value='';document.getElementById('cSendBtn').disabled=true;showToast('✓ Publicado!')}
+  else showToast('Erro ao publicar')
+}
+async function pubPostModal(){
+  if(!cUser){closeModal('newPost');location.href='login.html';return}
+  const c=document.getElementById('mContent').value.trim(); if(!c){showToast('Digite algo');return}
+  await publishPost(cUser.id,c,document.getElementById('mType').value,null)
+  closeModal('newPost');document.getElementById('mContent').value='';showToast('✓ Publicado!');loadFeed()
+}
+async function toggleLike(id,el){
+  if(!cUser){showToast('Faça login para curtir');return}
+  const sp=el.querySelector('span'),n=parseInt(sp.textContent),liked=el.classList.contains('liked')
+  el.classList.toggle('liked');sp.textContent=liked?n-1:n+1
+  if(liked) await sb().from('post_likes').delete().eq('post_id',id).eq('user_id',cUser.id)
+  else await sb().from('post_likes').insert({post_id:id,user_id:cUser.id})
+}
+async function toggleReplies(id){
+  const w=document.getElementById(`rw_${id}`); w.classList.toggle('open')
+  if(w.classList.contains('open')){
+    const l=document.getElementById(`rl_${id}`); l.innerHTML='<div class="spin" style="margin:8px auto"></div>'
+    const{data}=await sb().from('post_replies').select('*,a:profiles!user_id(username)').eq('post_id',id).order('created_at',{ascending:true})
+    l.innerHTML=(data??[]).map(r=>`<div class="reply-row"><div class="reply-av">${(r.a?.username??'?').slice(0,2).toUpperCase()}</div><div class="reply-bub"><div class="reply-auth">@${esc(r.a?.username??'?')}</div>${esc(r.content)}</div></div>`).join('')||'<p style="font-size:11px;color:var(--light);padding:6px">Sem respostas</p>'
+  }
+}
+async function pubReply(postId){
+  if(!cUser)return
+  const inp=document.getElementById(`ri_${postId}`),c=inp.value.trim(); if(!c)return
+  await sb().from('post_replies').insert({post_id:postId,user_id:cUser.id,content:c})
+  inp.value=''
+  const l=document.getElementById(`rl_${postId}`)
+  l.insertAdjacentHTML('beforeend',`<div class="reply-row"><div class="reply-av">${(cUser.email??'').slice(0,2).toUpperCase()}</div><div class="reply-bub"><div class="reply-auth">Você</div>${esc(c)}</div></div>`)
+  const p=document.getElementById(`p_${postId}`)?.querySelectorAll('.pact')[1]?.querySelector('span')
+  if(p)p.textContent=parseInt(p.textContent)+1
+}
+async function delPost(id){
+  if(!confirm('Apagar?'))return
+  await sb().from('posts').delete().eq('id',id).eq('user_id',cUser.id)
+  document.getElementById(`p_${id}`)?.remove();showToast('Removido')
+}
+
+// ── CONVS ──────────────────────────────────────────────────────
+async function loadConvs(){
+  if(!cUser){document.getElementById('convList').innerHTML='<div class="empty"><p><a href="login.html" style="color:var(--green);font-weight:600">Faça login</a></p></div>';return}
+  allConvs=await getConversations(cUser.id); renderConvs(allConvs)
+  const unread=allConvs.reduce((s,c)=>s+(c.user_a===cUser.id?c.unread_a:c.unread_b),0)
+  const b=document.getElementById('unreadBdg'); if(unread>0){b.textContent=unread;b.style.display='flex'}else b.style.display='none'
+  sb().channel('convs_'+cUser.id)
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'conversations'},()=>loadConvs())
+    .subscribe()
+}
+function renderConvs(list){
+  if(!list.length){document.getElementById('convList').innerHTML='<div class="empty"><p>Nenhuma conversa.<br>Comece uma!</p></div>';return}
+  document.getElementById('convList').innerHTML=list.map(c=>{
+    const other=c.user_a===cUser.id?c.ub:c.ua
+    const unread=c.user_a===cUser.id?c.unread_a:c.unread_b
+    const name=other?.username??'Usuário'
+    return`<div class="conv-item ${convId===c.id?'on':''}" onclick="openDm('${c.id}','${other?.id??''}','${esc(name)}')">
+      <div class="conv-av">${name.slice(0,2).toUpperCase()}</div>
+      <div class="conv-info"><div class="conv-name">@${esc(name)}</div><div class="conv-last">${c.last_message?esc(c.last_message.slice(0,40)):'Iniciar…'}</div></div>
+      <div class="conv-meta"><div class="conv-time">${timeAgo(c.last_message_at)}</div>${unread>0?`<div class="unread">${unread}</div>`:''}</div>
+    </div>`}).join('')
+}
+function filterConvs(q){renderConvs(allConvs.filter(c=>{const o=c.user_a===cUser?.id?c.ub:c.ua;return(o?.username??'').toLowerCase().includes(q.toLowerCase())}))}
+
+async function openDm(cId,otherId,name){
+  convId=cId
+  setEl('dmAv',name.slice(0,2).toUpperCase()); setEl('dmName','@'+name)
+  document.getElementById('dmPanel').classList.add('open')
+  document.getElementById('convListView').style.display='none'
+  const f=allConvs.find(c=>c.id===cId)?.user_a===cUser.id?'unread_a':'unread_b'
+  await sb().from('conversations').update({[f]:0}).eq('id',cId)
+  loadDmMsgs(cId)
+  sb().channel('dm_'+cId).on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:`conversation_id=eq.${cId}`},(p)=>appendDmMsg(p.new)).subscribe()
+}
+function closeDm(){convId=null;document.getElementById('dmPanel').classList.remove('open');document.getElementById('convListView').style.display='flex';loadConvs()}
+
+async function loadDmMsgs(cId){
+  const el=document.getElementById('dmMsgs'); el.innerHTML='<div class="empty"><div class="spin"></div></div>'
+  const msgs=await getMessages(cId)
+  el.innerHTML=msgs.length?msgs.map(m=>dmMsgHtml(m)).join(''):'<div class="sys-msg">Início da conversa 👋</div>'
+  el.scrollTop=el.scrollHeight
+}
+function dmMsgHtml(m){
+  const isMe=m.sender_id===cUser?.id,time=timeAgo(m.created_at)
+  if(m.type==='bolao_invite'&&m.bolao_id){
+    return`<div class="dm-msg ${isMe?'mine':''}"><div class="dm-bolao-card"><div class="dbtag">⚽ Convite para Bolão</div><div class="dbname">Você foi convidado!</div><div class="dbmeta">Clique para participar</div><a href="bolao.html?id=${m.bolao_id}">Entrar →</a></div><div class="dm-time">${time}</div></div>`
+  }
+  return`<div class="dm-msg ${isMe?'mine':''}"><div class="dm-bub">${esc(m.content)}</div><div class="dm-time">${time}</div></div>`
+}
+function appendDmMsg(msg){const el=document.getElementById('dmMsgs');el.insertAdjacentHTML('beforeend',dmMsgHtml(msg));el.scrollTop=el.scrollHeight}
+async function sendDm(){
+  if(!cUser||!convId)return
+  const inp=document.getElementById('dmIn'),c=inp.value.trim(); if(!c)return; inp.value=''
+  await sendMessage(convId,cUser.id,c)
+}
+async function dmFromPost(uid,name){
+  if(!cUser){showToast('Faça login para enviar mensagens');return}
+  const cId=await getOrCreateConv(cUser.id,uid)
+  openDm(cId,uid,name)
+  document.querySelector('.ctab')?.click()
+}
+async function sendBolaoInv(){
+  if(!cUser||!convId)return
+  const{data:b}=await sb().from('boloes').select('id,name').eq('owner_id',cUser.id).eq('status','open').limit(1).single()
+  if(!b){showToast('Você não tem bolões abertos');return}
+  await sb().from('messages').insert({conversation_id:convId,sender_id:cUser.id,content:`Convite: ${b.name}`,type:'bolao_invite',bolao_id:b.id})
+  showToast('⚽ Convite enviado!')
+}
+
+// ── SEARCH USERS ──────────────────────────────────────────────
+async function searchUsers(q){
+  const el=document.getElementById('userResults'); if(q.length<2){el.innerHTML='';return}
+  const{data}=await sb().from('profiles').select('id,username').ilike('username',`%${q}%`).neq('id',cUser?.id??'').limit(6)
+  el.innerHTML=(data??[]).map(u=>`<div onclick="startDmBySearch('${u.id}','${esc(u.username)}')" style="display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--border);border-radius:var(--r-sm);cursor:pointer;transition:border-color .15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div class="rk-av">${u.username.slice(0,2).toUpperCase()}</div>
+      <div style="font-size:13px;font-weight:600">@${esc(u.username)}</div>
+    </div>`).join('')||'<p style="font-size:12px;color:var(--light);text-align:center;padding:10px">Nenhum usuário</p>'
+}
+async function startDmBySearch(uid,name){closeModal('newDm');if(!cUser)return;const cId=await getOrCreateConv(cUser.id,uid);loadConvs();openDm(cId,uid,name)}
+
+// ── INVITE LINK ───────────────────────────────────────────────
+async function genInvLink(){
+  if(!cUser){setEl('invLinkVal','Faça login para gerar convite');return}
+  try{
+    const{data}=await sb().rpc('create_dm_invite',{p_from_user:cUser.id})
+    invCode=data; setEl('invLinkVal',`${location.origin}${location.pathname}?invite=${data}`)
+  }catch{setEl('invLinkVal','Erro ao gerar')}
+}
+function copyInvLink(){navigator.clipboard.writeText(document.getElementById('invLinkVal').textContent);showToast('📋 Link copiado!')}
+function shareInvWpp(){window.open(`https://wa.me/?text=${encodeURIComponent(`Vamos conversar no BolãoPro! ${document.getElementById('invLinkVal').textContent}`)}`)}
+
+async function handleInvCode(code){
+  if(!cUser)return
+  const{data:c}=await sb().from('conversations').select('*,ua:profiles!user_a(username)').eq('invite_code',code).eq('invite_status','pending').single()
+  if(!c||c.user_a===cUser.id)return
+  pendingInv=c; setEl('invFrom','@'+(c.ua?.username??'alguém'))
+  document.getElementById('invBanner').style.display='flex'
+}
+async function acceptInv(){
+  if(!pendingInv||!cUser)return
+  await sb().from('conversations').update({user_b:cUser.id,invite_status:'accepted'}).eq('id',pendingInv.id)
+  document.getElementById('invBanner').style.display='none'; showToast('✓ Convite aceito!'); loadConvs()
+}
+async function declineInv(){
+  if(!pendingInv)return
+  await sb().from('conversations').update({invite_status:'declined'}).eq('id',pendingInv.id)
+  document.getElementById('invBanner').style.display='none'; pendingInv=null
+}
+
+// ── GROUP CHAT ────────────────────────────────────────────────
+async function loadBolaoSelect(){
+  if(!cUser){document.getElementById('bolaoSelectList').innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Faça login</p>';return}
+  const{data}=await sb().from('participants').select('bolao_id,boloes(id,name,status)').eq('user_id',cUser.id).eq('payment_status','paid')
+  const boloes=(data??[]).map(d=>d.boloes).filter(Boolean)
+  document.getElementById('bolaoSelectList').innerHTML=boloes.length
+    ? boloes.map(b=>`<div onclick="selectGroupChat('${b.id}','${esc(b.name)}')" style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:var(--r-sm);cursor:pointer;margin-bottom:8px;transition:border-color .15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--green-lt);display:flex;align-items:center;justify-content:center;font-size:16px">⚽</div>
+        <div style="font-size:13px;font-weight:600">${esc(b.name)}</div>
+        <div style="margin-left:auto;font-size:11px;color:var(--green);font-weight:600">Entrar →</div>
+      </div>`).join('')
+    : '<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Você não participa de bolões pagos ainda</p>'
+}
+async function selectGroupChat(id,name){
+  bolaoGroupId=id; closeModal('selectBolao')
+  document.getElementById('chatNone').style.display='none'
+  document.getElementById('chatContent').style.display='flex'
+  setEl('chatBolaoName',name); setEl('chatBolaoMeta','Carregando…')
+  const msgs=await getGroupChat(id)
+  const el=document.getElementById('chatMsgs')
+  el.innerHTML=msgs.length?msgs.map(m=>chatMsgHtml(m)).join(''):'<div class="sys-msg">Início do chat 👋</div>'
+  el.scrollTop=el.scrollHeight
+  sb().channel('gchat_'+id).on('postgres_changes',{event:'INSERT',schema:'public',table:'bolao_chat',filter:`bolao_id=eq.${id}`},(p)=>{
+    const el=document.getElementById('chatMsgs')
+    sb().from('profiles').select('username').eq('id',p.new.user_id).single().then(({data:s})=>{p.new.sender=s;el.insertAdjacentHTML('beforeend',chatMsgHtml(p.new));el.scrollTop=el.scrollHeight})
+  }).subscribe()
+}
+function chatMsgHtml(m){
+  const isMe=m.user_id===cUser?.id, name=m.sender?.username??'Usuário'
+  if(m.type==='system')return`<div class="sys-msg">${esc(m.content)}</div>`
+  return`<div class="cmsg ${isMe?'mine':''}">
+    ${!isMe?`<div class="cmsg-av">${name.slice(0,2).toUpperCase()}</div>`:``}
+    <div class="cmsg-wrap">
+      ${!isMe?`<div class="cmsg-author">@${esc(name)}</div>`:''}
+      <div class="cmsg-bubble">${esc(m.content)}</div>
+      <div class="cmsg-time">${timeAgo(m.created_at)}</div>
+    </div>
+  </div>`
+}
+async function sendGroup(){
+  if(!cUser||!bolaoGroupId)return
+  const inp=document.getElementById('chatIn'),c=inp.value.trim(); if(!c)return; inp.value=''
+  await sendGroupMsg(bolaoGroupId,cUser.id,c)
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function switchTab(tab,btn){
+  document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on')); btn.classList.add('on')
+  document.getElementById('feedArea').style.display=tab==='feed'?'block':'none'
+  document.getElementById('chatArea').classList.toggle('active',tab==='chat')
+}
+
+// ── REALTIME FEED ─────────────────────────────────────────────
+function subscribeRealtime(){
+  sb().channel('pub_feed').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'},(p)=>{
+    sb().from('profiles').select('username').eq('id',p.new.user_id).single().then(({data:a})=>{p.new.author=a;prependPost(p.new)})
+  }).subscribe()
+}
+function prependPost(post){
+  const tmap={tip:'tt-tip 💡 Dica',invite:'tt-invite ⚽ Convite',result:'tt-result 🏆 Resultado',general:'tt-general 💬 Geral'}
+  const auth=post.author?.username??'Usuário', av=auth.slice(0,2).toUpperCase()
+  const tag=tmap[post.type]??'tt-general 💬'
+  const [cls,...lbl]=tag.split(' ')
+  const el=document.getElementById('postsList')
+  el.insertAdjacentHTML('afterbegin',`<div class="post" id="p_${post.id}">
+    <div class="post-hd"><div class="post-av">${av}</div><div><div class="post-author">@${esc(auth)}</div></div><span class="type-tag ${cls}">${lbl.join(' ')}</span><span class="post-time">agora</span></div>
+    <div class="post-body">${esc(post.content)}</div>
+    <div class="post-actions"><div class="pact">❤️ <span>0</span></div><div class="pact">💬 <span>0</span></div></div>
+  </div>`)
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BolãoPro — Jogos</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.jogo-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);transition:all .2s;}
+.jogo-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.jogo-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.comp-tag{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);background:var(--bg);padding:3px 8px;border-radius:6px;text-transform:uppercase;}
+.jogo-dt{font-size:11px;color:var(--muted);}
+.teams-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:14px;}
+.team{text-align:center;}
+.team-logo{width:52px;height:52px;border-radius:50%;background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--muted);margin:0 auto 7px;overflow:hidden;}
+.team-logo img{width:38px;height:38px;object-fit:contain;}
+.team-name{font-size:12px;font-weight:700;}
+.score-box{text-align:center;}
+.score-num{font-size:28px;font-weight:800;letter-spacing:2px;color:var(--text);}
+.score-vs{font-size:14px;font-weight:700;color:var(--light);letter-spacing:2px;}
+.live-badge{display:inline-flex;align-items:center;gap:5px;background:var(--red-lt);color:var(--red);font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;border:1px solid rgba(220,38,38,.2);}
+.live-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:blink 1s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.odds-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.odd-btn{background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;text-decoration:none;display:block;}
+.odd-btn:hover{border-color:var(--green);background:var(--green-lt);}
+.odd-lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.odd-val{font-size:17px;font-weight:800;color:var(--text);}
+.odd-house{font-size:10px;color:var(--sb);margin-top:2px;}
+.jogo-footer{display:flex;gap:8px;}
+.jogo-footer a{flex:1;height:36px;border-radius:var(--r-sm);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s;text-decoration:none;}
+.jf-sb{background:var(--sb-lt,#FFF7ED);color:var(--sb);border:1px solid rgba(234,88,12,.2);}
+.jf-sb:hover{background:rgba(234,88,12,.12);}
+.jf-sup{background:var(--sup-lt,#F5F3FF);color:var(--sup);border:1px solid rgba(124,58,237,.2);}
+.jf-sup:hover{background:rgba(124,58,237,.12);}
+.jf-bolao{background:var(--green-lt);color:var(--green);border:1px solid var(--green-m);}
+.jf-bolao:hover{background:var(--green-m);}
+.round-label{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);padding:16px 0 8px;display:flex;align-items:center;gap:8px;}
+.round-label::after{content:'';flex:1;height:1px;background:var(--border);}
+.no-games{text-align:center;padding:60px 20px;color:var(--muted);}
+.no-games .icon{font-size:48px;margin-bottom:12px;}
+.no-games h3{font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.no-games p{font-size:13px;line-height:1.6;}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="jogos.html" class="nav-item on"><span class="nav-icon">📅</span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="userCard" style="display:none">
+      <div class="u-av" id="sideAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()">✕</div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="jogos.html" class="nav-item on"><span class="nav-icon">📅</span>Jogos</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="drawerUserCard" style="display:none">
+      <div class="u-av" id="drawerAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
+    </div>
+    <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <div class="page-title">📅 Jogos</div>
+    </div>
+    <div class="search-box">
+      <span style="font-size:13px;color:var(--light)">🔍</span>
+      <input id="searchInput" placeholder="Buscar time…" oninput="filterJogos(this.value)"/>
+    </div>
+    <div class="topbar-right">
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- FILTROS -->
+    <div class="filters" id="compFilters">
+      <button class="fil on" onclick="setComp('',this)">Todos</button>
+      <button class="fil" onclick="setComp('71',this)">🇧🇷 Brasileirão</button>
+      <button class="fil" onclick="setComp('13',this)">🌎 Libertadores</button>
+      <button class="fil" onclick="setComp('73',this)">🏆 Copa do Brasil</button>
+      <button class="fil" onclick="setComp('39',this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</button>
+    </div>
+
+    <!-- STATUS FILTERS -->
+    <div class="filters" style="margin-top:-6px">
+      <button class="fil on" onclick="setStatus('',this)" id="sfAll">Todos</button>
+      <button class="fil" onclick="setStatus('live',this)">🔴 Ao Vivo</button>
+      <button class="fil" onclick="setStatus('scheduled',this)">📅 Próximos</button>
+      <button class="fil" onclick="setStatus('finished',this)">✅ Finalizados</button>
+    </div>
+
+    <!-- JOGOS LIST -->
+    <div id="jogosList">
+      <div class="empty" style="min-height:50vh"><div class="spin spin-lg"></div></div>
+    </div>
+  </div>
+</div>
+
+<nav class="bnav">
+  <div class="bnav-inner">
+    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle">+</div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+  </div>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+let allJogos = []
+let curComp   = ''
+let curStatus = ''
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await initAuth()
+  if (user) {
+    hideEl('sideLogin'); showEl('sideLogout')
+    const p = await getProfile(user.id)
+    const n = p?.username ?? user.email?.split('@')[0] ?? '?'
+    setEl('topUserName', n); setEl('topUserAv', n.slice(0,2).toUpperCase())
+  }
+  loadJogos()
+
+  // Realtime: atualiza ao vivo quando placar muda
+  sb().channel('matches_rt')
+    .on('postgres_changes', {
+      event: 'UPDATE', schema: 'public', table: 'matches'
+    }, () => loadJogos())
+    .subscribe()
+})
+
+async function loadJogos() {
+  try {
+    let q = sb().from('matches')
+      .select('*, competition:competitions(name, short_name, api_id)')
+      .order('match_date', { ascending: true })
+      .limit(60)
+
+    if (curComp)   q = q.eq('competitions.api_id', parseInt(curComp))
+    if (curStatus) q = q.eq('status', curStatus)
+    else           q = q.in('status', ['live', 'scheduled', 'finished'])
+
+    const { data, error } = await q
+    if (error) throw error
+
+    allJogos = data ?? []
+    renderJogos(allJogos)
+  } catch (e) {
+    console.error(e)
+    document.getElementById('jogosList').innerHTML = `
+      <div class="no-games">
+        <div class="icon">⚠️</div>
+        <h3>Erro ao carregar jogos</h3>
+        <p>${e.message}</p>
+      </div>`
+  }
+}
+
+function renderJogos(list) {
+  const filtered = list.filter(j => {
+    if (curComp && String(j.competition?.api_id) !== curComp) return false
+    if (curStatus && j.status !== curStatus) return false
+    return true
+  })
+
+  if (!filtered.length) {
+    document.getElementById('jogosList').innerHTML = `
+      <div class="no-games">
+        <div class="icon">⚽</div>
+        <h3>Nenhum jogo encontrado</h3>
+        <p>Os jogos são sincronizados automaticamente pela Edge Function.<br>
+           Aguarde a próxima sincronização às 08h ou acione manualmente no Supabase.</p>
+      </div>`
+    return
+  }
+
+  // Agrupar por rodada
+  const grouped = {}
+  for (const j of filtered) {
+    const key = j.round_name ?? 'Jogos'
+    if (!grouped[key]) grouped[key] = []
+    grouped[key].push(j)
+  }
+
+  let html = ''
+  for (const [round, jogos] of Object.entries(grouped)) {
+    html += `<div class="round-label">${round}</div>`
+    for (const j of jogos) {
+      html += jogoCardHtml(j)
+    }
+  }
+
+  document.getElementById('jogosList').innerHTML = html
+}
+
+function jogoCardHtml(j) {
+  const comp    = j.competition?.name ?? j.round_name ?? '—'
+  const dt      = j.match_date ? fmtDate(j.match_date) : '—'
+  const isLive  = j.status === 'live'
+  const isDone  = j.status === 'finished'
+  const homeLg  = j.home_team_logo
+    ? `<img src="${j.home_team_logo}" alt="${esc(j.home_team)}">`
+    : `<span>${esc(j.home_team.slice(0,3).toUpperCase())}</span>`
+  const awayLg  = j.away_team_logo
+    ? `<img src="${j.away_team_logo}" alt="${esc(j.away_team)}">`
+    : `<span>${esc(j.away_team.slice(0,3).toUpperCase())}</span>`
+
+  const scoreHtml = (isLive || isDone) && j.home_score !== null
+    ? `<div class="score-num">${j.home_score} <span style="color:var(--light);font-size:20px">×</span> ${j.away_score}</div>`
+    : `<div class="score-vs">VS</div>`
+
+  const oddsHtml = !isDone ? `
+    <div class="odds-row">
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn">
+        <div class="odd-lbl">${esc(j.home_team.split(' ')[0])}</div>
+        <div class="odd-val">${j.odd_home_sportingbet ?? '—'}</div>
+        <div class="odd-house">Sportingbet</div>
+      </a>
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn">
+        <div class="odd-lbl">Empate</div>
+        <div class="odd-val">${j.odd_draw_sportingbet ?? '—'}</div>
+        <div class="odd-house">Sportingbet</div>
+      </a>
+      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn">
+        <div class="odd-lbl">${esc(j.away_team.split(' ')[0])}</div>
+        <div class="odd-val">${j.odd_away_superbet ?? '—'}</div>
+        <div class="odd-house">Superbet</div>
+      </a>
+    </div>` : ''
+
+  const topScorerHtml = isDone && j.top_scorer
+    ? `<div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px">⚽ Artilheiro: <strong>${esc(j.top_scorer)}</strong></div>`
+    : ''
+
+  return `
+  <div class="jogo-card">
+    <div class="jogo-head">
+      <span class="comp-tag">${esc(comp)}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        ${isLive ? `<div class="live-badge"><div class="dot"></div>AO VIVO</div>` : ''}
+        ${isDone ? `<span class="st st-done">Finalizado</span>` : ''}
+        <span class="jogo-dt">${dt}</span>
+      </div>
+    </div>
+    <div class="teams-row">
+      <div class="team">
+        <div class="team-logo">${homeLg}</div>
+        <div class="team-name">${esc(j.home_team)}</div>
+      </div>
+      <div class="score-box">${scoreHtml}</div>
+      <div class="team">
+        <div class="team-logo">${awayLg}</div>
+        <div class="team-name">${esc(j.away_team)}</div>
+      </div>
+    </div>
+    ${topScorerHtml}
+    ${oddsHtml}
+    <div class="jogo-footer">
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="jf-sb">⚡ Sportingbet</a>
+      <a href="${CONFIG.SUPERBET}"    target="_blank" class="jf-sup">⚡ Superbet</a>
+      <a href="index.html" class="jf-bolao" onclick="openBolaoFromJogo('${esc(j.home_team)}','${esc(j.away_team)}');return false">⚽ Criar Bolão</a>
+    </div>
+  </div>`
+}
+
+function openBolaoFromJogo(home, away) {
+  window.location.href = `index.html?home=${encodeURIComponent(home)}&away=${encodeURIComponent(away)}`
+}
+
+function setComp(c, btn) {
+  curComp = c
+  document.querySelectorAll('#compFilters .fil').forEach(b => b.classList.remove('on'))
+  btn.classList.add('on')
+  renderJogos(allJogos)
+}
+
+function setStatus(s, btn) {
+  curStatus = s
+  document.querySelectorAll('.filters .fil').forEach(b => {
+    if (b.onclick?.toString().includes('setStatus')) b.classList.remove('on')
+  })
+  btn.classList.add('on')
+  loadJogos()
+}
+
+function filterJogos(q) {
+  if (!q) { renderJogos(allJogos); return }
+  const lower = q.toLowerCase()
+  renderJogos(allJogos.filter(j =>
+    j.home_team.toLowerCase().includes(lower) ||
+    j.away_team.toLowerCase().includes(lower)
+  ))
+}
+</script>
+</body>
+</html>
