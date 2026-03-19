@@ -64,6 +64,8 @@ Deno.serve(async () => {
         `/fixtures?league=${league.api_id}&season=${league.season}&last=10`
       )
 
+      debug.push(`next keys: ${Object.keys(nextJson).join(',')} | errors: ${JSON.stringify(nextJson.errors)} | results: ${nextJson.results}`)
+
       if (nextJson.errors && Object.keys(nextJson.errors).length > 0) {
         debug.push(`API error: ${JSON.stringify(nextJson.errors)}`)
         continue
@@ -73,7 +75,7 @@ Deno.serve(async () => {
         ...(nextJson.response ?? []),
         ...(lastJson.response ?? []),
       ]
-      debug.push(`${allFixtures.length} jogos encontrados`)
+      debug.push(`${allFixtures.length} jogos encontrados (next:${nextJson.results ?? 0} last:${lastJson.results ?? 0})`)
 
       const { data: comp } = await sb
         .from('competitions')
