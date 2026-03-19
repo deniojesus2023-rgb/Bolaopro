@@ -47,7 +47,7 @@ supabase login
 echo ""
 echo -e "${YELLOW}→ Passo 2/4: Vinculando ao projeto${NC}"
 echo "  (quando pedir a senha do banco, é a senha que você definiu no Supabase)"
-supabase link --project-ref "$PROJECT_REF"
+supabase link --project-ref "$PROJECT_REF" --password "Arthurcorrea13072022!"
 
 # ── EXECUTAR SQL FUNCTIONS ───────────────────────────────────
 echo ""
