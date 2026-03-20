@@ -78,7 +78,8 @@ async function criarBolao(dados, userId) {
     competicao: dados.competicao, status: 'open',
   }).select('id, code').single()
   if (error) return { error: error.message }
-  await sb().from('participants').insert({ bolao_id: data.id, user_id: userId, payment_status: 'paid', amount_paid: 0 })
+  const paymentStatus = dados.cota > 0 ? 'pending' : 'paid'
+  await sb().from('participants').insert({ bolao_id: data.id, user_id: userId, payment_status: paymentStatus, amount_paid: 0 })
   return { data }
 }
 
@@ -103,6 +104,18 @@ async function getMeusBoloes(userId) {
     .select('bolao_id, boloes(*, participants(count))')
     .eq('user_id', userId).order('joined_at', { ascending: false })
   return data ?? []
+}
+
+// ── Afiliados ────────────────────────────────────────────────
+async function trackAffiliateClick(userId, partner, matchId = null, bolaoId = null) {
+  if (!userId) return
+  await sb().from('affiliate_clicks').insert({
+    user_id: userId,
+    partner,
+    match_id: matchId || null,
+    bolao_id: bolaoId || null,
+    source: document.referrer || 'direct',
+  })
 }
 
 // ── Comunidade ───────────────────────────────────────────────

@@ -303,6 +303,15 @@ function pickPred(k) {
 
 async function confirmarPalpite() {
   if (confirmed || saving) return
+  // Validar se bolão ainda aceita palpites
+  if (bolaoData.status === 'finished' || bolaoData.status === 'cancelled') {
+    showToast('Este bolão já foi encerrado')
+    return
+  }
+  if (bolaoData.deadline && new Date(bolaoData.deadline) < new Date()) {
+    showToast('O prazo para palpites encerrou')
+    return
+  }
   if (!prediction) { showToast('Selecione um resultado primeiro'); return }
   if (!currentUser) { location.href='login.html'; return }
   saving=true

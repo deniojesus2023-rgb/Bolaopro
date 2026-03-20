@@ -63,11 +63,13 @@ begin
       v_pts_score := coalesce(v_pred.pts_exact_score, 8);
     end if;
 
-    -- 5 pts: artilheiro certo (compara sobrenome)
+    -- 5 pts: artilheiro certo (compara nome completo, qualquer parte)
     if v_pred.predicted_top_scorer is not null
     and v_match.top_scorer is not null
-    and lower(v_pred.predicted_top_scorer) like
-        '%' || lower(split_part(v_match.top_scorer, ' ', 2)) || '%'
+    and (
+      lower(v_match.top_scorer) like '%' || lower(trim(v_pred.predicted_top_scorer)) || '%'
+      or lower(trim(v_pred.predicted_top_scorer)) like '%' || lower(v_match.top_scorer) || '%'
+    )
     then
       v_pts_scorer := coalesce(v_pred.pts_top_scorer, 5);
     end if;
@@ -164,6 +166,12 @@ begin
   -- Finalizar bolão
   update public.boloes
   set status     = 'finished',
+      updated_at = now()
+  where id = p_bolao_id;
+
+  -- Atualizar ganho da plataforma (taxa cobrada)
+  update public.boloes
+  set platform_earned = coalesce(total_collected, 0) - coalesce(total_prize, 0),
       updated_at = now()
   where id = p_bolao_id;
 
