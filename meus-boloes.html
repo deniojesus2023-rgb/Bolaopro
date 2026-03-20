@@ -36,6 +36,10 @@
     </div>
     <div class="topbar-right">
       <a href="index.html" onclick="setTimeout(()=>document.querySelector('.btn-primary')?.click(),100);return false" class="btn-primary">+ Criar Bolão</a>
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
+        🔔
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none"><div class="top-user-av" id="topUserAv">?</div><span style="font-size:12px;font-weight:600" id="topUserName">…</span></a>
     </div>
@@ -91,6 +95,23 @@ document.addEventListener('DOMContentLoaded',async()=>{
     </a>`}).join('')
   document.getElementById('content').innerHTML=`<div style="margin-bottom:6px"><p style="font-size:13px;color:var(--muted)">${data.length} bolão(ões) encontrado(s)</p></div>${cards}`
 })
+</script>
+<script>
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+carregarNotifBadge()
 </script>
 </body>
 </html>

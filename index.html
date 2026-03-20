@@ -18,7 +18,7 @@
   <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="#" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
   <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
   <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
   <div class="sidebar-bot">
@@ -59,7 +59,10 @@
     <div class="search-box"><span style="font-size:13px;color:var(--light)">🔍</span><input placeholder="Buscar bolão…"/></div>
     <div class="topbar-right">
       <a href="comunidade.html" class="icon-btn" title="Comunidade">💬</a>
-      <div class="icon-btn" onclick="openModal('criar')" title="Notificações">🔔</div>
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
+        🔔
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
       <button class="btn-primary" onclick="openModal('criar')">+ Criar Bolão</button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
@@ -324,6 +327,23 @@ async function submitCriar() {
 }
 function copyLink(){navigator.clipboard.writeText(document.getElementById('sucLink').textContent);showToast('📋 Link copiado!')}
 function irBolao(){if(newBolId)location.href=`bolao.html?id=${newBolId}`}
+</script>
+<script>
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+carregarNotifBadge()
 </script>
 </body>
 </html>
