@@ -48,6 +48,35 @@
 .btn-danger:disabled{opacity:.5;cursor:not-allowed;}
 .btn-danger-outline{width:100%;height:46px;border-radius:var(--r-sm);background:var(--white);color:var(--red);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;cursor:not-allowed;border:2px solid var(--red);font-family:'Inter',sans-serif;opacity:.5;}
 
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info{flex:1;min-width:0;padding-right:16px;}
+.toggle-lbl{font-size:13px;font-weight:600;margin-bottom:2px;}
+.toggle-sub{font-size:12px;color:var(--muted);}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:#D1D5DB;border-radius:22px;transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked + .toggle-slider{background:var(--green);}
+.toggle input:checked + .toggle-slider:before{transform:translateX(18px);}
+
+/* Theme buttons */
+.theme-btn{padding:10px 18px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);font-size:13px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;color:var(--text);transition:all .15s;}
+.theme-btn:hover{border-color:var(--green);color:var(--green);}
+.theme-btn.active{border-color:var(--green);background:var(--green);color:#fff;}
+
+/* Dark mode variables (basic) */
+html.dark{
+  --white:#1E293B;
+  --bg:#0F172A;
+  --border:#334155;
+  --text:#F1F5F9;
+  --muted:#94A3B8;
+  --light:#64748B;
+}
+html.reduce-motion *{transition:none!important;animation:none!important;}
+
 /* Modal simples para termos/privacidade */
 .info-modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
 .info-modal-overlay.on{opacity:1;pointer-events:all;}
@@ -126,6 +155,9 @@
     <button class="cfg-tab on" onclick="setTab('perfil',this)">👤 Perfil</button>
     <button class="cfg-tab" onclick="setTab('conta',this)">🔐 Conta</button>
     <button class="cfg-tab" id="notifTab" onclick="setTab('notificacoes',this)">🔔 Notificações</button>
+    <button class="cfg-tab" onclick="setTab('preferencias',this)">🎛️ Preferências</button>
+    <button class="cfg-tab" onclick="setTab('privacidade',this)">🔒 Privacidade</button>
+    <button class="cfg-tab" onclick="setTab('aparencia',this)">🎨 Aparência</button>
     <button class="cfg-tab" onclick="setTab('sobre',this)">ℹ️ Sobre</button>
   </div>
 
@@ -195,6 +227,151 @@
         </div>
         <div id="notifListContainer">
           <div class="empty"><div class="spin"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: PREFERÊNCIAS ── -->
+    <div class="cfg-section" id="tab-preferencias">
+      <div class="cfg-card">
+        <div class="cfg-card-head">🎛️ Preferências de Notificação</div>
+        <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Novos jogos adicionados ao bolão</div>
+              <div class="toggle-sub">Receba uma notificação quando novos jogos forem incluídos</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-jogos_novos" onchange="salvarPreferencia('jogos_novos', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Resultados de jogos</div>
+              <div class="toggle-sub">Seja notificado quando os resultados forem apurados</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-resultados" onchange="salvarPreferencia('resultados', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Novas mensagens no chat</div>
+              <div class="toggle-sub">Alertas de mensagens nos bolões que você participa</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-chat" onchange="salvarPreferencia('chat', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Premiação creditada</div>
+              <div class="toggle-sub">Notificação quando um prêmio for creditado na sua conta</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-premios" onchange="salvarPreferencia('premios', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Convites para bolões</div>
+              <div class="toggle-sub">Receba notificações quando for convidado para um bolão</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-convites" onchange="salvarPreferencia('convites', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: PRIVACIDADE ── -->
+    <div class="cfg-section" id="tab-privacidade">
+      <div class="cfg-card">
+        <div class="cfg-card-head">🔒 Visibilidade do Perfil</div>
+        <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Perfil público</div>
+              <div class="toggle-sub">Permite que outros usuários vejam meu perfil</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="priv-profile_public" onchange="salvarPrivacidade('profile_public', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Aparecer no ranking global</div>
+              <div class="toggle-sub">Visível no ranking público da plataforma</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="priv-show_in_ranking" onchange="salvarPrivacidade('show_in_ranking', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Mostrar estatísticas</div>
+              <div class="toggle-sub">Exibir minhas estatísticas para outros usuários</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="priv-show_stats" onchange="salvarPrivacidade('show_stats', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card" style="border-color:var(--green-lt,#D1FAE5);">
+        <div class="cfg-card-body" style="display:flex;align-items:flex-start;gap:12px;">
+          <span style="font-size:20px;flex-shrink:0;">🛡️</span>
+          <p style="font-size:12px;color:var(--muted);line-height:1.7;margin:0;">Seus dados pessoais (e-mail, Pix) <strong>nunca são exibidos publicamente</strong>. Apenas o nome de exibição e o username podem ser vistos por outros usuários, conforme as configurações acima.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: APARÊNCIA ── -->
+    <div class="cfg-section" id="tab-aparencia">
+      <div class="cfg-card">
+        <div class="cfg-card-head">🎨 Tema</div>
+        <div class="cfg-card-body">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="theme-btn" id="theme-light" onclick="setTheme('light')">☀️ Claro</button>
+            <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')">🌙 Escuro</button>
+            <button class="theme-btn" id="theme-auto" onclick="setTheme('auto')">🖥️ Automático</button>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head">🌐 Idioma</div>
+        <div class="cfg-card-body">
+          <div class="fl" style="margin-bottom:0;">
+            <label style="margin-bottom:6px;">Idioma do aplicativo</label>
+            <select disabled style="width:100%;height:44px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);color:var(--muted);font-size:14px;padding:0 12px;font-family:'Inter',sans-serif;cursor:not-allowed;">
+              <option>🇧🇷 Português (Brasil)</option>
+            </select>
+            <p style="font-size:11px;color:var(--light);margin-top:6px;">Outros idiomas serão adicionados em breve.</p>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head">✨ Animações</div>
+        <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
+          <div class="toggle-row" style="border-bottom:none;">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Reduzir animações</div>
+              <div class="toggle-sub">Desativa transições e efeitos de movimento na interface</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="anim-reduce_motion" onchange="setReduceMotion(this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -522,6 +699,116 @@ function fecharInfoModal(e) {
     document.getElementById('infoModal').classList.remove('on')
   }
 }
+
+// ── PREFERÊNCIAS ─────────────────────────────────────────────
+const PREF_KEYS = ['jogos_novos', 'resultados', 'chat', 'premios', 'convites']
+
+async function carregarPreferencias() {
+  if (!currentUser) return
+  const { data } = await sb().from('profiles')
+    .select('notification_prefs')
+    .eq('id', currentUser.id)
+    .single()
+  const prefs = (data && data.notification_prefs) ? data.notification_prefs : {}
+  PREF_KEYS.forEach(key => {
+    const el = document.getElementById('pref-' + key)
+    if (el) el.checked = prefs[key] !== false // default true
+  })
+}
+
+async function salvarPreferencia(key, value) {
+  if (!currentUser) return
+  // Ler prefs atuais
+  const { data } = await sb().from('profiles')
+    .select('notification_prefs')
+    .eq('id', currentUser.id)
+    .single()
+  const prefs = (data && data.notification_prefs) ? { ...data.notification_prefs } : {}
+  prefs[key] = value
+  const { error } = await sb().from('profiles')
+    .upsert({ id: currentUser.id, notification_prefs: prefs, updated_at: new Date().toISOString() })
+  if (error) { showToast('Erro ao salvar preferência.'); return }
+  showToast('✅ Preferência salva!')
+}
+
+// ── PRIVACIDADE ───────────────────────────────────────────────
+const PRIV_KEYS = ['profile_public', 'show_in_ranking', 'show_stats']
+
+async function carregarPrivacidade() {
+  if (!currentUser) return
+  const { data } = await sb().from('profiles')
+    .select('profile_public, show_in_ranking, show_stats')
+    .eq('id', currentUser.id)
+    .single()
+  if (!data) return
+  PRIV_KEYS.forEach(key => {
+    const el = document.getElementById('priv-' + key)
+    if (el) el.checked = data[key] !== false // default true
+  })
+}
+
+async function salvarPrivacidade(key, value) {
+  if (!currentUser) return
+  const update = { [key]: value, updated_at: new Date().toISOString() }
+  const { error } = await sb().from('profiles')
+    .upsert({ id: currentUser.id, ...update })
+  if (error) { showToast('Erro ao salvar configuração.'); return }
+  showToast('✅ Configuração salva!')
+}
+
+// ── APARÊNCIA ─────────────────────────────────────────────────
+function applyTheme(theme) {
+  const html = document.documentElement
+  html.classList.remove('dark')
+  if (theme === 'dark') {
+    html.classList.add('dark')
+  } else if (theme === 'auto') {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      html.classList.add('dark')
+    }
+  }
+  // Highlight active button
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'))
+  const activeBtn = document.getElementById('theme-' + theme)
+  if (activeBtn) activeBtn.classList.add('active')
+}
+
+function setTheme(theme) {
+  localStorage.setItem('theme', theme)
+  applyTheme(theme)
+  showToast('✅ Tema aplicado!')
+}
+
+function carregarTema() {
+  const theme = localStorage.getItem('theme') || 'auto'
+  applyTheme(theme)
+}
+
+function setReduceMotion(value) {
+  localStorage.setItem('reduce_motion', value ? '1' : '0')
+  document.documentElement.classList.toggle('reduce-motion', value)
+  showToast(value ? '✅ Animações reduzidas!' : '✅ Animações restauradas!')
+}
+
+function carregarReduceMotion() {
+  const val = localStorage.getItem('reduce_motion') === '1'
+  const el = document.getElementById('anim-reduce_motion')
+  if (el) el.checked = val
+  document.documentElement.classList.toggle('reduce-motion', val)
+}
+
+// ── EXTENSÃO DO setTab PARA CARREGAR DADOS ────────────────────
+const _origSetTab = setTab
+function setTab(name, btn) {
+  _origSetTab(name, btn)
+  if (name === 'preferencias') carregarPreferencias()
+  if (name === 'privacidade') carregarPrivacidade()
+  if (name === 'aparencia') { carregarTema(); carregarReduceMotion() }
+}
+
+// Carregar tema e reduce motion na inicialização
+carregarTema()
+carregarReduceMotion()
 </script>
 </body>
 </html>
