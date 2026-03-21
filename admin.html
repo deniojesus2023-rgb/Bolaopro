@@ -392,8 +392,8 @@
           </div>
         </div>
       </div>
-      <div style="background:var(--gold-lt);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:12px 16px;font-size:12px;color:#92400E;margin-bottom:16px;">
-        ⚠️ Configurações salvas localmente no navegador. Para persistência no banco, use <code>admin-setup.sql</code>.
+      <div style="background:var(--green-lt);border:1px solid var(--green-m);border-radius:var(--r-sm);padding:12px 16px;font-size:12px;color:var(--green);margin-bottom:16px;">
+        ✅ Configurações salvas no banco de dados (tabela <code>app_config</code>) e sincronizadas entre dispositivos.
       </div>
       <button class="btn-full" style="max-width:240px" onclick="salvarConfig()">💾 Salvar Configurações</button>
     </div>
@@ -858,20 +858,47 @@ async function carregarAfiliados() {
 }
 
 // ── CONFIG GLOBAL ─────────────────────────────────────────────────
-function carregarConfig() {
-  const defaults = { cfgFee:'5', cfgMaxPart:'50', cfgMinHoras:'24', cfgPtsResult:'3', cfgPtsExact:'8', cfgPtsScorer:'5', cfgPtsUpset:'5', cfgPtsPerfect:'20' }
-  Object.entries(defaults).forEach(([k, def]) => {
+const CFG_KEYS = ['cfgFee','cfgMaxPart','cfgMinHoras','cfgPtsResult','cfgPtsExact','cfgPtsScorer','cfgPtsUpset','cfgPtsPerfect']
+const CFG_DEFAULTS = { cfgFee:'5', cfgMaxPart:'50', cfgMinHoras:'24', cfgPtsResult:'3', cfgPtsExact:'8', cfgPtsScorer:'5', cfgPtsUpset:'5', cfgPtsPerfect:'20' }
+
+async function carregarConfig() {
+  // Tentar carregar do Supabase
+  try {
+    const { data, error } = await sb().from('app_config').select('key, value')
+    if (!error && data?.length) {
+      const remoto = {}
+      data.forEach(row => remoto[row.key] = row.value)
+      CFG_KEYS.forEach(k => {
+        const el = document.getElementById(k)
+        if (el) el.value = remoto[k] ?? localStorage.getItem('admin_' + k) ?? CFG_DEFAULTS[k]
+      })
+      return
+    }
+  } catch (_) {}
+  // Fallback: localStorage
+  CFG_KEYS.forEach(k => {
     const el = document.getElementById(k)
-    if (el) el.value = localStorage.getItem('admin_' + k) ?? def
+    if (el) el.value = localStorage.getItem('admin_' + k) ?? CFG_DEFAULTS[k]
   })
 }
 
-function salvarConfig() {
-  ['cfgFee','cfgMaxPart','cfgMinHoras','cfgPtsResult','cfgPtsExact','cfgPtsScorer','cfgPtsUpset','cfgPtsPerfect'].forEach(k => {
+async function salvarConfig() {
+  const rows = CFG_KEYS.map(k => {
     const el = document.getElementById(k)
-    if (el) localStorage.setItem('admin_' + k, el.value)
+    return { key: k, value: el ? el.value : CFG_DEFAULTS[k], updated_at: new Date().toISOString() }
   })
-  showToast('✅ Configurações salvas!')
+  try {
+    const { error } = await sb().from('app_config').upsert(rows, { onConflict: 'key' })
+    if (error) throw error
+    // Manter localStorage sincronizado como cache local
+    rows.forEach(r => localStorage.setItem('admin_' + r.key, r.value))
+    showToast('✅ Configurações salvas!')
+  } catch (err) {
+    // Fallback: salvar apenas no localStorage
+    rows.forEach(r => localStorage.setItem('admin_' + r.key, r.value))
+    showToast('⚠️ Salvo localmente (banco indisponível).')
+    console.error('salvarConfig error:', err)
+  }
 }
 
 // ── SUPORTE ───────────────────────────────────────────────────────

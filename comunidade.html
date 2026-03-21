@@ -143,7 +143,15 @@
 .ib.acc{background:var(--green);color:#fff;}
 .ib.dec{border:1px solid var(--border);color:var(--muted);}
 @media(max-width:1100px){.conv-col{width:250px;}}
-@media(max-width:900px){.conv-col{display:none;}}
+@media(max-width:900px){
+  .conv-col{display:none;}
+  .conv-col.mobile-visible{display:flex;position:absolute;top:var(--topbar);left:0;right:0;bottom:var(--bnav,0);width:100%;z-index:10;border-left:none;}
+  .feed-col.mobile-hidden{display:none;}
+  .ctab-dms{display:inline-flex !important;}
+  .mobile-dm-back{display:flex !important;}
+}
+.ctab-dms{display:none;}
+.mobile-dm-back{display:none;}
 @media(max-width:768px){
   .comm-layout{height:calc(100vh - var(--topbar) - var(--bnav));}
   .feed-area{padding:12px 14px;}
@@ -210,6 +218,7 @@
       <div class="tabs-bar">
         <div class="ctab on" onclick="switchTab('feed',this)">🌐 Feed</div>
         <div class="ctab" onclick="switchTab('chat',this)">⚽ Chat do Bolão</div>
+        <div class="ctab ctab-dms" onclick="toggleMobileDMs(this)">💬 DMs</div>
       </div>
 
       <!-- FEED -->
@@ -260,6 +269,7 @@
       <div id="convListView" style="display:flex;flex-direction:column;height:100%">
         <div class="conv-head">
           <div class="conv-head-row">
+            <button class="dm-back mobile-dm-back" onclick="toggleMobileDMs(document.querySelector('.ctab-dms'))" title="Voltar ao feed" style="display:none;margin-right:6px">←</button>
             <div class="conv-head-title">Mensagens</div>
             <div style="display:flex;gap:5px">
               <button class="conv-act green" onclick="openModal('newDm')">+ Nova</button>
@@ -609,9 +619,41 @@ async function sendGroup(){
 
 // ── TABS ──────────────────────────────────────────────────────
 function switchTab(tab,btn){
+  // If DMs are currently visible on mobile, hide them first
+  const convCol=document.querySelector('.conv-col')
+  const feedCol=document.querySelector('.feed-col')
+  if(convCol&&convCol.classList.contains('mobile-visible')){
+    convCol.classList.remove('mobile-visible')
+    feedCol.classList.remove('mobile-hidden')
+  }
   document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on')); btn.classList.add('on')
   document.getElementById('feedArea').style.display=tab==='feed'?'block':'none'
   document.getElementById('chatArea').classList.toggle('active',tab==='chat')
+}
+
+function toggleMobileDMs(btn){
+  const convCol=document.querySelector('.conv-col')
+  const feedCol=document.querySelector('.feed-col')
+  const isVisible=convCol.classList.contains('mobile-visible')
+  if(isVisible){
+    // Hide DMs, restore feed
+    convCol.classList.remove('mobile-visible')
+    feedCol.classList.remove('mobile-hidden')
+    btn.classList.remove('on')
+    // Re-activate the previously active feed/chat tab
+    const firstTab=document.querySelector('.ctab:not(.ctab-dms)')
+    if(firstTab&&!document.querySelector('.ctab:not(.ctab-dms).on')){
+      firstTab.classList.add('on')
+      document.getElementById('feedArea').style.display='block'
+      document.getElementById('chatArea').classList.remove('active')
+    }
+  }else{
+    // Show DMs, hide feed col content
+    document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'))
+    btn.classList.add('on')
+    convCol.classList.add('mobile-visible')
+    feedCol.classList.add('mobile-hidden')
+  }
 }
 
 // ── REALTIME FEED ─────────────────────────────────────────────
