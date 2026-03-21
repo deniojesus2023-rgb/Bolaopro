@@ -1,0 +1,73 @@
+/* ============================================================
+   BolãoPro — design-system.css
+   Identidade Visual: Paleta de Cores e Tipografia Axiforma/Inter
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ── Primary Colors ── */
+  --color-rich-black: #02171A;
+  --color-dark-green: #032221;
+  --color-bangladesh-green: #03624C;
+  --color-mountain-meadow: #2CC295;
+  --color-caribbean-green: #00DF81;
+  --color-anti-flash-white: #F1F7F6;
+
+  /* ── Secondary Colors ── */
+  --color-pine: #06302B;
+  --color-basil: #0B453A;
+  --color-forest: #095344;
+  --color-frog: #17876D;
+  --color-mint: #2FA98C;
+
+  /* ── Neutrals ── */
+  --color-stone: #707D7D;
+  --color-pistachio: #AAC8C4;
+
+  /* ── Semantic Mappings ── */
+  --bg-primary: #02171A;
+  --bg-secondary: #032221;
+  --bg-card: #032221;
+  --bg-sidebar: #032221;
+  --bg-surface: #06302B;
+  --accent-primary: #00DF81;
+  --accent-secondary: #2CC295;
+  --accent-hover: #2FA98C;
+  --text-primary: #F1F7F6;
+  --text-secondary: #AAC8C4;
+  --text-muted: #707D7D;
+  --border-color: #03624C;
+  --border-subtle: rgba(3, 98, 76, 0.3);
+
+  /* ── Typography ── */
+  --font-family: 'Inter', 'Axiforma', sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* ── Override shared.css variables to apply new palette ── */
+
+  /* Greens → new accent colors */
+  --green:    #00DF81;
+  --green2:   #2CC295;
+  --green-lt: rgba(0, 223, 129, 0.12);
+  --green-m:  rgba(0, 223, 129, 0.25);
+
+  /* Backgrounds/surfaces → dark theme */
+  --white:    #032221;
+  --bg:       #02171A;
+  --card:     #032221;
+  --border:   rgba(3, 98, 76, 0.4);
+
+  /* Text → light on dark */
+  --text:     #F1F7F6;
+  --muted:    #AAC8C4;
+  --light:    #707D7D;
+
+  /* Shadows */
+  --shadow:    0 2px 8px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(3, 98, 76, 0.2);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+  /* Theme color for meta tag */
+  --theme-color: #02171A;
+}

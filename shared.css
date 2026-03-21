@@ -1,7 +1,7 @@
 /* ============================================================
    BolãoPro — shared.css
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+/* Note: Font import is handled by design-system.css */
 
 :root {
   --green:    #1A6B45; --green2:  #228B57; --green-lt: #E8F5EE; --green-m:  #C6E8D5;
@@ -20,13 +20,13 @@
 
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
 html { -webkit-font-smoothing:antialiased; height:100%; }
-body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; }
+body { font-family:var(--font-family,'Inter',sans-serif); background:var(--bg); color:var(--text); min-height:100vh; display:flex; }
 a { text-decoration:none; color:inherit; }
 button { font-family:inherit; cursor:pointer; border:none; background:none; }
 input, select, textarea { font-family:inherit; }
 
 /* ── SIDEBAR ── */
-.sidebar { width:var(--sidebar); min-height:100vh; background:linear-gradient(180deg, #fff 0%, #f9fafb 100%); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:50; padding:20px 14px; }
+.sidebar { width:var(--sidebar); min-height:100vh; background:linear-gradient(180deg, var(--bg-sidebar,#032221) 0%, var(--bg-primary,#02171A) 100%); border-right:1px solid var(--border); display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:50; padding:20px 14px; }
 .s-logo { display:flex; align-items:center; gap:10px; margin-bottom:28px; padding:0 4px; }
 .s-logo-mark { width:34px; height:34px; border-radius:9px; background:var(--green); display:flex; align-items:center; justify-content:center; font-size:17px; }
 .s-logo-name { font-size:16px; font-weight:700; color:var(--text); }
@@ -49,7 +49,7 @@ input, select, textarea { font-family:inherit; }
 .main { margin-left:var(--sidebar); flex:1; min-height:100vh; display:flex; flex-direction:column; }
 
 /* ── TOPBAR ── */
-.topbar { height:var(--topbar); background:rgba(255,255,255,.92); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; z-index:40; gap:12px; }
+.topbar { height:var(--topbar); background:rgba(3,34,33,.95); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; z-index:40; gap:12px; }
 .topbar-left { display:flex; align-items:center; gap:10px; min-width:0; }
 .hamburger { display:none; width:36px; height:36px; border-radius:var(--r-sm); background:var(--bg); border:1px solid var(--border); align-items:center; justify-content:center; font-size:16px; cursor:pointer; flex-shrink:0; }
 .page-title { font-size:20px; font-weight:700; letter-spacing:-.3px; white-space:nowrap; }
@@ -166,7 +166,7 @@ input, select, textarea { font-family:inherit; }
 /* ── MODAL ── */
 .ovl { position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.35); backdrop-filter:blur(6px); display:flex; align-items:flex-end; justify-content:center; opacity:0; pointer-events:none; transition:opacity .2s; }
 .ovl.on { opacity:1; pointer-events:all; }
-.modal { background:var(--white); border-radius:var(--r-lg) var(--r-lg) 0 0; width:100%; max-width:500px; max-height:92vh; overflow-y:auto; transform:translateY(20px); transition:transform .28s cubic-bezier(.16,1,.3,1); padding-bottom:env(safe-area-inset-bottom); }
+.modal { background:var(--bg-card,#032221); border-radius:var(--r-lg) var(--r-lg) 0 0; width:100%; max-width:500px; max-height:92vh; overflow-y:auto; transform:translateY(20px); transition:transform .28s cubic-bezier(.16,1,.3,1); padding-bottom:env(safe-area-inset-bottom); }
 .ovl.on .modal { transform:translateY(0); }
 @media(min-width:600px) { .ovl { align-items:center; } .modal { border-radius:var(--r-lg); } }
 .modal-drag { width:40px; height:4px; background:var(--border); border-radius:2px; margin:14px auto 0; }
@@ -206,7 +206,7 @@ input, select, textarea { font-family:inherit; }
 .btn-wpp:hover { background:#BBFAD4; }
 
 /* ── BOTTOM NAV ── */
-.bnav { display:none; position:fixed; bottom:0; left:0; right:0; z-index:99; background:var(--white); border-top:1px solid var(--border); height:var(--bnav); padding-bottom:env(safe-area-inset-bottom); }
+.bnav { display:none; position:fixed; bottom:0; left:0; right:0; z-index:99; background:var(--bg-secondary,#032221); border-top:1px solid var(--border); height:var(--bnav); padding-bottom:env(safe-area-inset-bottom); }
 .bnav-inner { display:flex; height:100%; }
 .bn { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; color:var(--muted); font-size:10px; font-weight:600; cursor:pointer; transition:color .15s; border:none; background:none; font-family:'Inter',sans-serif; padding-top:4px; position:relative; }
 .bn.on, .bn:hover { color:var(--green); }
@@ -220,7 +220,7 @@ input, select, textarea { font-family:inherit; }
 /* ── DRAWER ── */
 .drawer-ovl { display:none; position:fixed; inset:0; z-index:80; background:rgba(0,0,0,.4); opacity:0; pointer-events:none; transition:opacity .25s; }
 .drawer-ovl.on { opacity:1; pointer-events:all; }
-.drawer { position:fixed; left:0; top:0; bottom:0; z-index:90; width:260px; background:var(--white); border-right:1px solid var(--border); padding:20px 14px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform .28s cubic-bezier(.16,1,.3,1); }
+.drawer { position:fixed; left:0; top:0; bottom:0; z-index:90; width:260px; background:var(--bg-sidebar,#032221); border-right:1px solid var(--border); padding:20px 14px; display:flex; flex-direction:column; transform:translateX(-100%); transition:transform .28s cubic-bezier(.16,1,.3,1); }
 .drawer.on { transform:translateX(0); }
 .drawer-x { position:absolute; top:14px; right:14px; width:28px; height:28px; border-radius:6px; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:15px; color:var(--muted); cursor:pointer; }
 
