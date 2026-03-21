@@ -59,7 +59,7 @@
       <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
       <div class="page-title">Dashboard</div>
     </div>
-    <div class="search-box"><span style="font-size:13px;color:var(--light)">🔍</span><input placeholder="Buscar bolão…"/></div>
+    <div class="search-box"><span style="font-size:13px;color:var(--light)">🔍</span><input id="searchBolao" placeholder="Buscar bolão…" oninput="buscarBolao(this.value)"/></div>
     <div class="topbar-right">
       <a href="comunidade.html" class="icon-btn" title="Comunidade">💬</a>
       <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
@@ -298,6 +298,16 @@ function setFil(f,btn) {
   curFil=f; document.querySelectorAll('.fil').forEach(b=>b.classList.remove('on')); btn.classList.add('on')
   document.getElementById('boloesCard').innerHTML='<div class="empty"><div class="spin"></div></div>'
   loadBoloes()
+}
+function buscarBolao(q) {
+  const term = q.trim().toLowerCase()
+  const rows = document.getElementById('boloesCard').querySelectorAll('.bolao-row')
+  rows.forEach(row => {
+    const nameEl = row.querySelector('.b-name')
+    const nome = nameEl ? nameEl.textContent.toLowerCase() : ''
+    row.closest('a') ? row.closest('a').style.display = (!term || nome.includes(term)) ? '' : 'none'
+                     : row.style.display = (!term || nome.includes(term)) ? '' : 'none'
+  })
 }
 function selSplit(el,v) { document.querySelectorAll('.split-opt').forEach(b=>b.classList.remove('on')); el.classList.add('on'); curSplit=v }
 function updP() {
