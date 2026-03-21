@@ -352,6 +352,8 @@ function confirmSignOut() {
 async function uploadAvatar(input) {
   const file = input.files?.[0]
   if (!file) return
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']
+  if (!allowedTypes.includes(file.type)) { showToast('Tipo de arquivo inválido. Use JPEG, PNG, GIF ou WebP.'); input.value = ''; return }
   if (file.size > 2097152) { showToast('Foto muito grande. Máximo 2MB.'); return }
 
   const heroAv = document.getElementById('heroAv')

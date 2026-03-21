@@ -1,4 +1,11 @@
 -- ================================================================
+-- DEPRECATED — Este arquivo está obsoleto.
+-- Use funcoes-faltando.sql em vez deste.
+-- funcoes-faltando.sql contém a versão mais recente de todas as
+-- funções definidas aqui. Não execute este arquivo em produção.
+-- ================================================================
+
+-- ================================================================
 -- BOLAOPRO — Funções SQL Faltando
 -- Cole no SQL Editor do Supabase e execute
 -- Essas funções são chamadas pela Edge Function após jogos
