@@ -180,7 +180,6 @@ async function loadJogos() {
       .order('match_date', { ascending: true })
       .limit(60)
 
-    if (curComp)   q = q.eq('competitions.api_id', parseInt(curComp))
     if (curStatus) q = q.eq('status', curStatus)
     else           q = q.in('status', ['live', 'scheduled', 'finished'])
 
