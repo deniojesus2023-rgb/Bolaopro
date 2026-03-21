@@ -641,6 +641,7 @@ function toggleMobileDMs(btn){
     feedCol.classList.remove('mobile-hidden')
     btn.classList.remove('on')
     // Re-activate the previously active feed/chat tab
+    // Re-activate the first feed/chat tab if none is active
     const firstTab=document.querySelector('.ctab:not(.ctab-dms)')
     if(firstTab&&!document.querySelector('.ctab:not(.ctab-dms).on')){
       firstTab.classList.add('on')
@@ -649,6 +650,7 @@ function toggleMobileDMs(btn){
     }
   }else{
     // Show DMs, hide feed col content
+    // Show DMs, hide feed col
     document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('on'))
     btn.classList.add('on')
     convCol.classList.add('mobile-visible')
