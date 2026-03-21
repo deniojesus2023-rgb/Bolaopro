@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Configurações</title>
+<link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
@@ -28,8 +29,8 @@
 .notif-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
 .notif-item:last-child{border-bottom:none;}
 .notif-item:hover{background:var(--bg);}
-.notif-item.unread{background:#F0FDF4;}
-.notif-item.unread:hover{background:#DCFCE7;}
+.notif-item.unread{background:var(--green-lt);}
+.notif-item.unread:hover{background:rgba(0,223,129,.18);}
 .notif-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
 .notif-body{flex:1;min-width:0;}
 .notif-title{font-size:13px;font-weight:600;margin-bottom:3px;}
@@ -70,12 +71,12 @@
 
 /* Dark mode variables (basic) */
 html.dark{
-  --white:#1E293B;
-  --bg:#0F172A;
-  --border:#334155;
-  --text:#F1F5F9;
-  --muted:#94A3B8;
-  --light:#64748B;
+  --white:#032221;
+  --bg:#02171A;
+  --border:#03624C;
+  --text:#F1F7F6;
+  --muted:#AAC8C4;
+  --light:#707D7D;
 }
 html.reduce-motion *{transition:none!important;animation:none!important;}
 
