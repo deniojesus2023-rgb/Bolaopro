@@ -57,7 +57,7 @@
 .reply-bub{background:var(--bg);border-radius:var(--r-sm);padding:7px 11px;font-size:12px;flex:1;}
 .reply-auth{font-weight:600;font-size:10px;margin-bottom:2px;}
 .reply-compose{display:flex;gap:7px;margin-top:8px;}
-.reply-in{flex:1;height:34px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:0 11px;font-size:12px;font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
+.reply-in{flex:1;height:34px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r-sm);padding:0 11px;font-size:12px;color:var(--text);font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;}
 .reply-in:focus{border-color:var(--green);}
 .reply-send{height:34px;padding:0 12px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:12px;font-weight:600;}
 /* CHAT */
@@ -371,7 +371,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script><script src="app.js"></script>
 <script>
-let cUser=null, convId=null, bolaoGroupId=null, ptype='tip', invCode=null, pendingInv=null, allConvs=[]
+let cUser=null, cUsername='?', convId=null, bolaoGroupId=null, ptype='tip', invCode=null, pendingInv=null, allConvs=[]
 
 document.addEventListener('DOMContentLoaded',async()=>{
   const params=new URLSearchParams(location.search)
@@ -379,6 +379,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   if(cUser){
     hideEl('sideLogin');showEl('sideLogout')
     const p=await getProfile(cUser.id); const n=p?.username??cUser.email?.split('@')[0]??'?'
+    cUsername=n
     setEl('topUserName',n);setEl('topUserAv',n.slice(0,2).toUpperCase())
     setEl('compAv',n.slice(0,2).toUpperCase())
     showEl('composeBox')
@@ -402,7 +403,7 @@ function renderFeed(posts){
         const auth=p.author?.username??'Usuário', av=auth.slice(0,2).toUpperCase()
         const tag=tmap[p.type]??'tt-general 💬'
         const [cls,...lbl]=tag.split(' ')
-        return`<div class="post" id="p_${p.id}">
+        return`<div class="post" id="p_${p.id}" data-author="${p.user_id}">
           <div class="post-hd">
             <div class="post-av">${av}</div>
             <div><div class="post-author">@${esc(auth)}</div></div>
@@ -444,8 +445,14 @@ async function toggleLike(id,el){
   if(!cUser){showToast('Faça login para curtir');return}
   const sp=el.querySelector('span'),n=parseInt(sp.textContent),liked=el.classList.contains('liked')
   el.classList.toggle('liked');sp.textContent=liked?n-1:n+1
-  if(liked) await sb().from('post_likes').delete().eq('post_id',id).eq('user_id',cUser.id)
-  else await sb().from('post_likes').insert({post_id:id,user_id:cUser.id})
+  if(liked){
+    await sb().from('post_likes').delete().eq('post_id',id).eq('user_id',cUser.id)
+  } else {
+    await sb().from('post_likes').insert({post_id:id,user_id:cUser.id})
+    const authorId=document.getElementById(`p_${id}`)?.dataset.author
+    if(authorId && authorId!==cUser.id)
+      sb().from('notifications').insert({user_id:authorId,type:'like',title:`@${cUsername} curtiu seu post`,is_read:false})
+  }
 }
 async function toggleReplies(id){
   const w=document.getElementById(`rw_${id}`); w.classList.toggle('open')
@@ -459,6 +466,9 @@ async function pubReply(postId){
   if(!cUser)return
   const inp=document.getElementById(`ri_${postId}`),c=inp.value.trim(); if(!c)return
   await sb().from('post_replies').insert({post_id:postId,user_id:cUser.id,content:c})
+  const authorId=document.getElementById(`p_${postId}`)?.dataset.author
+  if(authorId && authorId!==cUser.id)
+    sb().from('notifications').insert({user_id:authorId,type:'reply',title:`@${cUsername} comentou no seu post`,body:c.slice(0,100),is_read:false})
   inp.value=''
   const l=document.getElementById(`rl_${postId}`)
   l.insertAdjacentHTML('beforeend',`<div class="reply-row"><div class="reply-av">${(cUser.email??'').slice(0,2).toUpperCase()}</div><div class="reply-bub"><div class="reply-auth">Você</div>${esc(c)}</div></div>`)
@@ -689,7 +699,7 @@ function prependPost(post){
   const tag=tmap[post.type]??'tt-general 💬'
   const [cls,...lbl]=tag.split(' ')
   const el=document.getElementById('postsList')
-  el.insertAdjacentHTML('afterbegin',`<div class="post" id="p_${post.id}">
+  el.insertAdjacentHTML('afterbegin',`<div class="post" id="p_${post.id}" data-author="${post.user_id}">
     <div class="post-hd"><div class="post-av">${av}</div><div><div class="post-author">@${esc(auth)}</div></div><span class="type-tag ${cls}">${lbl.join(' ')}</span><span class="post-time">agora</span></div>
     <div class="post-body">${esc(post.content)}</div>
     <div class="post-actions"><div class="pact">❤️ <span>0</span></div><div class="pact">💬 <span>0</span></div></div>
