@@ -222,12 +222,17 @@ function renderPage() {
           <div class="team"><div class="team-logo">${awayLg}</div><div class="team-name">${esc(away)}</div></div>
         </div>
         <div class="pred-btns" id="predBtns">
-          ${[{k:'home',l:home,o:'1.90',p:'Sportingbet'},{k:'draw',l:'Empate',o:'3.40',p:'Superbet'},{k:'away',l:away,o:'4.20',p:'Sportingbet'}]
-            .map(x=>`<div class="pred-btn${prediction===x.k?' sel':''}" onclick="${isDone||confirmed?'':` pickPred('${x.k}')`}">
+          ${(()=>{
+            const oddH = match?.odd_home_sportingbet ?? match?.odd_home ?? '—'
+            const oddD = match?.odd_draw_sportingbet ?? match?.odd_draw ?? '—'
+            const oddA = match?.odd_away_sportingbet ?? match?.odd_away ?? '—'
+            return [{k:'home',l:home,o:oddH,p:'Sportingbet'},{k:'draw',l:'Empate',o:oddD,p:'Superbet'},{k:'away',l:away,o:oddA,p:'Sportingbet'}]
+              .map(x=>`<div class="pred-btn${prediction===x.k?' sel':''}" onclick="${isDone||confirmed?'':` pickPred('${x.k}')`}">
               <div class="pred-lbl">${esc(x.l)}</div>
               <div class="pred-odd">${x.o}</div>
               <div class="pred-partner">${x.p}</div>
-            </div>`).join('')}
+            </div>`).join('')
+          })()}
         </div>
         <div class="bar-wrap">
           <div class="bar-labels">
@@ -301,9 +306,21 @@ function renderPage() {
           <div class="pix-sub">Pague via Pix para participar</div>
           <button onclick="entrarBolao()" class="btn-full" style="height:38px;font-size:13px">💳 Pagar e Entrar</button>
         </div>` : ''}
+
+        ${currentUser && b.owner_id === currentUser.id ? `
+        <div class="invite-box" style="margin-top:14px">
+          <div class="invite-title">⚙️ Adicionar Jogo ao Bolão</div>
+          <select id="matchSelect" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-bottom:8px;background:var(--white)">
+            <option value="">Carregando jogos…</option>
+          </select>
+          <button onclick="vincularJogo()" class="btn-full" id="vincularBtn" style="height:36px;font-size:12px">🔗 Vincular Jogo</button>
+          <div id="vincularErr" style="font-size:11px;color:var(--red);margin-top:6px"></div>
+        </div>` : ''}
       </div>
     </div>
   </div>`
+
+  if (currentUser && b.owner_id === currentUser.id) carregarMatchesDisponiveis()
 }
 
 function pickPred(k) {
@@ -324,12 +341,19 @@ async function confirmarPalpite() {
     showToast('O prazo para palpites encerrou')
     return
   }
+  if (!bolaoData.bolao_matches || bolaoData.bolao_matches.length === 0) {
+    const errEl = document.getElementById('predErr')
+    if (errEl) errEl.textContent = 'Este bolão não possui jogos vinculados. O administrador deve adicionar jogos.'
+    const btn = document.getElementById('predBtn')
+    if (btn) btn.disabled = true
+    return
+  }
   if (!prediction) { showToast('Selecione um resultado primeiro'); return }
   if (!currentUser) { location.href='login.html'; return }
   saving=true
   const btn=document.getElementById('predBtn')
   if(btn){btn.textContent='Salvando…';btn.disabled=true}
-  const matchId = bolaoData.bolao_matches?.[0]?.match?.id ?? bolaoData.id
+  const matchId = bolaoData.bolao_matches[0].match?.id
   const h=document.getElementById('scoreH')?.value
   const a=document.getElementById('scoreA')?.value
   const s=document.getElementById('scorer')?.value
@@ -340,6 +364,43 @@ async function confirmarPalpite() {
 }
 
 function entrarBolao() { showToast('💳 Integração Pix em breve! Combine o pagamento com o criador.') }
+
+async function carregarMatchesDisponiveis() {
+  const sel = document.getElementById('matchSelect')
+  if (!sel) return
+  const { data, error } = await sb().from('matches')
+    .select('id, home_team, away_team, match_date, status')
+    .eq('status', 'scheduled')
+    .order('match_date')
+  if (error || !data || data.length === 0) {
+    sel.innerHTML = '<option value="">Nenhum jogo disponível</option>'
+    return
+  }
+  sel.innerHTML = '<option value="">Selecione um jogo…</option>' +
+    data.map(m => {
+      const dt = m.match_date ? new Date(m.match_date).toLocaleDateString('pt-BR') : ''
+      return `<option value="${m.id}">${esc(m.home_team)} × ${esc(m.away_team)}${dt ? ' — ' + dt : ''}</option>`
+    }).join('')
+}
+
+async function vincularJogo() {
+  const sel = document.getElementById('matchSelect')
+  const btn = document.getElementById('vincularBtn')
+  const errEl = document.getElementById('vincularErr')
+  const matchId = sel?.value
+  if (!matchId) { if (errEl) errEl.textContent = 'Selecione um jogo.'; return }
+  if (errEl) errEl.textContent = ''
+  if (btn) { btn.textContent = 'Vinculando…'; btn.disabled = true }
+  const { error } = await sb().from('bolao_matches').insert({ bolao_id: pid, match_id: matchId })
+  if (btn) { btn.textContent = '🔗 Vincular Jogo'; btn.disabled = false }
+  if (error) {
+    if (errEl) errEl.textContent = 'Erro ao vincular: ' + (error.message ?? 'tente novamente')
+    return
+  }
+  showToast('✅ Jogo vinculado com sucesso!')
+  bolaoData = await getBolao(pid)
+  if (bolaoData) renderPage()
+}
 
 function subscribeRealtime() {
   sb().channel(`bolao_${pid}`)
