@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BolãoPro — Admin</title>
+<link rel="stylesheet" href="shared.css"/>
+<style>
+.adm-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--white);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.adm-tabs::-webkit-scrollbar{display:none;}
+.adm-tab{padding:13px 16px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;font-family:'Inter',sans-serif;}
+.adm-tab:hover{color:var(--text);}
+.adm-tab.on{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+.adm-section{display:none;}.adm-section.on{display:block;}
+.cfg-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;}
+.cfg-card-head{padding:14px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.cfg-card-body{padding:20px;}
+.adm-table{width:100%;border-collapse:collapse;}
+.adm-table th{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:9px 14px;text-align:left;background:var(--bg);border-bottom:1px solid var(--border);}
+.adm-table td{font-size:13px;padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.adm-table tr:last-child td{border-bottom:none;}
+.adm-table tr:hover td{background:var(--bg);}
+.act-btn{height:26px;padding:0 9px;border-radius:var(--r-sm);font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--white);color:var(--text);font-family:'Inter',sans-serif;transition:all .15s;white-space:nowrap;margin-right:4px;}
+.act-btn:hover{border-color:var(--green);color:var(--green);}
+.act-btn.red:hover{border-color:var(--red);color:var(--red);}
+.act-btn.grn{border-color:var(--green);color:var(--green);}
+.act-btn.grn:hover{background:var(--green);color:#fff;}
+.adm-modal-ovl{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.adm-modal-ovl.on{opacity:1;pointer-events:all;}
+.adm-modal{background:var(--white);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:85vh;overflow-y:auto;margin:16px;box-shadow:var(--shadow-md);}
+.adm-modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);font-size:15px;font-weight:700;}
+.adm-modal-head button{width:28px;height:28px;border-radius:50%;background:var(--bg);border:1px solid var(--border);cursor:pointer;font-size:12px;}
+.adm-modal-body{padding:20px;}
+.fl{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.fl label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;}
+.fl input,.fl select,.fl textarea{height:40px;border:1px solid var(--border);border-radius:var(--r-sm);padding:0 12px;font-size:14px;color:var(--text);background:var(--white);outline:none;font-family:'Inter',sans-serif;transition:border-color .15s;}
+.fl textarea{height:80px;padding:10px 12px;resize:vertical;}
+.fl input:focus,.fl select:focus,.fl textarea:focus{border-color:var(--green);}
+.btn-full{width:100%;height:42px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;border:none;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;}
+.btn-full:hover{background:var(--green2);}
+.sub-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.sub-tab{height:30px;padding:0 14px;border-radius:20px;font-size:12px;font-weight:500;color:var(--muted);border:1px solid var(--border);background:var(--white);cursor:pointer;transition:all .15s;}
+.sub-tab.on{background:var(--green);border-color:var(--green);color:#fff;font-weight:600;}
+.empty{padding:36px;text-align:center;color:var(--muted);font-size:13px;}
+.adm-av{width:28px;height:28px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--green);flex-shrink:0;}
+.pill{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.pill-open{background:var(--green-lt);color:var(--green);}
+.pill-active{background:var(--gold-lt);color:var(--gold);}
+.pill-finished{background:var(--bg);color:var(--muted);}
+.pill-cancelled{background:var(--red-lt);color:var(--red);}
+.pill-pending{background:#FEF3C7;color:#D97706;}
+.pill-confirmed{background:var(--green-lt);color:var(--green);}
+.pill-failed{background:var(--red-lt);color:var(--red);}
+.pill-refunded{background:var(--bg);color:var(--muted);}
+.pill-scheduled{background:var(--bg);color:var(--muted);}
+.pill-live{background:var(--gold-lt);color:var(--gold);}
+.pill-admin{background:#EDE9FE;color:#7C3AED;}
+.pill-banned{background:var(--red-lt);color:var(--red);}
+.pill-free{background:var(--bg);color:var(--muted);}
+.table-wrap{overflow-x:auto;}
+.info-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.info-row:last-child{border-bottom:none;}
+.info-lbl{color:var(--muted);}
+.info-val{font-weight:600;}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
+  <a href="admin.html" class="nav-item on"><span class="nav-icon">🛡️</span>Admin</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="userCard" style="display:none">
+      <div class="u-av" id="sideAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- DRAWER -->
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()">✕</div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
+  <a href="admin.html" class="nav-item on"><span class="nav-icon">🛡️</span>Admin</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="drawerUserCard" style="display:none">
+      <div class="u-av" id="drawerAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- ACESSO NEGADO -->
+<div id="accessDenied" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div style="font-size:52px">🔒</div>
+  <h2 style="font-size:20px;font-weight:700;">Acesso Restrito</h2>
+  <p style="color:var(--muted);text-align:center;max-width:280px;font-size:14px;">Você não tem permissão para acessar o painel administrativo.</p>
+  <a href="index.html" class="btn-primary" style="height:40px;padding:0 20px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;">Voltar ao Dashboard</a>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="adminContent" style="display:none">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openDrawer()">☰</button>
+      <div class="page-title">🛡️ Admin</div>
+    </div>
+    <div class="topbar-right">
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="adm-tabs">
+    <button class="adm-tab on"  onclick="setTab('dashboard',this)">📊 Dashboard</button>
+    <button class="adm-tab"     onclick="setTab('usuarios',this)">👥 Usuários</button>
+    <button class="adm-tab"     onclick="setTab('boloes',this)">⚽ Bolões</button>
+    <button class="adm-tab"     onclick="setTab('jogos',this)">📅 Jogos</button>
+    <button class="adm-tab"     onclick="setTab('financeiro',this)">💰 Financeiro</button>
+    <button class="adm-tab"     onclick="setTab('moderacao',this)">🛡️ Moderação</button>
+    <button class="adm-tab"     onclick="setTab('notificacoes',this)">🔔 Notificações</button>
+    <button class="adm-tab"     onclick="setTab('afiliados',this)">🔗 Afiliados</button>
+    <button class="adm-tab"     onclick="setTab('config',this)">⚙️ Config Global</button>
+    <button class="adm-tab"     onclick="setTab('suporte',this)">🎧 Suporte</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ── ABA: DASHBOARD ── -->
+    <div class="adm-section on" id="tab-dashboard">
+      <div class="stats-row" id="dashStats">
+        <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Usuários</span><span style="font-size:18px">👥</span></div><div class="stat-num" id="dTotalUsers">—</div><div class="stat-foot"><span class="stat-badge up">Total</span></div></div>
+        <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Bolões</span><span style="font-size:18px">⚽</span></div><div class="stat-num" id="dTotalBoloes">—</div><div class="stat-foot"><span class="stat-badge up">Criados</span></div></div>
+        <div class="stat-card feat"><div class="stat-head"><span class="stat-lbl">Receita Plataforma</span><span style="font-size:18px">💰</span></div><div class="stat-num" id="dReceita">—</div><div class="stat-foot"><span class="stat-badge feat">R$</span></div></div>
+        <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Cliques Afiliados</span><span style="font-size:18px">🔗</span></div><div class="stat-num" id="dCliques">—</div><div class="stat-foot"><span class="stat-badge gray">Parceiros</span></div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="cfg-card">
+          <div class="cfg-card-head">⚽ Últimos Bolões</div>
+          <div id="dashBoloes"><div class="empty">Carregando…</div></div>
+        </div>
+        <div class="cfg-card">
+          <div class="cfg-card-head">💰 Últimos Pagamentos</div>
+          <div id="dashPagamentos"><div class="empty">Carregando…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: USUÁRIOS ── -->
+    <div class="adm-section" id="tab-usuarios">
+      <div class="cfg-card">
+        <div class="cfg-card-head">
+          👥 Usuários
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="usrSearch" placeholder="Buscar username…" style="height:32px;border:1px solid var(--border);border-radius:var(--r-sm);padding:0 10px;font-size:13px;font-family:'Inter',sans-serif;outline:none;width:200px;" oninput="buscarUsuarios(this.value)"/>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Usuário</th><th>Plano</th><th>Bolões</th><th>Pontos</th><th>Cadastro</th><th>Ações</th></tr></thead>
+            <tbody id="usrTbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);">
+          <button class="act-btn" onclick="usrPagAnterior()">← Anterior</button>
+          <span id="usrPagInfo" style="font-size:12px;color:var(--muted);">Página 1</span>
+          <button class="act-btn" onclick="usrPagProxima()">Próxima →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: BOLÕES ── -->
+    <div class="adm-section" id="tab-boloes">
+      <div class="cfg-card">
+        <div class="cfg-card-head">⚽ Bolões</div>
+        <div style="padding:12px 20px;border-bottom:1px solid var(--border);">
+          <div class="filters">
+            <button class="fil on" onclick="filtrarBoloes('',this)">Todos</button>
+            <button class="fil" onclick="filtrarBoloes('open',this)">Abertos</button>
+            <button class="fil" onclick="filtrarBoloes('active',this)">Ativos</button>
+            <button class="fil" onclick="filtrarBoloes('finished',this)">Encerrados</button>
+            <button class="fil" onclick="filtrarBoloes('cancelled',this)">Cancelados</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Código</th><th>Nome</th><th>Dono</th><th>Participantes</th><th>Cota</th><th>Prêmio</th><th>Status</th><th>Ações</th></tr></thead>
+            <tbody id="boloesTbody"><tr><td colspan="8" class="empty">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: JOGOS ── -->
+    <div class="adm-section" id="tab-jogos">
+      <div class="cfg-card">
+        <div class="cfg-card-head">📅 Jogos</div>
+        <div style="padding:12px 20px;border-bottom:1px solid var(--border);">
+          <div class="filters">
+            <button class="fil on" onclick="filtrarJogos('',this)">Todos</button>
+            <button class="fil" onclick="filtrarJogos('scheduled',this)">Agendados</button>
+            <button class="fil" onclick="filtrarJogos('live',this)">Ao Vivo</button>
+            <button class="fil" onclick="filtrarJogos('finished',this)">Encerrados</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Partida</th><th>Competição</th><th>Data</th><th>Status</th><th>Placar</th><th>Ações</th></tr></thead>
+            <tbody id="jogosTbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: FINANCEIRO ── -->
+    <div class="adm-section" id="tab-financeiro">
+      <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Total Arrecadado</span></div><div class="stat-num" id="fTotalCol">—</div></div>
+        <div class="stat-card feat"><div class="stat-head"><span class="stat-lbl">Receita Plataforma</span></div><div class="stat-num" id="fReceita">—</div></div>
+        <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Pagamentos Pendentes</span></div><div class="stat-num" id="fPendentes">—</div></div>
+        <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Confirmados</span></div><div class="stat-num" id="fConfirmados">—</div></div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head">
+          💳 Pagamentos
+          <div class="filters" style="margin-bottom:0">
+            <button class="fil on" onclick="filtrarPagamentos('',this)">Todos</button>
+            <button class="fil" onclick="filtrarPagamentos('pending',this)">Pendentes</button>
+            <button class="fil" onclick="filtrarPagamentos('confirmed',this)">Confirmados</button>
+            <button class="fil" onclick="filtrarPagamentos('failed',this)">Falhos</button>
+            <button class="fil" onclick="filtrarPagamentos('refunded',this)">Reembolsados</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Usuário</th><th>Bolão</th><th>Tipo</th><th>Valor</th><th>Status</th><th>Data</th></tr></thead>
+            <tbody id="pagTbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: MODERAÇÃO ── -->
+    <div class="adm-section" id="tab-moderacao">
+      <div class="sub-tabs">
+        <button class="sub-tab on" onclick="setSubTab('modPosts',this)">📝 Posts</button>
+        <button class="sub-tab" onclick="setSubTab('modBanidos',this)">🚫 Banidos</button>
+      </div>
+      <div id="modPosts">
+        <div class="cfg-card">
+          <div class="cfg-card-head">📝 Posts Recentes</div>
+          <div class="table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Autor</th><th>Conteúdo</th><th>Tipo</th><th>Likes</th><th>Data</th><th>Ações</th></tr></thead>
+              <tbody id="postsTbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="modBanidos" style="display:none">
+        <div class="cfg-card">
+          <div class="cfg-card-head">🚫 Usuários Banidos</div>
+          <div class="table-wrap">
+            <table class="adm-table">
+              <thead><tr><th>Usuário</th><th>Nome</th><th>Cadastro</th><th>Ações</th></tr></thead>
+              <tbody id="banidosTbody"><tr><td colspan="4" class="empty">Carregando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: NOTIFICAÇÕES ── -->
+    <div class="adm-section" id="tab-notificacoes">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div class="cfg-card">
+          <div class="cfg-card-head">📤 Enviar Notificação</div>
+          <div class="cfg-card-body">
+            <div class="fl">
+              <label>Destinatário</label>
+              <select id="nDestino" onchange="toggleUsernameField()">
+                <option value="all">Todos os usuários</option>
+                <option value="one">Usuário específico</option>
+              </select>
+            </div>
+            <div class="fl" id="nUsernameRow" style="display:none">
+              <label>Username</label>
+              <input id="nUsername" placeholder="username do usuário"/>
+            </div>
+            <div class="fl">
+              <label>Tipo</label>
+              <select id="nTipo">
+                <option value="info">ℹ️ Info</option>
+                <option value="success">✅ Sucesso</option>
+                <option value="warning">⚠️ Aviso</option>
+                <option value="alert">🚨 Alerta</option>
+              </select>
+            </div>
+            <div class="fl">
+              <label>Título</label>
+              <input id="nTitulo" placeholder="Título da notificação" maxlength="100"/>
+            </div>
+            <div class="fl">
+              <label>Mensagem</label>
+              <textarea id="nBody" placeholder="Corpo da notificação…" maxlength="300" style="height:90px;"></textarea>
+            </div>
+            <button class="btn-full" onclick="enviarNotificacao()">📤 Enviar Notificação</button>
+          </div>
+        </div>
+        <div class="cfg-card">
+          <div class="cfg-card-head">📋 Últimas Enviadas</div>
+          <div id="notifHistorico"><div class="empty">Carregando…</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: AFILIADOS ── -->
+    <div class="adm-section" id="tab-afiliados">
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Total Cliques</span></div><div class="stat-num" id="affTotal">—</div></div>
+        <div class="stat-card" style="border-left:3px solid var(--sb)"><div class="stat-head"><span class="stat-lbl">Sportingbet</span></div><div class="stat-num" id="affSB">—</div></div>
+        <div class="stat-card" style="border-left:3px solid var(--sup)"><div class="stat-head"><span class="stat-lbl">Superbet</span></div><div class="stat-num" id="affSup">—</div></div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head">📊 Cliques por Dia (últimos 7 dias)</div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Data</th><th>Sportingbet</th><th>Superbet</th><th>Total</th></tr></thead>
+            <tbody id="affDiasTbody"><tr><td colspan="4" class="empty">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head">🖱️ Últimos Cliques</div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Usuário</th><th>Parceiro</th><th>Data</th></tr></thead>
+            <tbody id="affClicksTbody"><tr><td colspan="3" class="empty">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ABA: CONFIG GLOBAL ── -->
+    <div class="adm-section" id="tab-config">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <div class="cfg-card">
+            <div class="cfg-card-head">💸 Taxas</div>
+            <div class="cfg-card-body">
+              <div class="fl"><label>Taxa da Plataforma (%)</label><input type="number" id="cfgFee" min="0" max="30" step="0.5"/></div>
+              <p style="font-size:11px;color:var(--muted);margin-top:-8px;margin-bottom:14px;">Valor padrão ao criar novos bolões.</p>
+              <div class="fl"><label>Máx. Participantes Padrão</label><input type="number" id="cfgMaxPart" min="2" max="500"/></div>
+              <div class="fl"><label>Prazo Mínimo antes do Jogo (horas)</label><input type="number" id="cfgMinHoras" min="0" max="72"/></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="cfg-card">
+            <div class="cfg-card-head">🎯 Pontuação Padrão</div>
+            <div class="cfg-card-body">
+              <div class="fl"><label>Pontos por Resultado</label><input type="number" id="cfgPtsResult" min="0"/></div>
+              <div class="fl"><label>Pontos Placar Exato</label><input type="number" id="cfgPtsExact" min="0"/></div>
+              <div class="fl"><label>Pontos Artilheiro</label><input type="number" id="cfgPtsScorer" min="0"/></div>
+              <div class="fl"><label>Bônus Zebra</label><input type="number" id="cfgPtsUpset" min="0"/></div>
+              <div class="fl"><label>Bônus Placar Perfeito</label><input type="number" id="cfgPtsPerfect" min="0"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--gold-lt);border:1px solid #FDE68A;border-radius:var(--r-sm);padding:12px 16px;font-size:12px;color:#92400E;margin-bottom:16px;">
+        ⚠️ Configurações salvas localmente no navegador. Para persistência no banco, use <code>admin-setup.sql</code>.
+      </div>
+      <button class="btn-full" style="max-width:240px" onclick="salvarConfig()">💾 Salvar Configurações</button>
+    </div>
+
+    <!-- ── ABA: SUPORTE ── -->
+    <div class="adm-section" id="tab-suporte">
+      <div class="cfg-card" style="margin-bottom:20px">
+        <div class="cfg-card-head">🔍 Buscar Usuário</div>
+        <div class="cfg-card-body" style="display:flex;gap:10px;padding-bottom:16px;">
+          <input id="supSearch" placeholder="Username ou e-mail…" style="flex:1;height:40px;border:1px solid var(--border);border-radius:var(--r-sm);padding:0 12px;font-size:14px;font-family:'Inter',sans-serif;outline:none;" onkeydown="if(event.key==='Enter')buscarSuporte()"/>
+          <button class="btn-primary" onclick="buscarSuporte()">🔍 Buscar</button>
+        </div>
+      </div>
+      <div id="supResultado" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:20px;">
+          <div class="cfg-card">
+            <div class="cfg-card-head">👤 Perfil</div>
+            <div class="cfg-card-body" id="supPerfilBox"></div>
+          </div>
+          <div>
+            <div class="cfg-card" style="margin-bottom:16px">
+              <div class="cfg-card-head">⚽ Últimos Bolões</div>
+              <div id="supBoloesList"><div class="empty">Nenhum bolão.</div></div>
+            </div>
+            <div class="cfg-card">
+              <div class="cfg-card-head">💳 Últimos Pagamentos</div>
+              <div id="supPagList"><div class="empty">Nenhum pagamento.</div></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:16px;" id="supAcoes"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODAL EDITAR JOGO -->
+<div class="adm-modal-ovl" id="jogoModal" onclick="fecharJogoModal(event)">
+  <div class="adm-modal">
+    <div class="adm-modal-head">✏️ Editar Jogo <button onclick="document.getElementById('jogoModal').classList.remove('on')">✕</button></div>
+    <div class="adm-modal-body">
+      <input type="hidden" id="jogoEditId"/>
+      <div class="fl"><label>Placar Casa</label><input type="number" id="jogoHomeScore" min="0"/></div>
+      <div class="fl"><label>Placar Fora</label><input type="number" id="jogoAwayScore" min="0"/></div>
+      <div class="fl"><label>Status</label>
+        <select id="jogoStatus">
+          <option value="scheduled">Agendado</option>
+          <option value="live">Ao Vivo</option>
+          <option value="finished">Encerrado</option>
+          <option value="cancelled">Cancelado</option>
+        </select>
+      </div>
+      <button class="btn-full" onclick="salvarJogo()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE NAV -->
+<nav class="bnav">
+  <a href="index.html" class="bn"><span class="bn-icon">📊</span>Dashboard</a>
+  <a href="meus-boloes.html" class="bn"><span class="bn-icon">⚽</span>Bolões</a>
+  <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Social</a>
+  <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
+  <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+let currentUser = null
+let adminProfile = null
+let usrPage = 0
+const PER_PAGE = 20
+let usrQuery = ''
+let supUserId = null
+
+// ── INIT ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser = await initAuth({ requireAuth: true })
+  if (!currentUser) return
+
+  adminProfile = await getProfile(currentUser.id)
+  if (!adminProfile || adminProfile.plan !== 'admin') {
+    document.getElementById('accessDenied').style.display = 'flex'
+    return
+  }
+
+  document.getElementById('adminContent').style.display = 'flex'
+  hideEl('sideLogin'); showEl('sideLogout')
+
+  const name = adminProfile.username ?? currentUser.email?.split('@')[0] ?? '?'
+  setEl('topUserName', name)
+  setEl('topUserAv', name.slice(0,2).toUpperCase())
+  showEl('topUserBtn')
+
+  carregarDashboard()
+  carregarConfig()
+})
+
+// ── TABS ─────────────────────────────────────────────────────────
+const tabLoaders = {
+  dashboard: carregarDashboard,
+  usuarios: () => carregarUsuarios(),
+  boloes: () => carregarBoloes(''),
+  jogos: () => carregarJogos(''),
+  financeiro: () => { carregarFinanceiroStats(); carregarPagamentos('') },
+  moderacao: () => { carregarPosts(); carregarBanidos() },
+  notificacoes: () => carregarNotifHistorico(),
+  afiliados: carregarAfiliados,
+  config: carregarConfig,
+  suporte: () => {}
+}
+let tabsLoaded = {}
+
+function setTab(id, el) {
+  document.querySelectorAll('.adm-tab').forEach(t => t.classList.remove('on'))
+  document.querySelectorAll('.adm-section').forEach(s => s.classList.remove('on'))
+  el.classList.add('on')
+  document.getElementById('tab-' + id).classList.add('on')
+  if (!tabsLoaded[id]) { tabsLoaded[id] = true; tabLoaders[id]?.() }
+}
+
+function setSubTab(id, el) {
+  el.parentElement.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('on'))
+  el.classList.add('on')
+  document.getElementById('modPosts').style.display = id === 'modPosts' ? 'block' : 'none'
+  document.getElementById('modBanidos').style.display = id === 'modBanidos' ? 'block' : 'none'
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────
+const fmtBRL = v => 'R$ ' + (v ?? 0).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.') 
+const fmtDate = d => d ? new Date(d).toLocaleDateString('pt-BR') : '—'
+const fmtDateTime = d => d ? new Date(d).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'
+const pillStatus = s => `<span class="pill pill-${s}">${s}</span>`
+const av = n => `<div class="adm-av">${(n||'?').slice(0,2).toUpperCase()}</div>`
+
+function setFil(group, el) {
+  el.closest('.filters').querySelectorAll('.fil').forEach(f => f.classList.remove('on'))
+  el.classList.add('on')
+}
+
+// ── DASHBOARD ────────────────────────────────────────────────────
+async function carregarDashboard() {
+  const [{ count: cu }, { count: cb }, boloesData, pagData, { count: ca }] = await Promise.all([
+    sb().from('profiles').select('*', { count:'exact', head:true }),
+    sb().from('boloes').select('*', { count:'exact', head:true }),
+    sb().from('boloes').select('name,status,participant_count,total_prize,created_at').order('created_at',{ascending:false}).limit(5),
+    sb().from('payments').select('amount,status,created_at,user:profiles!user_id(username),bolao:boloes!bolao_id(name)').eq('status','confirmed').order('created_at',{ascending:false}).limit(5),
+    sb().from('affiliate_clicks').select('*', { count:'exact', head:true })
+  ])
+  const { data: receitaData } = await sb().from('boloes').select('platform_earned')
+  const receita = receitaData?.reduce((s,r) => s + (r.platform_earned || 0), 0) ?? 0
+
+  setEl('dTotalUsers', cu ?? 0)
+  setEl('dTotalBoloes', cb ?? 0)
+  setEl('dReceita', fmtBRL(receita))
+  setEl('dCliques', ca ?? 0)
+
+  const bEl = document.getElementById('dashBoloes')
+  bEl.innerHTML = boloesData.data?.length ? boloesData.data.map(b => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:13px;font-weight:600;">${b.name}</div><div style="font-size:11px;color:var(--muted);">${fmtDate(b.created_at)}</div></div>
+      <div style="display:flex;align-items:center;gap:8px;">${pillStatus(b.status)}<span style="font-size:12px;font-weight:600;color:var(--gold);">${fmtBRL(b.total_prize)}</span></div>
+    </div>`).join('') : '<div class="empty">Nenhum bolão.</div>'
+
+  const pEl = document.getElementById('dashPagamentos')
+  pEl.innerHTML = pagData.data?.length ? pagData.data.map(p => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:13px;font-weight:600;">${p.user?.username ?? '—'}</div><div style="font-size:11px;color:var(--muted);">${p.bolao?.name ?? '—'}</div></div>
+      <span style="font-size:13px;font-weight:700;color:var(--green);">${fmtBRL(p.amount)}</span>
+    </div>`).join('') : '<div class="empty">Nenhum pagamento.</div>'
+}
+
+// ── USUÁRIOS ─────────────────────────────────────────────────────
+async function carregarUsuarios() {
+  const tbody = document.getElementById('usrTbody')
+  tbody.innerHTML = `<tr><td colspan="6" class="empty">Carregando…</td></tr>`
+  let q = sb().from('profiles').select('id,username,full_name,plan,total_boloes,total_points,created_at')
+  if (usrQuery) q = q.ilike('username', `%${usrQuery}%`)
+  const { data } = await q.order('created_at',{ascending:false}).range(usrPage*PER_PAGE, (usrPage+1)*PER_PAGE-1)
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>`; return }
+  tbody.innerHTML = data.map(u => `<tr>
+    <td style="display:flex;align-items:center;gap:8px;">${av(u.username)}<div><div style="font-weight:600;">${u.username}</div><div style="font-size:11px;color:var(--muted);">${u.full_name || ''}</div></div></td>
+    <td>${pillStatus(u.plan || 'free')}</td>
+    <td>${u.total_boloes ?? 0}</td>
+    <td>${u.total_points ?? 0}</td>
+    <td>${fmtDate(u.created_at)}</td>
+    <td>
+      <button class="act-btn" onclick="verUsuario('${u.id}')">👁️ Ver</button>
+      <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${u.username}')">🔑 Admin</button>
+      <button class="act-btn red" onclick="banirUsuario('${u.id}','${u.username}')">🚫 Banir</button>
+    </td>
+  </tr>`).join('')
+  setEl('usrPagInfo', `Página ${usrPage + 1}`)
+}
+
+let buscarTimer
+function buscarUsuarios(q) {
+  clearTimeout(buscarTimer)
+  usrQuery = q; usrPage = 0
+  buscarTimer = setTimeout(carregarUsuarios, 350)
+}
+function usrPagAnterior() { if (usrPage > 0) { usrPage--; carregarUsuarios() } }
+function usrPagProxima() { usrPage++; carregarUsuarios() }
+
+async function verUsuario(id) {
+  const { data: u } = await sb().from('profiles').select('*').eq('id', id).single()
+  if (!u) return
+  showToast(`👤 ${u.username} — ${u.plan} | Bolões: ${u.total_boloes} | Pontos: ${u.total_points}`)
+}
+
+async function promoverAdmin(id, username) {
+  if (!confirm(`Promover @${username} a admin?`)) return
+  const { error } = await sb().from('profiles').update({ plan: 'admin' }).eq('id', id)
+  if (error) { showToast('Erro ao promover.'); return }
+  showToast(`✅ @${username} é agora admin!`)
+  carregarUsuarios()
+}
+
+async function banirUsuario(id, username) {
+  if (!confirm(`Banir @${username}? Esta ação pode ser desfeita na aba Moderação.`)) return
+  const { error } = await sb().from('profiles').update({ plan: 'banned' }).eq('id', id)
+  if (error) { showToast('Erro ao banir.'); return }
+  showToast(`🚫 @${username} foi banido.`)
+  carregarUsuarios()
+}
+
+// ── BOLÕES ───────────────────────────────────────────────────────
+async function carregarBoloes(filtro) {
+  const tbody = document.getElementById('boloesTbody')
+  tbody.innerHTML = `<tr><td colspan="8" class="empty">Carregando…</td></tr>`
+  let q = sb().from('boloes').select('id,code,name,owner_id,participant_count,cota_value,total_prize,status,created_at,owner:profiles!owner_id(username)')
+  if (filtro) q = q.eq('status', filtro)
+  const { data } = await q.order('created_at',{ascending:false}).limit(50)
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="8" class="empty">Nenhum bolão.</td></tr>`; return }
+  tbody.innerHTML = data.map(b => `<tr>
+    <td><code style="font-size:11px;background:var(--bg);padding:2px 6px;border-radius:4px;">${b.code}</code></td>
+    <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
+    <td>${b.owner?.username ?? '—'}</td>
+    <td>${b.participant_count ?? 0}</td>
+    <td>${fmtBRL(b.cota_value)}</td>
+    <td style="font-weight:700;color:var(--gold);">${fmtBRL(b.total_prize)}</td>
+    <td>${pillStatus(b.status)}</td>
+    <td>
+      <button class="act-btn" onclick="window.open('bolao.html?id=${b.id}','_blank')">👁️ Ver</button>
+      ${b.status !== 'cancelled' ? `<button class="act-btn red" onclick="cancelarBolao('${b.id}','${b.name}')">❌ Cancelar</button>` : ''}
+    </td>
+  </tr>`).join('')
+}
+
+function filtrarBoloes(filtro, el) { setFil('boloes', el); carregarBoloes(filtro) }
+
+async function cancelarBolao(id, nome) {
+  if (!confirm(`Cancelar bolão "${nome}"?`)) return
+  const { error } = await sb().from('boloes').update({ status: 'cancelled' }).eq('id', id)
+  if (error) { showToast('Erro ao cancelar.'); return }
+  showToast('✅ Bolão cancelado.')
+  carregarBoloes('')
+}
+
+// ── JOGOS ────────────────────────────────────────────────────────
+async function carregarJogos(filtro) {
+  const tbody = document.getElementById('jogosTbody')
+  tbody.innerHTML = `<tr><td colspan="6" class="empty">Carregando…</td></tr>`
+  let q = sb().from('matches').select('id,home_team,away_team,match_date,status,home_score,away_score,competition:competitions!competition_id(short_name)')
+  if (filtro) q = q.eq('status', filtro)
+  const { data } = await q.order('match_date',{ascending:false}).limit(50)
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum jogo.</td></tr>`; return }
+  tbody.innerHTML = data.map(j => `<tr>
+    <td style="font-weight:600;">${j.home_team} × ${j.away_team}</td>
+    <td>${j.competition?.short_name ?? '—'}</td>
+    <td>${fmtDateTime(j.match_date)}</td>
+    <td>${pillStatus(j.status)}</td>
+    <td>${j.home_score != null ? `${j.home_score} - ${j.away_score}` : '—'}</td>
+    <td><button class="act-btn grn" onclick="abrirEditarJogo('${j.id}',${j.home_score??''},${j.away_score??''},'${j.status}')">✏️ Editar</button></td>
+  </tr>`).join('')
+}
+
+function filtrarJogos(filtro, el) { setFil('jogos', el); carregarJogos(filtro) }
+
+function abrirEditarJogo(id, hs, as_, status) {
+  document.getElementById('jogoEditId').value = id
+  document.getElementById('jogoHomeScore').value = hs
+  document.getElementById('jogoAwayScore').value = as_
+  document.getElementById('jogoStatus').value = status
+  document.getElementById('jogoModal').classList.add('on')
+}
+
+function fecharJogoModal(e) { if (e.target === document.getElementById('jogoModal')) document.getElementById('jogoModal').classList.remove('on') }
+
+async function salvarJogo() {
+  const id = document.getElementById('jogoEditId').value
+  const dados = {
+    home_score: parseInt(document.getElementById('jogoHomeScore').value) || null,
+    away_score: parseInt(document.getElementById('jogoAwayScore').value) || null,
+    status: document.getElementById('jogoStatus').value,
+    updated_at: new Date().toISOString()
+  }
+  const { error } = await sb().from('matches').update(dados).eq('id', id)
+  if (error) { showToast('Erro ao salvar jogo.'); return }
+  showToast('✅ Jogo atualizado!')
+  document.getElementById('jogoModal').classList.remove('on')
+  carregarJogos('')
+}
+
+// ── FINANCEIRO ───────────────────────────────────────────────────
+async function carregarFinanceiroStats() {
+  const [{ data: boloes }, pendentes, confirmados] = await Promise.all([
+    sb().from('boloes').select('total_collected,platform_earned'),
+    sb().from('payments').select('*',{count:'exact',head:true}).eq('status','pending'),
+    sb().from('payments').select('*',{count:'exact',head:true}).eq('status','confirmed')
+  ])
+  const totalCol = boloes?.reduce((s,b) => s + (b.total_collected||0), 0) ?? 0
+  const receita  = boloes?.reduce((s,b) => s + (b.platform_earned||0), 0) ?? 0
+  setEl('fTotalCol', fmtBRL(totalCol))
+  setEl('fReceita', fmtBRL(receita))
+  setEl('fPendentes', pendentes.count ?? 0)
+  setEl('fConfirmados', confirmados.count ?? 0)
+}
+
+async function carregarPagamentos(filtro) {
+  const tbody = document.getElementById('pagTbody')
+  tbody.innerHTML = `<tr><td colspan="6" class="empty">Carregando…</td></tr>`
+  let q = sb().from('payments').select('id,amount,type,status,created_at,user:profiles!user_id(username),bolao:boloes!bolao_id(name)')
+  if (filtro) q = q.eq('status', filtro)
+  const { data } = await q.order('created_at',{ascending:false}).limit(50)
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum pagamento.</td></tr>`; return }
+  tbody.innerHTML = data.map(p => `<tr>
+    <td>${p.user?.username ?? '—'}</td>
+    <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.bolao?.name ?? '—'}</td>
+    <td>${p.type}</td>
+    <td style="font-weight:700;">${fmtBRL(p.amount)}</td>
+    <td>${pillStatus(p.status)}</td>
+    <td>${fmtDateTime(p.created_at)}</td>
+  </tr>`).join('')
+}
+
+function filtrarPagamentos(filtro, el) { setFil('pagamentos', el); carregarPagamentos(filtro) }
+
+// ── MODERAÇÃO ────────────────────────────────────────────────────
+async function carregarPosts() {
+  const tbody = document.getElementById('postsTbody')
+  tbody.innerHTML = `<tr><td colspan="6" class="empty">Carregando…</td></tr>`
+  const { data } = await sb().from('posts').select('id,content,type,likes_count,created_at,user:profiles!user_id(username)').order('created_at',{ascending:false}).limit(30)
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum post.</td></tr>`; return }
+  tbody.innerHTML = data.map(p => `<tr>
+    <td>${p.user?.username ?? '—'}</td>
+    <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.content}</td>
+    <td><span class="pill pill-${p.type === 'tip' ? 'open' : 'pending'}">${p.type}</span></td>
+    <td>${p.likes_count ?? 0}</td>
+    <td>${fmtDateTime(p.created_at)}</td>
+    <td><button class="act-btn red" onclick="excluirPost('${p.id}')">🗑️ Excluir</button></td>
+  </tr>`).join('')
+}
+
+async function excluirPost(id) {
+  if (!confirm('Excluir este post?')) return
+  const { error } = await sb().from('posts').delete().eq('id', id)
+  if (error) { showToast('Erro ao excluir.'); return }
+  showToast('🗑️ Post excluído.')
+  carregarPosts()
+}
+
+async function carregarBanidos() {
+  const tbody = document.getElementById('banidosTbody')
+  tbody.innerHTML = `<tr><td colspan="4" class="empty">Carregando…</td></tr>`
+  const { data } = await sb().from('profiles').select('id,username,full_name,created_at').eq('plan','banned').order('created_at',{ascending:false})
+  if (!data?.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Nenhum usuário banido.</td></tr>`; return }
+  tbody.innerHTML = data.map(u => `<tr>
+    <td style="font-weight:600;">${u.username}</td>
+    <td>${u.full_name || '—'}</td>
+    <td>${fmtDate(u.created_at)}</td>
+    <td><button class="act-btn grn" onclick="desbanirUsuario('${u.id}','${u.username}')">✅ Desbanir</button></td>
+  </tr>`).join('')
+}
+
+async function desbanirUsuario(id, username) {
+  const { error } = await sb().from('profiles').update({ plan: 'free' }).eq('id', id)
+  if (error) { showToast('Erro.'); return }
+  showToast(`✅ @${username} desbanido.`)
+  carregarBanidos()
+}
+
+// ── NOTIFICAÇÕES ─────────────────────────────────────────────────
+function toggleUsernameField() {
+  const v = document.getElementById('nDestino').value
+  document.getElementById('nUsernameRow').style.display = v === 'one' ? 'flex' : 'none'
+}
+
+async function enviarNotificacao() {
+  const destino = document.getElementById('nDestino').value
+  const tipo    = document.getElementById('nTipo').value
+  const titulo  = document.getElementById('nTitulo').value.trim()
+  const body    = document.getElementById('nBody').value.trim()
+  if (!titulo || !body) { showToast('Preencha título e mensagem.'); return }
+
+  let userIds = []
+  if (destino === 'all') {
+    const { data } = await sb().from('profiles').select('id')
+    userIds = data?.map(p => p.id) ?? []
+  } else {
+    const uname = document.getElementById('nUsername').value.trim()
+    if (!uname) { showToast('Informe o username.'); return }
+    const { data } = await sb().from('profiles').select('id').eq('username', uname).single()
+    if (!data) { showToast('Usuário não encontrado.'); return }
+    userIds = [data.id]
+  }
+
+  const rows = userIds.map(uid => ({ user_id: uid, type: tipo, title: titulo, body }))
+  const { error } = await sb().from('notifications').insert(rows)
+  if (error) { showToast('Erro ao enviar.'); return }
+  showToast(`✅ ${userIds.length === 1 ? 'Notificação enviada!' : `${userIds.length} notificações enviadas!`}`)
+  document.getElementById('nTitulo').value = ''
+  document.getElementById('nBody').value = ''
+  carregarNotifHistorico()
+}
+
+async function carregarNotifHistorico() {
+  const el = document.getElementById('notifHistorico')
+  el.innerHTML = '<div class="empty">Carregando…</div>'
+  const { data } = await sb().from('notifications').select('title,type,created_at,user:profiles!user_id(username)').order('created_at',{ascending:false}).limit(10)
+  if (!data?.length) { el.innerHTML = '<div class="empty">Nenhuma notificação enviada.</div>'; return }
+  el.innerHTML = data.map(n => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);">
+      <div><div style="font-size:13px;font-weight:600;">${n.title}</div><div style="font-size:11px;color:var(--muted);">@${n.user?.username ?? 'todos'} · ${n.type}</div></div>
+      <span style="font-size:11px;color:var(--light);">${fmtDateTime(n.created_at)}</span>
+    </div>`).join('')
+}
+
+// ── AFILIADOS ────────────────────────────────────────────────────
+async function carregarAfiliados() {
+  const { data: all } = await sb().from('affiliate_clicks').select('partner,clicked_at').order('clicked_at',{ascending:false})
+  if (!all) return
+  const sb_count  = all.filter(c => c.partner === 'sportingbet').length
+  const sup_count = all.filter(c => c.partner === 'superbet').length
+  setEl('affTotal', all.length)
+  setEl('affSB', sb_count)
+  setEl('affSup', sup_count)
+
+  // Dias
+  const dias = {}
+  all.forEach(c => {
+    const d = new Date(c.clicked_at).toLocaleDateString('pt-BR')
+    if (!dias[d]) dias[d] = { sb: 0, sup: 0 }
+    if (c.partner === 'sportingbet') dias[d].sb++
+    else dias[d].sup++
+  })
+  const diasArr = Object.entries(dias).slice(0, 7)
+  document.getElementById('affDiasTbody').innerHTML = diasArr.length
+    ? diasArr.map(([d, v]) => `<tr><td>${d}</td><td>${v.sb}</td><td>${v.sup}</td><td><strong>${v.sb + v.sup}</strong></td></tr>`).join('')
+    : '<tr><td colspan="4" class="empty">Sem dados.</td></tr>'
+
+  // Últimos cliques
+  const { data: ultimos } = await sb().from('affiliate_clicks').select('partner,clicked_at,user:profiles!user_id(username)').order('clicked_at',{ascending:false}).limit(20)
+  document.getElementById('affClicksTbody').innerHTML = ultimos?.length
+    ? ultimos.map(c => `<tr><td>${c.user?.username ?? '—'}</td><td><span class="pill" style="background:${c.partner==='sportingbet'?'var(--sb-lt)':'var(--sup-lt)'};color:${c.partner==='sportingbet'?'var(--sb)':'var(--sup)'};">${c.partner}</span></td><td>${fmtDateTime(c.clicked_at)}</td></tr>`).join('')
+    : '<tr><td colspan="3" class="empty">Sem cliques.</td></tr>'
+}
+
+// ── CONFIG GLOBAL ─────────────────────────────────────────────────
+function carregarConfig() {
+  const defaults = { cfgFee:'5', cfgMaxPart:'50', cfgMinHoras:'24', cfgPtsResult:'3', cfgPtsExact:'8', cfgPtsScorer:'5', cfgPtsUpset:'5', cfgPtsPerfect:'20' }
+  Object.entries(defaults).forEach(([k, def]) => {
+    const el = document.getElementById(k)
+    if (el) el.value = localStorage.getItem('admin_' + k) ?? def
+  })
+}
+
+function salvarConfig() {
+  ['cfgFee','cfgMaxPart','cfgMinHoras','cfgPtsResult','cfgPtsExact','cfgPtsScorer','cfgPtsUpset','cfgPtsPerfect'].forEach(k => {
+    const el = document.getElementById(k)
+    if (el) localStorage.setItem('admin_' + k, el.value)
+  })
+  showToast('✅ Configurações salvas!')
+}
+
+// ── SUPORTE ───────────────────────────────────────────────────────
+async function buscarSuporte() {
+  const q = document.getElementById('supSearch').value.trim()
+  if (!q) return
+  const { data: u } = await sb().from('profiles').select('*').ilike('username', `%${q}%`).limit(1).single()
+  if (!u) { showToast('Usuário não encontrado.'); return }
+  supUserId = u.id
+
+  document.getElementById('supResultado').style.display = 'block'
+  document.getElementById('supPerfilBox').innerHTML = `
+    <div class="info-row"><span class="info-lbl">Username</span><span class="info-val">@${u.username}</span></div>
+    <div class="info-row"><span class="info-lbl">Nome</span><span class="info-val">${u.full_name || '—'}</span></div>
+    <div class="info-row"><span class="info-lbl">Plano</span>${pillStatus(u.plan||'free')}</div>
+    <div class="info-row"><span class="info-lbl">Bolões</span><span class="info-val">${u.total_boloes??0}</span></div>
+    <div class="info-row"><span class="info-lbl">Vitórias</span><span class="info-val">${u.total_wins??0}</span></div>
+    <div class="info-row"><span class="info-lbl">Pontos</span><span class="info-val">${u.total_points??0}</span></div>
+    <div class="info-row"><span class="info-lbl">Ganhos</span><span class="info-val">${fmtBRL(u.total_earned)}</span></div>
+    <div class="info-row"><span class="info-lbl">Cadastro</span><span class="info-val">${fmtDate(u.created_at)}</span></div>
+    <div class="info-row"><span class="info-lbl">Chave Pix</span><span class="info-val">${u.pix_key||'—'}</span></div>`
+
+  const [{ data: boloes }, { data: pags }] = await Promise.all([
+    sb().from('participants').select('bolao:boloes!bolao_id(name,status,cota_value)').eq('user_id', u.id).order('joined_at',{ascending:false}).limit(5),
+    sb().from('payments').select('amount,status,type,created_at').eq('user_id', u.id).order('created_at',{ascending:false}).limit(5)
+  ])
+
+  const bEl = document.getElementById('supBoloesList')
+  bEl.innerHTML = boloes?.length ? boloes.map(p => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);">
+      <span style="font-size:13px;font-weight:600;">${p.bolao?.name??'—'}</span>
+      <div style="display:flex;gap:6px;">${pillStatus(p.bolao?.status||'open')}<span style="font-size:12px;color:var(--muted);">${fmtBRL(p.bolao?.cota_value)}</span></div>
+    </div>`).join('') : '<div class="empty">Nenhum bolão.</div>'
+
+  const pEl = document.getElementById('supPagList')
+  pEl.innerHTML = pags?.length ? pags.map(p => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid var(--border);">
+      <div><span style="font-size:13px;font-weight:600;">${p.type}</span><span style="font-size:11px;color:var(--muted);margin-left:8px;">${fmtDateTime(p.created_at)}</span></div>
+      <div style="display:flex;gap:6px;align-items:center;">${pillStatus(p.status)}<span style="font-size:13px;font-weight:700;">${fmtBRL(p.amount)}</span></div>
+    </div>`).join('') : '<div class="empty">Nenhum pagamento.</div>'
+
+  document.getElementById('supAcoes').innerHTML = `
+    <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${u.username}')">🔑 Promover Admin</button>
+    <button class="act-btn red" onclick="banirUsuario('${u.id}','${u.username}')">🚫 Banir</button>
+    <button class="act-btn" onclick="setTab('notificacoes',document.querySelectorAll('.adm-tab')[6]);document.getElementById('nDestino').value='one';toggleUsernameField();document.getElementById('nUsername').value='${u.username}'">📧 Enviar Notificação</button>`
+}
+</script>
+</body>
+</html>
