@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>BolãoPro — Configurações</title>
+<link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+.cfg-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--white);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
+.cfg-tabs::-webkit-scrollbar{display:none;}
+.cfg-tab{padding:14px 20px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;background:none;border-left:none;border-right:none;border-top:none;font-family:'Inter',sans-serif;}
+.cfg-tab:hover{color:var(--text);}
+.cfg-tab.on{color:var(--green);border-bottom-color:var(--green);font-weight:600;}
+
+.cfg-section{display:none;}
+.cfg-section.on{display:block;}
+
+.cfg-card{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;transition:box-shadow .2s;}
+.cfg-card:hover{box-shadow:var(--shadow-md);}
+.cfg-card-head{padding:16px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.cfg-card-body{padding:20px;}
+
+.danger-card{background:var(--white);border:2px solid var(--red);border-radius:var(--r-lg);overflow:hidden;margin-bottom:20px;}
+.danger-card .cfg-card-head{border-bottom:1px solid var(--red-lt);color:var(--red);background:var(--red-lt);}
+.danger-card .cfg-card-body{padding:20px;}
+
+.notif-list{display:flex;flex-direction:column;}
+.notif-item{display:flex;align-items:flex-start;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.notif-item:last-child{border-bottom:none;}
+.notif-item:hover{background:var(--bg);}
+.notif-item.unread{background:#F0FDF4;}
+.notif-item.unread:hover{background:#DCFCE7;}
+.notif-icon{font-size:22px;flex-shrink:0;margin-top:1px;}
+.notif-body{flex:1;min-width:0;}
+.notif-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+.notif-text{font-size:12px;color:var(--muted);line-height:1.5;}
+.notif-meta{display:flex;align-items:center;gap:8px;margin-top:4px;}
+.notif-time{font-size:11px;color:var(--light);}
+.notif-badge-new{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+.about-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--border);}
+.about-row:last-child{border-bottom:none;}
+.about-lbl{font-size:13px;color:var(--muted);}
+.about-val{font-size:13px;font-weight:500;color:var(--text);}
+.about-link{font-size:13px;font-weight:500;color:var(--green);cursor:pointer;}
+.about-link:hover{opacity:.75;}
+
+.btn-danger{width:100%;height:46px;border-radius:var(--r-sm);background:var(--red);color:#fff;font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;cursor:pointer;border:none;font-family:'Inter',sans-serif;margin-bottom:10px;}
+.btn-danger:hover{background:#B91C1C;}
+.btn-danger:disabled{opacity:.5;cursor:not-allowed;}
+.btn-danger-outline{width:100%;height:46px;border-radius:var(--r-sm);background:var(--white);color:var(--red);font-size:14px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;cursor:not-allowed;border:2px solid var(--red);font-family:'Inter',sans-serif;opacity:.5;}
+
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-info{flex:1;min-width:0;padding-right:16px;}
+.toggle-lbl{font-size:13px;font-weight:600;margin-bottom:2px;}
+.toggle-sub{font-size:12px;color:var(--muted);}
+.toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;cursor:pointer;inset:0;background:#D1D5DB;border-radius:22px;transition:.2s;}
+.toggle-slider:before{content:'';position:absolute;height:16px;width:16px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s;}
+.toggle input:checked + .toggle-slider{background:var(--green);}
+.toggle input:checked + .toggle-slider:before{transform:translateX(18px);}
+
+/* Theme buttons */
+.theme-btn{padding:10px 18px;border-radius:var(--r-sm);border:2px solid var(--border);background:var(--white);font-size:13px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;color:var(--text);transition:all .15s;}
+.theme-btn:hover{border-color:var(--green);color:var(--green);}
+.theme-btn.active{border-color:var(--green);background:var(--green);color:#fff;}
+
+/* Dark mode variables (basic) */
+html.dark{
+  --white:#1E293B;
+  --bg:#0F172A;
+  --border:#334155;
+  --text:#F1F5F9;
+  --muted:#94A3B8;
+  --light:#64748B;
+}
+html.reduce-motion *{transition:none!important;animation:none!important;}
+
+/* Modal simples para termos/privacidade */
+.info-modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.info-modal-overlay.on{opacity:1;pointer-events:all;}
+.info-modal{background:var(--white);border-radius:var(--r-lg);width:100%;max-width:500px;max-height:80vh;overflow-y:auto;padding:24px;margin:16px;}
+.info-modal h2{font-size:18px;font-weight:700;margin-bottom:16px;}
+.info-modal p{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:12px;}
+.info-modal-close{width:100%;height:40px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:13px;font-weight:600;margin-top:8px;cursor:pointer;border:none;font-family:'Inter',sans-serif;}
+
+/* Mobile tabs */
+@media (max-width: 768px) {
+  .cfg-tab { padding: 10px 14px; font-size: 12px; }
+  .cfg-tabs { padding: 0; }
+  .cfg-card-head { padding: 14px 16px; font-size: 13px; }
+  .cfg-card-body { padding: 16px; }
+  .danger-card .cfg-card-body { padding: 16px; }
+  .theme-btn { padding: 9px 14px; font-size: 12px; }
+}
+@media (max-width: 400px) {
+  .cfg-tab { padding: 10px 10px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="userCard" style="display:none">
+      <div class="u-av" id="sideAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- DRAWER -->
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="drawerUserCard" style="display:none">
+      <div class="u-av" id="drawerAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title">Configurações</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="cfg-tabs" id="cfgTabs">
+    <button class="cfg-tab on" onclick="setTab('perfil',this)"><i data-lucide="user"></i> Perfil</button>
+    <button class="cfg-tab" onclick="setTab('conta',this)"><i data-lucide="lock"></i> Conta</button>
+    <button class="cfg-tab" id="notifTab" onclick="setTab('notificacoes',this)"><i data-lucide="bell"></i> Notif.</button>
+    <button class="cfg-tab" onclick="setTab('preferencias',this)"><i data-lucide="sliders"></i> Prefs.</button>
+    <button class="cfg-tab" onclick="setTab('privacidade',this)"><i data-lucide="shield"></i> Privac.</button>
+    <button class="cfg-tab" onclick="setTab('aparencia',this)"><i data-lucide="palette"></i> Aparência</button>
+    <button class="cfg-tab" onclick="setTab('sobre',this)"><i data-lucide="info"></i> Sobre</button>
+  </div>
+
+  <div class="content">
+
+    <!-- ── TAB: PERFIL ── -->
+    <div class="cfg-section on" id="tab-perfil">
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="user"></i> Foto de Perfil</div>
+        <div class="cfg-card-body" style="display:flex;align-items:center;gap:20px;">
+          <div id="cfgAvDiv" onclick="document.getElementById('cfgAvatarInput').click()" style="width:72px;height:72px;border-radius:20px;background:var(--green-lt);border:3px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--green);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;flex-direction:column;" class="cfgAvHover"><i data-lucide="camera"></i></div>
+          </div>
+          <input type="file" id="cfgAvatarInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadAvatarCfg(this)"/>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">Foto do perfil</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px">JPG, PNG ou WebP. Máximo 2MB.</div>
+            <button class="btn-outline" style="height:32px;font-size:12px;padding:0 14px" onclick="document.getElementById('cfgAvatarInput').click()"><i data-lucide="upload"></i> Trocar foto</button>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="user"></i> Dados do Perfil</div>
+        <div class="cfg-card-body">
+          <div class="fl"><label>Nome completo</label><input id="pFullName" placeholder="Seu Nome Completo"/></div>
+          <div class="fl">
+            <label>Username</label>
+            <input id="pUsername" placeholder="seu_username" maxlength="30"/>
+          </div>
+          <div class="fl"><label>Chave Pix</label><input id="pPixKey" placeholder="CPF, e-mail, telefone ou chave aleatória"/></div>
+          <div class="fl"><label>Telefone</label><input id="pPhone" placeholder="(11) 99999-9999" type="tel"/></div>
+          <div class="err-box" id="perfilErr"></div>
+          <button class="btn-full" id="salvarPerfilBtn" onclick="salvarPerfil()"><i data-lucide="save"></i> Salvar Perfil</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: CONTA ── -->
+    <div class="cfg-section" id="tab-conta">
+
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="lock"></i> Alterar Senha</div>
+        <div class="cfg-card-body">
+          <div class="fl">
+            <label>Senha atual</label>
+            <input id="cSenhaAtual" type="password" placeholder="Sua senha atual (informativo)"/>
+          </div>
+          <div class="fl">
+            <label>Nova senha</label>
+            <input id="cNovaSenha" type="password" placeholder="Mínimo 6 caracteres"/>
+          </div>
+          <div class="fl">
+            <label>Confirmar nova senha</label>
+            <input id="cConfirmaSenha" type="password" placeholder="Repita a nova senha"/>
+          </div>
+          <div class="err-box" id="senhaErr"></div>
+          <button class="btn-full" id="alterarSenhaBtn" onclick="alterarSenha()"><i data-lucide="lock"></i> Alterar Senha</button>
+        </div>
+      </div>
+
+      <div class="danger-card">
+        <div class="cfg-card-head"><i data-lucide="alert-triangle"></i> Zona de Perigo</div>
+        <div class="cfg-card-body">
+          <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">Ações irreversíveis ou de alto impacto relacionadas à sua conta. Prossiga com cuidado.</p>
+          <button class="btn-danger" onclick="sairTodosDispositivos()"><i data-lucide="log-out"></i> Sair de Todos os Dispositivos</button>
+          <div title="Entre em contato com o suporte">
+            <button class="btn-danger-outline" disabled><i data-lucide="trash-2"></i> Excluir minha Conta</button>
+          </div>
+          <p style="font-size:11px;color:var(--light);margin-top:8px;text-align:center">Para excluir sua conta, entre em contato: suporte@bolaopro.com</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── TAB: NOTIFICAÇÕES ── -->
+    <div class="cfg-section" id="tab-notificacoes">
+      <div class="cfg-card" style="margin-bottom:0">
+        <div class="cfg-card-head" style="justify-content:space-between">
+          <span><i data-lucide="bell"></i> Notificações</span>
+          <button class="btn-outline" style="height:30px;font-size:12px;padding:0 12px" onclick="marcarTodasLidas()">✓ Marcar todas como lidas</button>
+        </div>
+        <div id="notifListContainer">
+          <div class="empty"><div class="spin"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: PREFERÊNCIAS ── -->
+    <div class="cfg-section" id="tab-preferencias">
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="sliders"></i> Preferências de Notificação</div>
+        <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Novos jogos adicionados ao bolão</div>
+              <div class="toggle-sub">Receba uma notificação quando novos jogos forem incluídos</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-jogos_novos" onchange="salvarPreferencia('jogos_novos', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Resultados de jogos</div>
+              <div class="toggle-sub">Seja notificado quando os resultados forem apurados</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-resultados" onchange="salvarPreferencia('resultados', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Novas mensagens no chat</div>
+              <div class="toggle-sub">Alertas de mensagens nos bolões que você participa</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-chat" onchange="salvarPreferencia('chat', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Premiação creditada</div>
+              <div class="toggle-sub">Notificação quando um prêmio for creditado na sua conta</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-premios" onchange="salvarPreferencia('premios', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Convites para bolões</div>
+              <div class="toggle-sub">Receba notificações quando for convidado para um bolão</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="pref-convites" onchange="salvarPreferencia('convites', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: PRIVACIDADE ── -->
+    <div class="cfg-section" id="tab-privacidade">
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="shield"></i> Visibilidade do Perfil</div>
+        <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Perfil público</div>
+              <div class="toggle-sub">Permite que outros usuários vejam meu perfil</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="priv-profile_public" onchange="salvarPrivacidade('profile_public', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Aparecer no ranking global</div>
+              <div class="toggle-sub">Visível no ranking público da plataforma</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="priv-show_in_ranking" onchange="salvarPrivacidade('show_in_ranking', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div class="toggle-row">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Mostrar estatísticas</div>
+              <div class="toggle-sub">Exibir minhas estatísticas para outros usuários</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="priv-show_stats" onchange="salvarPrivacidade('show_stats', this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card" style="border-color:var(--green-lt,#D1FAE5);">
+        <div class="cfg-card-body" style="display:flex;align-items:flex-start;gap:12px;">
+          <span style="font-size:20px;flex-shrink:0;"><i data-lucide="shield"></i></span>
+          <p style="font-size:12px;color:var(--muted);line-height:1.7;margin:0;">Seus dados pessoais (e-mail, Pix) <strong>nunca são exibidos publicamente</strong>. Apenas o nome de exibição e o username podem ser vistos por outros usuários, conforme as configurações acima.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: APARÊNCIA ── -->
+    <div class="cfg-section" id="tab-aparencia">
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="palette"></i> Tema</div>
+        <div class="cfg-card-body">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="theme-btn" id="theme-light" onclick="setTheme('light')"><i data-lucide="sun"></i> Claro</button>
+            <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')"><i data-lucide="moon"></i> Escuro</button>
+            <button class="theme-btn" id="theme-auto" onclick="setTheme('auto')"><i data-lucide="monitor"></i> Automático</button>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="globe"></i> Idioma</div>
+        <div class="cfg-card-body">
+          <div class="fl" style="margin-bottom:0;">
+            <label style="margin-bottom:6px;">Idioma do aplicativo</label>
+            <select disabled style="width:100%;height:44px;border-radius:var(--r-sm);border:1px solid var(--border);background:var(--bg);color:var(--muted);font-size:14px;padding:0 12px;font-family:'Inter',sans-serif;cursor:not-allowed;">
+              <option>🇧🇷 Português (Brasil)</option>
+            </select>
+            <p style="font-size:11px;color:var(--light);margin-top:6px;">Outros idiomas serão adicionados em breve.</p>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="sparkles"></i> Animações</div>
+        <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
+          <div class="toggle-row" style="border-bottom:none;">
+            <div class="toggle-info">
+              <div class="toggle-lbl">Reduzir animações</div>
+              <div class="toggle-sub">Desativa transições e efeitos de movimento na interface</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="anim-reduce_motion" onchange="setReduceMotion(this.checked)"/>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TAB: SOBRE ── -->
+    <div class="cfg-section" id="tab-sobre">
+      <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="info"></i> Sobre o BolãoPro</div>
+        <div class="cfg-card-body">
+          <div class="about-row">
+            <span class="about-lbl">Versão</span>
+            <span class="about-val">BolãoPro v1.0</span>
+          </div>
+          <div class="about-row">
+            <span class="about-lbl">Termos de Uso</span>
+            <span class="about-link" onclick="openInfoModal('termos')">Ver Termos →</span>
+          </div>
+          <div class="about-row">
+            <span class="about-lbl">Política de Privacidade</span>
+            <span class="about-link" onclick="openInfoModal('privacidade')">Ver Política →</span>
+          </div>
+          <div class="about-row">
+            <span class="about-lbl">Contato / Suporte</span>
+            <span class="about-val">suporte@bolaopro.com</span>
+          </div>
+          <div class="about-row" style="border-bottom:none">
+            <span class="about-lbl">Copyright</span>
+            <span class="about-val" style="font-size:12px;color:var(--light)">© 2025 BolãoPro. Todos os direitos reservados.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="bnav-inner">
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle"><i data-lucide="plus"></i></div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
+  </div>
+</nav>
+
+<!-- MODAL: TERMOS / PRIVACIDADE -->
+<div class="info-modal-overlay" id="infoModal" onclick="fecharInfoModal(event)">
+  <div class="info-modal">
+    <h2 id="infoModalTitle">Termos de Uso</h2>
+    <div id="infoModalBody">
+      <p>Conteúdo em breve.</p>
+    </div>
+    <button class="info-modal-close" onclick="document.getElementById('infoModal').classList.remove('on')">Fechar</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+let currentUser = null
+
+document.addEventListener('DOMContentLoaded', async () => {
+  currentUser = await initAuth({ requireAuth: true })
+  if (!currentUser) return
+
+  hideEl('sideLogin'); showEl('sideLogout')
+
+  const p = await getProfile(currentUser.id)
+  if (p) {
+    document.getElementById('pFullName').value = p.full_name ?? ''
+    document.getElementById('pUsername').value  = p.username  ?? ''
+    document.getElementById('pPixKey').value    = p.pix_key   ?? ''
+    document.getElementById('pPhone').value     = p.phone     ?? ''
+    const name = p.username ?? currentUser.email?.split('@')[0] ?? '?'
+    setEl('topUserName', name)
+    setEl('topUserAv', name.slice(0,2).toUpperCase())
+    // Avatar preview
+    const avDiv = document.getElementById('cfgAvDiv')
+    if (avDiv) {
+      if (p.avatar_url) {
+        avDiv.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:17px;" alt="${esc(name)}"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+      } else {
+        avDiv.innerHTML = name.slice(0,2).toUpperCase() + `<div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+      }
+      avDiv.onmouseenter = () => avDiv.querySelector('.cfgAvHover').style.opacity = '1'
+      avDiv.onmouseleave = () => avDiv.querySelector('.cfgAvHover').style.opacity = '0'
+    }
+  }
+
+  // Verificar hash da URL para tab de notificações
+  if (location.hash === '#notificacoes') {
+    const tabBtn = document.getElementById('notifTab')
+    setTab('notificacoes', tabBtn)
+  }
+
+  carregarNotifBadge()
+  if (window.lucide) lucide.createIcons()
+})
+
+// ── TABS ────────────────────────────────────────────────────
+function setTab(name, btn) {
+  document.querySelectorAll('.cfg-section').forEach(s => s.classList.remove('on'))
+  document.querySelectorAll('.cfg-tab').forEach(b => b.classList.remove('on'))
+  document.getElementById('tab-' + name).classList.add('on')
+  btn.classList.add('on')
+  if (name === 'notificacoes') carregarNotificacoes()
+  if (name === 'preferencias') carregarPreferencias()
+  if (name === 'privacidade') carregarPrivacidade()
+  if (name === 'aparencia') { carregarTema(); carregarReduceMotion() }
+}
+
+// ── AVATAR UPLOAD ────────────────────────────────────────────
+async function uploadAvatarCfg(input) {
+  const file = input.files?.[0]
+  if (!file) return
+  if (file.size > 2097152) { showToast('Foto muito grande. Máximo 2MB.'); return }
+
+  showToast('Enviando foto…')
+  const ext  = file.name.split('.').pop()
+  const path = `${currentUser.id}/avatar.${ext}`
+
+  const { error: upErr } = await sb().storage.from('avatars').upload(path, file, { upsert: true })
+  if (upErr) { showToast('Erro ao enviar: ' + upErr.message); return }
+
+  const { data: { publicUrl } } = sb().storage.from('avatars').getPublicUrl(path)
+  const avatarUrl = publicUrl + '?t=' + Date.now()
+
+  const { error: dbErr } = await sb().from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id)
+  if (dbErr) { showToast('Foto enviada, mas erro ao salvar: ' + dbErr.message); return }
+
+  showToast('Foto atualizada!')
+  const avDiv = document.getElementById('cfgAvDiv')
+  if (avDiv) {
+    avDiv.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:17px;"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+  }
+  input.value = ''
+}
+
+// ── PERFIL ───────────────────────────────────────────────────
+async function salvarPerfil() {
+  const fullName = document.getElementById('pFullName').value.trim()
+  const username = document.getElementById('pUsername').value.trim()
+  const pixKey   = document.getElementById('pPixKey').value.trim()
+  const phone    = document.getElementById('pPhone').value.trim()
+  const err      = document.getElementById('perfilErr')
+  err.style.display = 'none'
+
+  if (!username) {
+    err.textContent = 'Username é obrigatório.'
+    err.style.display = 'block'; return
+  }
+  if (!/^[a-zA-Z0-9_]{3,30}$/.test(username)) {
+    err.textContent = 'Username deve ter 3-30 caracteres (letras, números e _).'
+    err.style.display = 'block'; return
+  }
+
+  const btn = document.getElementById('salvarPerfilBtn')
+  btn.textContent = 'Salvando…'; btn.disabled = true
+
+  const { error } = await sb().from('profiles').update({
+    full_name: fullName || null,
+    username,
+    pix_key: pixKey || null,
+    phone: phone || null,
+    updated_at: new Date().toISOString()
+  }).eq('id', currentUser.id)
+
+  btn.innerHTML = '<i data-lucide="save"></i> Salvar Perfil'; btn.disabled = false; if (window.lucide) lucide.createIcons()
+
+  if (error) {
+    err.textContent = error.code === '23505' ? 'Este username já está em uso.' : error.message
+    err.style.display = 'block'; return
+  }
+
+  showToast('✅ Perfil atualizado com sucesso!')
+
+  // Atualizar UI do topbar e sidebar
+  setEl('topUserName', username)
+  setEl('topUserAv', username.slice(0,2).toUpperCase())
+  setEl('sideName', username)
+  setEl('sideAv', username.slice(0,2).toUpperCase())
+  setEl('drawerName', username)
+  setEl('drawerAv', username.slice(0,2).toUpperCase())
+}
+
+// ── CONTA / SENHA ────────────────────────────────────────────
+async function alterarSenha() {
+  const novaSenha    = document.getElementById('cNovaSenha').value
+  const confirmaSenha = document.getElementById('cConfirmaSenha').value
+  const err          = document.getElementById('senhaErr')
+  err.style.display  = 'none'
+
+  if (!novaSenha) {
+    err.textContent = 'Digite a nova senha.'; err.style.display = 'block'; return
+  }
+  if (novaSenha.length < 6) {
+    err.textContent = 'A nova senha deve ter pelo menos 6 caracteres.'; err.style.display = 'block'; return
+  }
+  if (novaSenha !== confirmaSenha) {
+    err.textContent = 'As senhas não coincidem.'; err.style.display = 'block'; return
+  }
+
+  const btn = document.getElementById('alterarSenhaBtn')
+  btn.textContent = 'Alterando…'; btn.disabled = true
+
+  const { error } = await sb().auth.updateUser({ password: novaSenha })
+
+  btn.innerHTML = '<i data-lucide="lock"></i> Alterar Senha'; btn.disabled = false; if (window.lucide) lucide.createIcons()
+
+  if (error) {
+    err.textContent = error.message; err.style.display = 'block'; return
+  }
+
+  document.getElementById('cSenhaAtual').value   = ''
+  document.getElementById('cNovaSenha').value     = ''
+  document.getElementById('cConfirmaSenha').value = ''
+  showToast('✅ Senha alterada com sucesso!')
+}
+
+async function sairTodosDispositivos() {
+  if (!confirm('Tem certeza? Você será desconectado de todos os dispositivos.')) return
+  await sb().auth.signOut({ scope: 'global' })
+  location.href = 'login.html'
+}
+
+// ── NOTIFICAÇÕES ─────────────────────────────────────────────
+async function carregarNotificacoes() {
+  const container = document.getElementById('notifListContainer')
+  if (!currentUser) {
+    container.innerHTML = '<div class="empty"><p>Faça login para ver notificações.</p></div>'
+    return
+  }
+
+  container.innerHTML = '<div class="empty"><div class="spin"></div></div>'
+
+  const { data, error } = await sb().from('notifications')
+    .select('*')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(50)
+
+  if (error || !data || !data.length) {
+    container.innerHTML = '<div class="empty"><div class="empty-icon"><i data-lucide="bell"></i></div><p>Nenhuma notificação ainda</p></div>'
+    if (window.lucide) lucide.createIcons()
+    return
+  }
+
+  container.innerHTML = '<div class="notif-list">' + data.map(n => {
+    const icon = n.type === 'prize' ? '<i data-lucide="trophy"></i>' : n.type === 'system' ? '<i data-lucide="settings"></i>' : '<i data-lucide="info"></i>'
+    const unreadClass = n.is_read ? '' : ' unread'
+    return `<div class="notif-item${unreadClass}" id="notif-${n.id}" onclick="marcarLida('${n.id}')">
+      <div class="notif-icon">${icon}</div>
+      <div class="notif-body">
+        <div class="notif-title">${esc(n.title)}</div>
+        ${n.body ? `<div class="notif-text">${esc(n.body)}</div>` : ''}
+        <div class="notif-meta">
+          <span class="notif-time">${timeAgo(n.created_at)}</span>
+          ${!n.is_read ? '<span class="notif-badge-new"></span>' : ''}
+        </div>
+      </div>
+    </div>`
+  }).join('') + '</div>'
+  if (window.lucide) lucide.createIcons()
+}
+
+async function marcarLida(notifId) {
+  const el = document.getElementById('notif-' + notifId)
+  if (!el || !el.classList.contains('unread')) return
+
+  el.classList.remove('unread')
+  const badge = el.querySelector('.notif-badge-new')
+  if (badge) badge.remove()
+
+  await sb().from('notifications')
+    .update({ is_read: true })
+    .eq('id', notifId)
+    .eq('user_id', currentUser.id)
+
+  atualizarBadge()
+}
+
+async function marcarTodasLidas() {
+  if (!currentUser) return
+  const { error } = await sb().from('notifications')
+    .update({ is_read: true })
+    .eq('user_id', currentUser.id)
+    .eq('is_read', false)
+
+  if (error) { showToast('Erro ao marcar notificações.'); return }
+
+  // Atualizar visualmente
+  document.querySelectorAll('.notif-item.unread').forEach(el => {
+    el.classList.remove('unread')
+    const badge = el.querySelector('.notif-badge-new')
+    if (badge) badge.remove()
+  })
+
+  const badgeEl = document.getElementById('notifBadge')
+  if (badgeEl) badgeEl.style.display = 'none'
+
+  showToast('✅ Todas as notificações marcadas como lidas!')
+}
+
+async function atualizarBadge() {
+  if (!currentUser) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', currentUser.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count > 9 ? '9+' : count
+      badge.style.display = 'flex'
+    } else {
+      badge.style.display = 'none'
+    }
+  }
+}
+
+async function carregarNotifBadge() {
+  if (!currentUser) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', currentUser.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+
+function abrirNotifs() {
+  const tabBtn = document.getElementById('notifTab')
+  setTab('notificacoes', tabBtn)
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// ── SOBRE / MODAIS ───────────────────────────────────────────
+const infoTextos = {
+  termos: {
+    title: 'Termos de Uso',
+    body: `<p>Bem-vindo ao BolãoPro. Ao utilizar nossa plataforma, você concorda com os seguintes termos:</p>
+<p><strong>1. Uso da plataforma:</strong> O BolãoPro é uma plataforma de entretenimento para organização de bolões entre amigos. Não nos responsabilizamos por disputas entre participantes.</p>
+<p><strong>2. Conta do usuário:</strong> Você é responsável por manter a confidencialidade de sua senha e por todas as atividades realizadas em sua conta.</p>
+<p><strong>3. Conduta:</strong> É proibido o uso da plataforma para fins ilegais, abusivos ou que violem os direitos de terceiros.</p>
+<p><strong>4. Modificações:</strong> Reservamo-nos o direito de modificar estes termos a qualquer momento, com aviso prévio aos usuários.</p>
+<p><strong>5. Contato:</strong> Para dúvidas, entre em contato pelo e-mail suporte@bolaopro.com.</p>`
+  },
+  privacidade: {
+    title: 'Política de Privacidade',
+    body: `<p>Sua privacidade é importante para nós. Esta política explica como coletamos e utilizamos seus dados:</p>
+<p><strong>1. Dados coletados:</strong> Coletamos nome, e-mail, username e chave Pix para o funcionamento da plataforma.</p>
+<p><strong>2. Uso dos dados:</strong> Seus dados são utilizados exclusivamente para o funcionamento do BolãoPro e nunca são vendidos a terceiros.</p>
+<p><strong>3. Armazenamento:</strong> Seus dados são armazenados com segurança utilizando infraestrutura Supabase com criptografia.</p>
+<p><strong>4. Seus direitos:</strong> Você pode solicitar a exclusão de seus dados a qualquer momento pelo e-mail suporte@bolaopro.com.</p>
+<p><strong>5. Cookies:</strong> Utilizamos apenas cookies essenciais para autenticação e funcionamento da plataforma.</p>`
+  }
+}
+
+function openInfoModal(tipo) {
+  const info = infoTextos[tipo]
+  if (!info) return
+  document.getElementById('infoModalTitle').textContent = info.title
+  document.getElementById('infoModalBody').innerHTML = info.body
+  document.getElementById('infoModal').classList.add('on')
+}
+
+function fecharInfoModal(e) {
+  if (e.target === document.getElementById('infoModal')) {
+    document.getElementById('infoModal').classList.remove('on')
+  }
+}
+
+// ── PREFERÊNCIAS ─────────────────────────────────────────────
+const PREF_KEYS = ['jogos_novos', 'resultados', 'chat', 'premios', 'convites']
+
+async function carregarPreferencias() {
+  if (!currentUser) return
+  const { data } = await sb().from('profiles')
+    .select('notification_prefs')
+    .eq('id', currentUser.id)
+    .single()
+  const prefs = (data && data.notification_prefs) ? data.notification_prefs : {}
+  PREF_KEYS.forEach(key => {
+    const el = document.getElementById('pref-' + key)
+    if (el) el.checked = prefs[key] !== false // default true
+  })
+}
+
+async function salvarPreferencia(key, value) {
+  if (!currentUser) return
+  // Ler prefs atuais
+  const { data } = await sb().from('profiles')
+    .select('notification_prefs')
+    .eq('id', currentUser.id)
+    .single()
+  const prefs = (data && data.notification_prefs) ? { ...data.notification_prefs } : {}
+  prefs[key] = value
+  const { error } = await sb().from('profiles')
+    .upsert({ id: currentUser.id, notification_prefs: prefs, updated_at: new Date().toISOString() })
+  if (error) { showToast('Erro ao salvar preferência.'); return }
+  showToast('✅ Preferência salva!')
+}
+
+// ── PRIVACIDADE ───────────────────────────────────────────────
+const PRIV_KEYS = ['profile_public', 'show_in_ranking', 'show_stats']
+
+async function carregarPrivacidade() {
+  if (!currentUser) return
+  const { data } = await sb().from('profiles')
+    .select('profile_public, show_in_ranking, show_stats')
+    .eq('id', currentUser.id)
+    .single()
+  if (!data) return
+  PRIV_KEYS.forEach(key => {
+    const el = document.getElementById('priv-' + key)
+    if (el) el.checked = data[key] !== false // default true
+  })
+}
+
+async function salvarPrivacidade(key, value) {
+  if (!currentUser) return
+  const update = { [key]: value, updated_at: new Date().toISOString() }
+  const { error } = await sb().from('profiles')
+    .upsert({ id: currentUser.id, ...update })
+  if (error) { showToast('Erro ao salvar configuração.'); return }
+  showToast('✅ Configuração salva!')
+}
+
+// ── APARÊNCIA ─────────────────────────────────────────────────
+function applyTheme(theme) {
+  const html = document.documentElement
+  html.classList.remove('dark')
+  if (theme === 'dark') {
+    html.classList.add('dark')
+  } else if (theme === 'auto') {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      html.classList.add('dark')
+    }
+  }
+  // Highlight active button
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'))
+  const activeBtn = document.getElementById('theme-' + theme)
+  if (activeBtn) activeBtn.classList.add('active')
+}
+
+function setTheme(theme) {
+  localStorage.setItem('theme', theme)
+  applyTheme(theme)
+  showToast('✅ Tema aplicado!')
+}
+
+function carregarTema() {
+  const theme = localStorage.getItem('theme') || 'auto'
+  applyTheme(theme)
+}
+
+function setReduceMotion(value) {
+  localStorage.setItem('reduce_motion', value ? '1' : '0')
+  document.documentElement.classList.toggle('reduce-motion', value)
+  showToast(value ? '✅ Animações reduzidas!' : '✅ Animações restauradas!')
+}
+
+function carregarReduceMotion() {
+  const val = localStorage.getItem('reduce_motion') === '1'
+  const el = document.getElementById('anim-reduce_motion')
+  if (el) el.checked = val
+  document.documentElement.classList.toggle('reduce-motion', val)
+}
+
+// Carregar tema e reduce motion na inicialização
+carregarTema()
+carregarReduceMotion()
+</script>
+</body>
+</html>

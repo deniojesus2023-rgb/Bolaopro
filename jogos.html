@@ -4,9 +4,12 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Jogos</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
-.jogo-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);transition:all .2s;}
+.jogo-card{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);transition:all .2s;}
 .jogo-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.jogo-card:has(.live-badge){border-top-color:var(--red);}
+.jogo-card:has(.st-done){border-top-color:var(--light);}
 .jogo-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .comp-tag{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);background:var(--bg);padding:3px 8px;border-radius:6px;text-transform:uppercase;}
 .jogo-dt{font-size:11px;color:var(--muted);}
@@ -41,21 +44,67 @@
 .no-games .icon{font-size:48px;margin-bottom:12px;}
 .no-games h3{font-size:16px;font-weight:700;margin-bottom:6px;color:var(--text);}
 .no-games p{font-size:13px;line-height:1.6;}
+
+/* ── Venue / Árbitro ── */
+.match-meta{display:flex;align-items:center;gap:12px;font-size:11px;color:var(--muted);margin-bottom:12px;flex-wrap:wrap;}
+.match-meta span{display:flex;align-items:center;gap:4px;}
+
+/* ── Minuto ao vivo / Placar HT ── */
+.minute-badge{display:inline-block;background:var(--red-lt);color:var(--red);font-size:11px;font-weight:800;padding:2px 7px;border-radius:10px;border:1px solid rgba(220,38,38,.25);}
+.score-extra{font-size:11px;color:var(--muted);text-align:center;margin-top:4px;}
+
+/* ── Eventos do jogo (gols, cartões) ── */
+.events-list{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;border-top:1px solid var(--border);padding-top:10px;}
+.ev-item{display:flex;align-items:center;gap:6px;font-size:12px;}
+.ev-item.away{flex-direction:row-reverse;text-align:right;}
+.ev-min{font-size:10px;font-weight:700;color:var(--muted);min-width:28px;text-align:center;}
+.ev-icon{font-size:14px;line-height:1;}
+.ev-player{font-weight:600;color:var(--text);}
+.ev-assist{font-size:10px;color:var(--muted);}
+
+/* ── Estatísticas ── */
+.stats-toggle{width:100%;background:none;border:none;border-top:1px solid var(--border);padding:10px 0 2px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:4px;}
+.stats-toggle:hover{color:var(--green);}
+.stats-section{display:none;margin-top:10px;}
+.stats-section.open{display:block;}
+.stat-row{display:grid;grid-template-columns:1fr 80px 1fr;align-items:center;gap:6px;margin-bottom:8px;}
+.stat-val{font-size:13px;font-weight:700;text-align:center;}
+.stat-val.home{text-align:right;color:var(--green);}
+.stat-val.away{text-align:left;color:var(--red);}
+.stat-label{font-size:10px;font-weight:600;color:var(--muted);text-align:center;text-transform:uppercase;letter-spacing:.5px;}
+.stat-bars{display:grid;grid-template-columns:1fr 1fr;gap:3px;height:6px;border-radius:3px;overflow:hidden;background:var(--border);}
+.stat-bar-h{height:100%;background:var(--green);border-radius:3px 0 0 3px;}
+.stat-bar-a{height:100%;background:var(--red);border-radius:0 3px 3px 0;}
+
+/* ── Escalações ── */
+.lineups-btn{width:100%;margin-top:6px;padding:8px;background:var(--bg);border:1px dashed var(--border);border-radius:var(--r-sm);font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;}
+.lineups-btn:hover{border-color:var(--green);color:var(--green);}
+.lineups-section{display:none;margin-top:10px;}
+.lineups-section.open{display:block;}
+.lineups-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.lineup-col h4{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px;}
+.lineup-col .formation{font-size:10px;background:var(--bg);padding:2px 6px;border-radius:6px;border:1px solid var(--border);display:inline-block;margin-bottom:6px;}
+.lineup-player{font-size:11px;color:var(--text);padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:5px;}
+.lineup-player .num{font-weight:700;color:var(--muted);min-width:18px;}
+.lineup-player .pos{font-size:9px;color:var(--muted);background:var(--bg);padding:1px 4px;border-radius:4px;align-self:center;}
+.lineup-player.sub{color:var(--muted);}
+.coach-row{font-size:11px;color:var(--muted);margin-top:6px;padding-top:6px;border-top:1px solid var(--border);}
 </style>
 </head>
 <body>
 
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item on"><span class="nav-icon">📅</span>Jogos</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item on"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="userCard" style="display:none">
       <div class="u-av" id="sideAv">?</div>
@@ -66,33 +115,41 @@
 
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()">✕</div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item on"><span class="nav-icon">📅</span>Jogos</a>
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item on"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="drawerUserCard" style="display:none">
       <div class="u-av" id="drawerAv">?</div>
       <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
     </div>
-    <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
   </div>
 </aside>
 
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
-      <div class="page-title">📅 Jogos</div>
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title">Jogos</div>
     </div>
     <div class="search-box">
-      <span style="font-size:13px;color:var(--light)">🔍</span>
+      <span style="font-size:13px;color:var(--light)"><i data-lucide="search"></i></span>
       <input id="searchInput" placeholder="Buscar time…" oninput="filterJogos(this.value)"/>
     </div>
     <div class="topbar-right">
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
         <div class="top-user-av" id="topUserAv">?</div>
@@ -128,11 +185,11 @@
 
 <nav class="bnav">
   <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
-    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
-    <a href="index.html" class="bn-center"><div class="bn-circle">+</div></a>
-    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle"><i data-lucide="plus"></i></div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
 
@@ -167,11 +224,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function loadJogos() {
   try {
     let q = sb().from('matches')
-      .select('*, competition:competitions(name, short_name, api_id)')
+      .select(`*,
+        competition:competitions(name, short_name, api_id),
+        stats:match_statistics(*),
+        events:match_events(minute, minute_extra, team_type, player_name, assist_name, event_type, event_detail)`)
       .order('match_date', { ascending: true })
       .limit(60)
 
-    if (curComp)   q = q.eq('competitions.api_id', parseInt(curComp))
     if (curStatus) q = q.eq('status', curStatus)
     else           q = q.in('status', ['live', 'scheduled', 'finished'])
 
@@ -229,21 +288,73 @@ function renderJogos(list) {
 }
 
 function jogoCardHtml(j) {
-  const comp    = j.competition?.name ?? j.round_name ?? '—'
-  const dt      = j.match_date ? fmtDate(j.match_date) : '—'
-  const isLive  = j.status === 'live'
-  const isDone  = j.status === 'finished'
-  const homeLg  = j.home_team_logo
+  const comp   = j.competition?.name ?? j.round_name ?? '—'
+  const dt     = j.match_date ? fmtDate(j.match_date) : '—'
+  const isLive = j.status === 'live'
+  const isDone = j.status === 'finished'
+  const uid    = j.id.slice(0, 8)
+
+  const homeLg = j.home_team_logo
     ? `<img src="${j.home_team_logo}" alt="${esc(j.home_team)}">`
     : `<span>${esc(j.home_team.slice(0,3).toUpperCase())}</span>`
-  const awayLg  = j.away_team_logo
+  const awayLg = j.away_team_logo
     ? `<img src="${j.away_team_logo}" alt="${esc(j.away_team)}">`
     : `<span>${esc(j.away_team.slice(0,3).toUpperCase())}</span>`
 
+  // Placar principal
   const scoreHtml = (isLive || isDone) && j.home_score !== null
     ? `<div class="score-num">${j.home_score} <span style="color:var(--light);font-size:20px">×</span> ${j.away_score}</div>`
     : `<div class="score-vs">VS</div>`
 
+  // Minuto ao vivo
+  const minuteHtml = isLive && j.minute
+    ? `<span class="minute-badge">${j.minute}'</span>` : ''
+
+  // Placar intervalo / prorrogação / pênaltis
+  let extraScore = ''
+  if (j.halftime_home !== null && j.halftime_away !== null)
+    extraScore += `<span>Intervalo: ${j.halftime_home}–${j.halftime_away}</span>`
+  if (j.extratime_home !== null && j.extratime_away !== null)
+    extraScore += ` &nbsp;|&nbsp; <span>Prorr.: ${j.extratime_home}–${j.extratime_away}</span>`
+  if (j.penalty_home !== null && j.penalty_away !== null)
+    extraScore += ` &nbsp;|&nbsp; <span>Pênaltis: ${j.penalty_home}–${j.penalty_away}</span>`
+  const extraScoreHtml = extraScore
+    ? `<div class="score-extra">${extraScore}</div>` : ''
+
+  // Venue + Árbitro
+  const metaParts = []
+  if (j.venue_name) metaParts.push(`<span><i data-lucide="map-pin" style="width:12px;height:12px"></i> ${esc(j.venue_name)}${j.venue_city ? ', ' + esc(j.venue_city) : ''}</span>`)
+  if (j.referee)    metaParts.push(`<span><i data-lucide="flag" style="width:12px;height:12px"></i> ${esc(j.referee)}</span>`)
+  const metaHtml = metaParts.length
+    ? `<div class="match-meta">${metaParts.join('')}</div>` : ''
+
+  // Eventos (gols, cartões, subs)
+  const events = (j.events ?? []).slice().sort((a,b) => (a.minute??0)-(b.minute??0))
+  let eventsHtml = ''
+  if (events.length) {
+    const evItems = events.map(e => {
+      const min  = e.minute_extra ? `${e.minute}+${e.minute_extra}'` : `${e.minute ?? '?'}'`
+      let icon = '⚽'
+      if (e.event_type === 'Card') icon = e.event_detail?.includes('Yellow') ? '🟨' : '🟥'
+      else if (e.event_type === 'subst') icon = '🔄'
+      else if (e.event_type === 'Var')   icon = '📺'
+      const assist = e.assist_name ? `<span class="ev-assist">(${esc(e.assist_name)})</span>` : ''
+      return `<div class="ev-item ${e.team_type}">
+        <span class="ev-min">${min}</span>
+        <span class="ev-icon">${icon}</span>
+        <span class="ev-player">${esc(e.player_name ?? '?')}</span>
+        ${assist}
+      </div>`
+    }).join('')
+    eventsHtml = `<div class="events-list">${evItems}</div>`
+  }
+
+  // Artilheiro final
+  const topScorerHtml = isDone && j.top_scorer
+    ? `<div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px">⚽ Artilheiro: <strong>${esc(j.top_scorer)}</strong></div>`
+    : ''
+
+  // Odds (corrigidas: todas da Sportingbet, botão Superbet separado)
   const oddsHtml = !isDone ? `
     <div class="odds-row">
       <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn">
@@ -256,27 +367,51 @@ function jogoCardHtml(j) {
         <div class="odd-val">${j.odd_draw_sportingbet ?? '—'}</div>
         <div class="odd-house">Sportingbet</div>
       </a>
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn">
+        <div class="odd-lbl">${esc(j.away_team.split(' ')[0])}</div>
+        <div class="odd-val">${j.odd_away_sportingbet ?? '—'}</div>
+        <div class="odd-house">Sportingbet</div>
+      </a>
+    </div>
+    <div class="odds-row" style="margin-top:-4px">
+      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn">
+        <div class="odd-lbl">${esc(j.home_team.split(' ')[0])}</div>
+        <div class="odd-val">${j.odd_home_superbet ?? '—'}</div>
+        <div class="odd-house" style="color:var(--sup)">Superbet</div>
+      </a>
+      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn">
+        <div class="odd-lbl">Empate</div>
+        <div class="odd-val">${j.odd_draw_superbet ?? '—'}</div>
+        <div class="odd-house" style="color:var(--sup)">Superbet</div>
+      </a>
       <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn">
         <div class="odd-lbl">${esc(j.away_team.split(' ')[0])}</div>
         <div class="odd-val">${j.odd_away_superbet ?? '—'}</div>
-        <div class="odd-house">Superbet</div>
+        <div class="odd-house" style="color:var(--sup)">Superbet</div>
       </a>
     </div>` : ''
 
-  const topScorerHtml = isDone && j.top_scorer
-    ? `<div style="font-size:11px;color:var(--muted);text-align:center;margin-bottom:10px">⚽ Artilheiro: <strong>${esc(j.top_scorer)}</strong></div>`
-    : ''
+  // Stats section
+  const statsHtml = buildStatsHtml(j.stats, j.home_team, j.away_team, uid)
+
+  // Lineups button (lazy-load)
+  const lineupsHtml = `
+    <button class="lineups-btn" id="linBtn_${uid}" onclick="toggleLineups('${j.id}','${uid}')">
+      <i data-lucide="users" style="width:13px;height:13px"></i> Ver Escalações
+    </button>
+    <div class="lineups-section" id="linSec_${uid}"></div>`
 
   return `
   <div class="jogo-card">
     <div class="jogo-head">
       <span class="comp-tag">${esc(comp)}</span>
       <div style="display:flex;align-items:center;gap:8px">
-        ${isLive ? `<div class="live-badge"><div class="dot"></div>AO VIVO</div>` : ''}
+        ${isLive ? `<div class="live-badge"><div class="dot"></div>AO VIVO</div>${minuteHtml}` : ''}
         ${isDone ? `<span class="st st-done">Finalizado</span>` : ''}
         <span class="jogo-dt">${dt}</span>
       </div>
     </div>
+    ${metaHtml}
     <div class="teams-row">
       <div class="team">
         <div class="team-logo">${homeLg}</div>
@@ -288,9 +423,13 @@ function jogoCardHtml(j) {
         <div class="team-name">${esc(j.away_team)}</div>
       </div>
     </div>
+    ${extraScoreHtml}
+    ${eventsHtml}
     ${topScorerHtml}
     ${oddsHtml}
-    <div class="jogo-footer">
+    ${statsHtml}
+    ${lineupsHtml}
+    <div class="jogo-footer" style="margin-top:10px">
       <a href="${CONFIG.SPORTINGBET}" target="_blank" class="jf-sb">⚡ Sportingbet</a>
       <a href="${CONFIG.SUPERBET}"    target="_blank" class="jf-sup">⚡ Superbet</a>
       <a href="index.html" class="jf-bolao" onclick="openBolaoFromJogo('${esc(j.home_team)}','${esc(j.away_team)}');return false">⚽ Criar Bolão</a>
@@ -326,6 +465,134 @@ function filterJogos(q) {
     j.away_team.toLowerCase().includes(lower)
   ))
 }
+
+// ── Estatísticas ──────────────────────────────────────────────────
+function buildStatsHtml(stats, homeTeam, awayTeam, uid) {
+  if (!stats || !stats.length) return ''
+  const h = stats.find(s => s.team_type === 'home') ?? {}
+  const a = stats.find(s => s.team_type === 'away') ?? {}
+
+  function row(label, hv, av) {
+    if (hv == null && av == null) return ''
+    hv = hv ?? 0; av = av ?? 0
+    const total = hv + av || 1
+    const hPct  = Math.round((hv / total) * 100)
+    const aPct  = 100 - hPct
+    return `<div class="stat-row">
+      <div class="stat-val home">${hv}</div>
+      <div>
+        <div class="stat-label">${label}</div>
+        <div class="stat-bars">
+          <div class="stat-bar-h" style="width:${hPct}%"></div>
+          <div class="stat-bar-a" style="width:${aPct}%"></div>
+        </div>
+      </div>
+      <div class="stat-val away">${av}</div>
+    </div>`
+  }
+
+  const rows = [
+    row('Posse (%)',     h.possession,       a.possession),
+    row('Chutes a gol', h.shots_on_goal,     a.shots_on_goal),
+    row('Total chutes', h.shots_total,       a.shots_total),
+    row('Escanteios',   h.corners,           a.corners),
+    row('Faltas',       h.fouls,             a.fouls),
+    row('Impedimentos', h.offsides,          a.offsides),
+    row('Cartões AM',   h.yellow_cards,      a.yellow_cards),
+    row('Cartões VM',   h.red_cards,         a.red_cards),
+    row('Defesas GK',   h.goalkeeper_saves,  a.goalkeeper_saves),
+    row('Passes',       h.passes_total,      a.passes_total),
+    row('Passes (%)',   h.passes_percentage, a.passes_percentage),
+  ].filter(Boolean).join('')
+
+  if (!rows) return ''
+
+  return `
+    <button class="stats-toggle" onclick="toggleStats('${uid}')">
+      <i data-lucide="bar-chart-2" style="width:13px;height:13px"></i>
+      Estatísticas
+      <i data-lucide="chevron-down" id="statsChev_${uid}" style="width:13px;height:13px"></i>
+    </button>
+    <div class="stats-section" id="statsSec_${uid}">
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;font-size:10px;font-weight:700;color:var(--green);margin-bottom:8px;text-align:center">
+        <div>${esc(homeTeam)}</div><div></div><div style="color:var(--red)">${esc(awayTeam)}</div>
+      </div>
+      ${rows}
+    </div>`
+}
+
+function toggleStats(uid) {
+  const sec  = document.getElementById(`statsSec_${uid}`)
+  const chev = document.getElementById(`statsChev_${uid}`)
+  if (!sec) return
+  sec.classList.toggle('open')
+  if (chev) chev.style.transform = sec.classList.contains('open') ? 'rotate(180deg)' : ''
+  lucide.createIcons()
+}
+
+// ── Escalações (lazy-load) ────────────────────────────────────────
+async function toggleLineups(matchId, uid) {
+  const sec = document.getElementById(`linSec_${uid}`)
+  const btn = document.getElementById(`linBtn_${uid}`)
+  if (!sec) return
+  if (sec.classList.contains('open')) {
+    sec.classList.remove('open'); sec.style.display = 'none'
+    if (btn) btn.innerHTML = '<i data-lucide="users" style="width:13px;height:13px"></i> Ver Escalações'
+    lucide.createIcons(); return
+  }
+  if (btn) btn.textContent = 'Carregando…'
+  const { data, error } = await sb().from('match_lineups')
+    .select('*').eq('match_id', matchId)
+  if (error || !data?.length) {
+    sec.innerHTML = '<p style="font-size:12px;color:var(--muted);text-align:center;padding:8px">Escalação não disponível ainda.</p>'
+    sec.style.display = 'block'; sec.classList.add('open')
+    if (btn) btn.innerHTML = '<i data-lucide="users" style="width:13px;height:13px"></i> Ocultar Escalações'
+    lucide.createIcons(); return
+  }
+  const hm = data.find(l => l.team_type === 'home')
+  const aw = data.find(l => l.team_type === 'away')
+  sec.innerHTML = `<div class="lineups-grid">${renderLineupCol(hm)}${renderLineupCol(aw)}</div>`
+  sec.style.display = 'block'; sec.classList.add('open')
+  if (btn) btn.innerHTML = '<i data-lucide="users" style="width:13px;height:13px"></i> Ocultar Escalações'
+  lucide.createIcons()
+}
+
+function renderLineupCol(lineup) {
+  if (!lineup) return '<div></div>'
+  const players = typeof lineup.players === 'string' ? JSON.parse(lineup.players) : (lineup.players ?? [])
+  const starters = players.filter(p => !p.substitute)
+  const subs     = players.filter(p => p.substitute)
+  const pRows = starters.map(p =>
+    `<div class="lineup-player"><span class="num">${p.number ?? ''}</span><span>${esc(p.name ?? '')}</span><span class="pos">${p.pos ?? ''}</span></div>`
+  ).join('')
+  const subRows = subs.map(p =>
+    `<div class="lineup-player sub"><span class="num">${p.number ?? ''}</span><span>${esc(p.name ?? '')}</span><span class="pos">${p.pos ?? ''}</span></div>`
+  ).join('')
+  return `<div class="lineup-col">
+    <h4>${esc(lineup.team_name ?? '')}</h4>
+    ${lineup.formation ? `<div class="formation">${esc(lineup.formation)}</div>` : ''}
+    ${pRows}
+    ${subs.length ? `<div style="font-size:10px;font-weight:700;color:var(--muted);margin:6px 0 3px;text-transform:uppercase">Reservas</div>${subRows}` : ''}
+    ${lineup.coach_name ? `<div class="coach-row">🧑‍💼 ${esc(lineup.coach_name)}</div>` : ''}
+  </div>`
+}
+</script>
+<script>
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+carregarNotifBadge()
 </script>
 </body>
 </html>

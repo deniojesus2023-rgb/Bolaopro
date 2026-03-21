@@ -1,5 +1,5 @@
 -- ================================================================
--- BOLÃOPRO — Funções SQL Faltando
+-- BOLAOPRO — Funções SQL Faltando
 -- Cole no SQL Editor do Supabase e execute
 -- Essas funções são chamadas pela Edge Function após jogos
 -- ================================================================
@@ -33,13 +33,13 @@ begin
   else  v_result := 'draw';
   end if;
 
-  -- É zebra? (favorito perdeu — odd do vencedor era alta)
+  -- E zebra? (favorito perdeu — odd do vencedor era alta)
   v_is_upset := (
     (v_result = 'home' and coalesce(v_match.odd_home_sportingbet, 2.0) >= 3.0) or
     (v_result = 'away' and coalesce(v_match.odd_away_sportingbet, 3.5) >= 3.0)
   );
 
-  -- Processar cada palpite ainda não calculado
+  -- Processar cada palpite ainda nao calculado
   for v_pred in
     select p.*, b.pts_result, b.pts_exact_score, b.pts_top_scorer, b.pts_bonus_upset
     from public.predictions p
@@ -63,18 +63,16 @@ begin
       v_pts_score := coalesce(v_pred.pts_exact_score, 8);
     end if;
 
-    -- 5 pts: artilheiro certo (compara nome completo, qualquer parte)
+    -- 5 pts: artilheiro certo (compara sobrenome)
     if v_pred.predicted_top_scorer is not null
     and v_match.top_scorer is not null
-    and (
-      lower(v_match.top_scorer) like '%' || lower(trim(v_pred.predicted_top_scorer)) || '%'
-      or lower(trim(v_pred.predicted_top_scorer)) like '%' || lower(v_match.top_scorer) || '%'
-    )
+    and lower(v_pred.predicted_top_scorer) like
+        '%' || lower(split_part(v_match.top_scorer, ' ', 2)) || '%'
     then
       v_pts_scorer := coalesce(v_pred.pts_top_scorer, 5);
     end if;
 
-    -- +5 pts bônus zebra
+    -- +5 pts bonus zebra
     if v_pts_result > 0 and v_is_upset then
       v_pts_bonus := coalesce(v_pred.pts_bonus_upset, 5);
     end if;
@@ -90,7 +88,7 @@ begin
       updated_at         = now()
     where id = v_pred.id;
 
-    -- Atualizar pontos do participante no bolão
+    -- Atualizar pontos do participante no bolao
     update public.participants
     set total_points = total_points + v_pts_result + v_pts_score + v_pts_scorer + v_pts_bonus
     where bolao_id = v_pred.bolao_id
@@ -111,8 +109,8 @@ $$ language plpgsql security definer;
 
 -- ================================================================
 -- FUNÇÃO 2: finalize_bolao
--- Chamada quando todos os jogos de um bolão terminam
--- Determina vencedor e distribui prêmio
+-- Chamada quando todos os jogos de um bolao terminam
+-- Determina vencedor e distribui premio
 -- ================================================================
 create or replace function public.finalize_bolao(p_bolao_id uuid)
 returns void as $$
@@ -126,7 +124,7 @@ begin
   if not found then return; end if;
   if v_bolao.status = 'finished' then return; end if;
 
-  -- Verificar se TODOS os jogos do bolão terminaram
+  -- Verificar se TODOS os jogos do bolao terminaram
   if exists (
     select 1
     from public.bolao_matches bm
@@ -137,7 +135,7 @@ begin
     return; -- ainda tem jogo em andamento
   end if;
 
-  -- Calcular posições pelo ranking de pontos
+  -- Calcular posicoes pelo ranking de pontos
   for v_winner in
     select user_id, total_points
     from public.participants
@@ -152,10 +150,10 @@ begin
     v_pos := v_pos + 1;
   end loop;
 
-  -- Prêmio total (já descontada a taxa de 5%)
+  -- Premio total (ja descontada a taxa de 5%)
   v_prize := coalesce(v_bolao.total_prize, 0);
 
-  -- Marcar prêmio do 1º lugar
+  -- Marcar premio do 1o lugar
   if v_prize > 0 then
     update public.participants
     set prize_won = v_prize
@@ -163,15 +161,9 @@ begin
       and position  = 1;
   end if;
 
-  -- Finalizar bolão
+  -- Finalizar bolao
   update public.boloes
   set status     = 'finished',
-      updated_at = now()
-  where id = p_bolao_id;
-
-  -- Atualizar ganho da plataforma (taxa cobrada)
-  update public.boloes
-  set platform_earned = coalesce(total_collected, 0) - coalesce(total_prize, 0),
       updated_at = now()
   where id = p_bolao_id;
 
@@ -181,8 +173,8 @@ begin
     p.user_id,
     p_bolao_id,
     'prize',
-    'Você ganhou o bolão!',
-    'Parabéns! Você ganhou R$ ' || v_prize::text || '. Informe sua chave Pix para receber.'
+    'Voce ganhou o bolao!',
+    'Parabens! Voce ganhou R$ ' || v_prize::text || '. Informe sua chave Pix para receber.'
   from public.participants p
   where p.bolao_id = p_bolao_id
     and p.position = 1

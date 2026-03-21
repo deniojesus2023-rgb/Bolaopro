@@ -4,38 +4,52 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Meus Bolões</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot"><div class="user-card" id="userCard" style="display:none"><div class="u-av" id="sideAv">?</div><div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div></div></div>
 </aside>
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()">✕</div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div><a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a></div>
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div></div>
 </aside>
 
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
       <div class="page-title">Meus Bolões</div>
     </div>
     <div class="topbar-right">
       <a href="index.html" onclick="setTimeout(()=>document.querySelector('.btn-primary')?.click(),100);return false" class="btn-primary">+ Criar Bolão</a>
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none"><div class="top-user-av" id="topUserAv">?</div><span style="font-size:12px;font-weight:600" id="topUserName">…</span></a>
     </div>
@@ -47,11 +61,11 @@
 
 <nav class="bnav">
   <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
-    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
-    <a href="index.html" class="bn-center"><div class="bn-circle">+</div></a>
-    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle"><i data-lucide="plus"></i></div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
 <div class="toast" id="toast"></div>
@@ -91,6 +105,23 @@ document.addEventListener('DOMContentLoaded',async()=>{
     </a>`}).join('')
   document.getElementById('content').innerHTML=`<div style="margin-bottom:6px"><p style="font-size:13px;color:var(--muted)">${data.length} bolão(ões) encontrado(s)</p></div>${cards}`
 })
+</script>
+<script>
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+carregarNotifBadge()
 </script>
 </body>
 </html>

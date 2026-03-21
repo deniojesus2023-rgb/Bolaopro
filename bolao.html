@@ -4,8 +4,9 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Bolão</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
-.detail-hero{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.detail-hero{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--green);border-radius:var(--r-lg);padding:22px;margin-bottom:20px;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
 .hero-info h1{font-size:20px;font-weight:700;letter-spacing:-.3px;margin-bottom:4px;}
 .hero-info p{font-size:12px;color:var(--muted);}
 .prize-box{background:var(--gold-lt);border:1px solid #FCD34D;border-radius:var(--r);padding:12px 18px;text-align:center;flex-shrink:0;}
@@ -78,35 +79,47 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot"><div class="user-card" id="userCard" style="display:none"><div class="u-av" id="sideAv">?</div><div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div></div></div>
 </aside>
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()">✕</div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div><a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a></div>
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div></div>
 </aside>
 
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
       <a href="index.html" style="font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px">← Voltar</a>
     </div>
     <div class="topbar-right">
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
         <div class="top-user-av" id="topUserAv">?</div>
@@ -122,11 +135,11 @@
 
 <nav class="bnav">
   <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
-    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
     <button class="bn-center" onclick="confirmarPalpite()"><div class="bn-circle" style="width:40px;height:40px;font-size:16px;font-weight:700">✓</div></button>
-    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
 
@@ -210,12 +223,17 @@ function renderPage() {
           <div class="team"><div class="team-logo">${awayLg}</div><div class="team-name">${esc(away)}</div></div>
         </div>
         <div class="pred-btns" id="predBtns">
-          ${[{k:'home',l:home,o:'1.90',p:'Sportingbet'},{k:'draw',l:'Empate',o:'3.40',p:'Superbet'},{k:'away',l:away,o:'4.20',p:'Sportingbet'}]
-            .map(x=>`<div class="pred-btn${prediction===x.k?' sel':''}" onclick="${isDone||confirmed?'':` pickPred('${x.k}')`}">
+          ${(()=>{
+            const oddH = match?.odd_home_sportingbet ?? match?.odd_home ?? '—'
+            const oddD = match?.odd_draw_sportingbet ?? match?.odd_draw ?? '—'
+            const oddA = match?.odd_away_sportingbet ?? match?.odd_away ?? '—'
+            return [{k:'home',l:home,o:oddH,p:'Sportingbet'},{k:'draw',l:'Empate',o:oddD,p:'Superbet'},{k:'away',l:away,o:oddA,p:'Sportingbet'}]
+              .map(x=>`<div class="pred-btn${prediction===x.k?' sel':''}" onclick="${isDone||confirmed?'':` pickPred('${x.k}')`}">
               <div class="pred-lbl">${esc(x.l)}</div>
               <div class="pred-odd">${x.o}</div>
               <div class="pred-partner">${x.p}</div>
-            </div>`).join('')}
+            </div>`).join('')
+          })()}
         </div>
         <div class="bar-wrap">
           <div class="bar-labels">
@@ -289,9 +307,21 @@ function renderPage() {
           <div class="pix-sub">Pague via Pix para participar</div>
           <button onclick="entrarBolao()" class="btn-full" style="height:38px;font-size:13px">💳 Pagar e Entrar</button>
         </div>` : ''}
+
+        ${currentUser && b.owner_id === currentUser.id ? `
+        <div class="invite-box" style="margin-top:14px">
+          <div class="invite-title">⚙️ Adicionar Jogo ao Bolão</div>
+          <select id="matchSelect" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-size:12px;margin-bottom:8px;background:var(--white)">
+            <option value="">Carregando jogos…</option>
+          </select>
+          <button onclick="vincularJogo()" class="btn-full" id="vincularBtn" style="height:36px;font-size:12px">🔗 Vincular Jogo</button>
+          <div id="vincularErr" style="font-size:11px;color:var(--red);margin-top:6px"></div>
+        </div>` : ''}
       </div>
     </div>
   </div>`
+
+  if (currentUser && b.owner_id === currentUser.id) carregarMatchesDisponiveis()
 }
 
 function pickPred(k) {
@@ -303,12 +333,28 @@ function pickPred(k) {
 
 async function confirmarPalpite() {
   if (confirmed || saving) return
+  // Validar se bolão ainda aceita palpites
+  if (bolaoData.status === 'finished' || bolaoData.status === 'cancelled') {
+    showToast('Este bolão já foi encerrado')
+    return
+  }
+  if (bolaoData.deadline && new Date(bolaoData.deadline) < new Date()) {
+    showToast('O prazo para palpites encerrou')
+    return
+  }
+  if (!bolaoData.bolao_matches || bolaoData.bolao_matches.length === 0) {
+    const errEl = document.getElementById('predErr')
+    if (errEl) errEl.textContent = 'Este bolão não possui jogos vinculados. O administrador deve adicionar jogos.'
+    const btn = document.getElementById('predBtn')
+    if (btn) btn.disabled = true
+    return
+  }
   if (!prediction) { showToast('Selecione um resultado primeiro'); return }
   if (!currentUser) { location.href='login.html'; return }
   saving=true
   const btn=document.getElementById('predBtn')
   if(btn){btn.textContent='Salvando…';btn.disabled=true}
-  const matchId = bolaoData.bolao_matches?.[0]?.match?.id ?? bolaoData.id
+  const matchId = bolaoData.bolao_matches[0].match?.id
   const h=document.getElementById('scoreH')?.value
   const a=document.getElementById('scoreA')?.value
   const s=document.getElementById('scorer')?.value
@@ -320,11 +366,65 @@ async function confirmarPalpite() {
 
 function entrarBolao() { showToast('💳 Integração Pix em breve! Combine o pagamento com o criador.') }
 
+async function carregarMatchesDisponiveis() {
+  const sel = document.getElementById('matchSelect')
+  if (!sel) return
+  const { data, error } = await sb().from('matches')
+    .select('id, home_team, away_team, match_date, status')
+    .eq('status', 'scheduled')
+    .order('match_date')
+  if (error || !data || data.length === 0) {
+    sel.innerHTML = '<option value="">Nenhum jogo disponível</option>'
+    return
+  }
+  sel.innerHTML = '<option value="">Selecione um jogo…</option>' +
+    data.map(m => {
+      const dt = m.match_date ? new Date(m.match_date).toLocaleDateString('pt-BR') : ''
+      return `<option value="${m.id}">${esc(m.home_team)} × ${esc(m.away_team)}${dt ? ' — ' + dt : ''}</option>`
+    }).join('')
+}
+
+async function vincularJogo() {
+  const sel = document.getElementById('matchSelect')
+  const btn = document.getElementById('vincularBtn')
+  const errEl = document.getElementById('vincularErr')
+  const matchId = sel?.value
+  if (!matchId) { if (errEl) errEl.textContent = 'Selecione um jogo.'; return }
+  if (errEl) errEl.textContent = ''
+  if (btn) { btn.textContent = 'Vinculando…'; btn.disabled = true }
+  const { error } = await sb().from('bolao_matches').insert({ bolao_id: pid, match_id: matchId })
+  if (btn) { btn.textContent = '🔗 Vincular Jogo'; btn.disabled = false }
+  if (error) {
+    if (errEl) errEl.textContent = 'Erro ao vincular: ' + (error.message ?? 'tente novamente')
+    return
+  }
+  showToast('✅ Jogo vinculado com sucesso!')
+  bolaoData = await getBolao(pid)
+  if (bolaoData) renderPage()
+}
+
 function subscribeRealtime() {
   sb().channel(`bolao_${pid}`)
     .on('postgres_changes',{event:'*',schema:'public',table:'participants',filter:`bolao_id=eq.${pid}`},async()=>{ bolaoData=await getBolao(pid); if(bolaoData) renderPage() })
     .subscribe()
 }
+</script>
+<script>
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+carregarNotifBadge()
 </script>
 </body>
 </html>

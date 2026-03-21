@@ -36,7 +36,11 @@ async function initAuth(opts = {}) {
     setEl('sideName',  name)
     setEl('sideEmail', user.email ?? '')
     showEl('userCard'); hideEl('sideLogin')
+    // Drawer
+    setEl('drawerAv',   av)
+    setEl('drawerName', name)
     showEl('drawerUserCard'); hideEl('drawerLogin')
+    showEl('drawerLogout')
     // Topbar
     hideEl('topLoginBtn')
     showEl('topUserBtn')
@@ -78,7 +82,8 @@ async function criarBolao(dados, userId) {
     competicao: dados.competicao, status: 'open',
   }).select('id, code').single()
   if (error) return { error: error.message }
-  await sb().from('participants').insert({ bolao_id: data.id, user_id: userId, payment_status: 'paid', amount_paid: 0 })
+  const paymentStatus = dados.cota > 0 ? 'pending' : 'paid'
+  await sb().from('participants').insert({ bolao_id: data.id, user_id: userId, payment_status: paymentStatus, amount_paid: 0 })
   return { data }
 }
 
@@ -103,6 +108,18 @@ async function getMeusBoloes(userId) {
     .select('bolao_id, boloes(*, participants(count))')
     .eq('user_id', userId).order('joined_at', { ascending: false })
   return data ?? []
+}
+
+// ── Afiliados ────────────────────────────────────────────────
+async function trackAffiliateClick(userId, partner, matchId = null, bolaoId = null) {
+  if (!userId) return
+  await sb().from('affiliate_clicks').insert({
+    user_id: userId,
+    partner,
+    match_id: matchId || null,
+    bolao_id: bolaoId || null,
+    source: document.referrer || 'direct',
+  })
 }
 
 // ── Comunidade ───────────────────────────────────────────────
@@ -218,3 +235,8 @@ function esc(s) {
 function stLabel(s) { return {open:'Aberto',active:'Ao Vivo',finished:'Finalizado',cancelled:'Cancelado'}[s] ?? s }
 function stClass(s)  { return {open:'st-open',active:'st-live',finished:'st-done',cancelled:'st-done'}[s] ?? 'st-done' }
 function stDot(s)    { return {open:'dot-open',active:'dot-live',finished:'dot-done',cancelled:'dot-done'}[s] ?? 'dot-done' }
+
+// ── LUCIDE ICONS ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.lucide) lucide.createIcons()
+})

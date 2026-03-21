@@ -4,20 +4,22 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Ranking</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
-.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 12px;text-align:center;gap:6px;box-shadow:var(--shadow);}
-.pod.g1{background:var(--gold-lt);border-color:#FCD34D;}
-.pod.g2{background:#F8FAFC;border-color:#CBD5E1;}
-.pod.g3{background:#FFF7ED;border-color:#FED7AA;}
+.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);padding:16px 12px;text-align:center;gap:6px;box-shadow:var(--shadow);transition:all .2s;}
+.pod:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.pod.g1{background:var(--gold-lt);border-color:#FCD34D;border-top-color:var(--gold);}
+.pod.g2{background:#F8FAFC;border-color:#CBD5E1;border-top-color:#94A3B8;}
+.pod.g3{background:#FFF7ED;border-color:#FED7AA;border-top-color:#C97D34;}
 .pod-av{width:44px;height:44px;border-radius:12px;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--green);}
 .pod-name{font-size:12px;font-weight:700;}
 .pod-pts{font-size:17px;font-weight:800;letter-spacing:-.5px;}
 .rk-table{border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);}
 .rk-head{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:11px 20px;border-bottom:1px solid var(--border);background:var(--bg);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
-.rk-row-full{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:13px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .15s;background:var(--white);}
+.rk-row-full{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:13px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .12s, box-shadow .12s;background:var(--white);}
 .rk-row-full:last-child{border-bottom:none;}
-.rk-row-full:hover{background:var(--bg);}
+.rk-row-full:hover{background:var(--bg);box-shadow:inset 3px 0 0 var(--green);}
 .rk-row-full.you{background:var(--green-lt);}
 @media(max-width:600px){
   .rk-head,.rk-row-full{grid-template-columns:36px 1fr 60px 90px;}
@@ -27,15 +29,17 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item on"><span class="nav-icon">🏆</span>Ranking</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item on"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="userCard" style="display:none">
       <div class="u-av" id="sideAv">?</div>
@@ -45,30 +49,39 @@
 </aside>
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()">✕</div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item on"><span class="nav-icon">🏆</span>Ranking</a>
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item on"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Geral</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="drawerUserCard" style="display:none">
       <div class="u-av" id="drawerAv">?</div>
       <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
     </div>
-    <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
   </div>
 </aside>
 
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
-      <div class="page-title">🏆 Ranking Global</div>
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title">Ranking Global</div>
     </div>
     <div class="topbar-right">
       <a href="#" id="sbLink" target="_blank" class="btn-outline" style="font-size:12px;border-color:rgba(234,88,12,.3);color:var(--sb)">⚡ Sportingbet</a>
       <a href="#" id="supLink" target="_blank" class="btn-outline" style="font-size:12px;border-color:rgba(124,58,237,.3);color:var(--sup)">⚡ Superbet</a>
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
         <div class="top-user-av" id="topUserAv">?</div>
@@ -111,7 +124,7 @@
 
     <!-- CTA -->
     <div class="card card-pad" style="margin-top:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:10px">🏆</div>
+      <div style="font-size:28px;margin-bottom:10px"><i data-lucide="trophy"></i></div>
       <div style="font-size:16px;font-weight:700;margin-bottom:6px">Quer entrar para o ranking?</div>
       <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Crie ou participe de bolões e acumule pontos para subir.</p>
       <a href="index.html" class="btn-full" style="max-width:220px;margin:0 auto;display:flex">Ver Bolões →</a>
@@ -121,11 +134,11 @@
 
 <nav class="bnav">
   <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
-    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
-    <a href="index.html" class="bn-center"><div class="bn-circle">⚽</div></a>
-    <a href="ranking.html" class="bn on"><span class="bn-icon">🏆</span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle"><i data-lucide="plus"></i></div></a>
+    <a href="ranking.html" class="bn on"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
 
@@ -198,6 +211,23 @@ function renderTable(list, myId) {
     </div>`
   }).join('')
 }
+</script>
+<script>
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+carregarNotifBadge()
 </script>
 </body>
 </html>
