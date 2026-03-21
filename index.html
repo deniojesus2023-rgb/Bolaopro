@@ -19,7 +19,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
-  <div class="nav-lbl">Geral</div>
+  <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
   <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
@@ -43,7 +43,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
-  <div class="nav-lbl">Geral</div>
+  <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
   <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
@@ -81,27 +81,43 @@
   </header>
 
   <div class="content">
+    <!-- HERO BANNER -->
+    <div class="hero fade-in">
+      <div class="hero-text">
+        <div class="hero-greeting" id="heroGreeting">Bem-vindo ao BolãoPro</div>
+        <div class="hero-title" id="heroTitle">Seus bolões estão te esperando 🏆</div>
+        <div class="hero-sub" id="heroSub">Participe, crie e dispute com amigos em tempo real.</div>
+      </div>
+      <div class="hero-cta">
+        <button class="hero-btn" onclick="openModal('criar')">+ Criar Bolão</button>
+      </div>
+    </div>
+
     <!-- STATS -->
     <div class="stats-row">
-      <div class="stat-card feat">
+      <div class="stat-card feat fade-in fade-in-1">
         <div class="stat-head"><span class="stat-lbl">Total de Bolões</span><button class="stat-arrow">↗</button></div>
         <div class="stat-num" id="st1">—</div>
         <div class="stat-foot"><span class="stat-badge feat">↑ Ativo</span><span class="stat-foot-lbl">plataforma</span></div>
+        <span class="stat-icon">🏆</span>
       </div>
-      <div class="stat-card">
+      <div class="stat-card fade-in fade-in-2">
         <div class="stat-head"><span class="stat-lbl">Ao Vivo</span><button class="stat-arrow">↗</button></div>
         <div class="stat-num" id="st2">—</div>
         <div class="stat-foot"><span class="stat-badge up">↑</span><span class="stat-foot-lbl">agora</span></div>
+        <span class="stat-icon">🔴</span>
       </div>
-      <div class="stat-card">
+      <div class="stat-card fade-in fade-in-3">
         <div class="stat-head"><span class="stat-lbl">Participantes</span><button class="stat-arrow">↗</button></div>
         <div class="stat-num" id="st3">—</div>
         <div class="stat-foot"><span class="stat-badge up">↑</span><span class="stat-foot-lbl">crescendo</span></div>
+        <span class="stat-icon">👥</span>
       </div>
-      <div class="stat-card">
+      <div class="stat-card fade-in fade-in-4">
         <div class="stat-head"><span class="stat-lbl">Em Prêmios</span><button class="stat-arrow">↗</button></div>
         <div class="stat-num" id="st4">—</div>
         <div class="stat-foot"><span class="stat-badge gray">acumulado</span></div>
+        <span class="stat-icon">💰</span>
       </div>
     </div>
 
@@ -118,7 +134,7 @@
           <button class="fil" onclick="setFil('active',this)">Ao Vivo</button>
           <button class="fil" onclick="setFil('finished',this)">Finalizados</button>
         </div>
-        <div class="card" id="boloesCard">
+        <div class="card" id="boloesCard" style="overflow:visible">
           <div class="empty"><div class="spin spin-lg"></div></div>
         </div>
       </div>
@@ -239,7 +255,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     const p = await getProfile(user.id)
     const n = p?.username ?? user.email?.split('@')[0] ?? '?'
     setEl('topUserName', n); setEl('topUserAv', n.slice(0,2).toUpperCase())
+    // Hero personalizado
+    const hora = new Date().getHours()
+    const saudacao = hora < 12 ? 'Bom dia' : hora < 18 ? 'Boa tarde' : 'Boa noite'
+    const hEl = document.getElementById('heroGreeting')
+    const tEl = document.getElementById('heroTitle')
+    if (hEl) hEl.textContent = `${saudacao}, ${n} 👋`
+    if (tEl) tEl.textContent = 'Seus bolões estão te esperando 🏆'
   }
+  // Hero padrão
+  const _hora = new Date().getHours()
+  const _sau = _hora < 12 ? 'Bom dia' : _hora < 18 ? 'Boa tarde' : 'Boa noite'
+  const _hEl = document.getElementById('heroGreeting')
+  if (_hEl && _hEl.textContent === 'Bem-vindo ao BolãoPro') _hEl.textContent = `${_sau}! Bem-vindo ao BolãoPro`
   loadStats(); loadBoloes(); loadRanking()
   // responsive grid
   if (window.innerWidth <= 1024) {
@@ -267,23 +295,25 @@ async function loadBoloes() {
     document.getElementById('boloesCard').innerHTML = '<div class="empty"><div class="empty-icon">⚽</div><p>Nenhum bolão encontrado</p></div>'
     return
   }
-  document.getElementById('boloesCard').innerHTML = list.map(b => {
+  const gridHtml = '<div class="bolao-grid">' + list.map(b => {
     const cnt  = b.participants?.[0]?.count ?? 0
     const prz  = (b.cota_value??0)*cnt*0.95
-    const init = (b.owner?.username??'A').slice(0,2).toUpperCase()
+    const pct  = b.max_participants ? Math.min(100, Math.round(cnt/(b.max_participants)*100)) : 0
     const dt   = b.data_partida ? fmtDate(b.data_partida) : b.competicao ?? '—'
     return `<a href="bolao.html?id=${b.id}" style="text-decoration:none;color:inherit">
-      <div class="bolao-row">
-        <div class="b-dot ${stDot(b.status)}"></div>
-        <div class="b-info">
-          <div class="b-name">${esc(b.name)}</div>
-          <div class="b-meta">${esc(b.competicao??'')} · ${cnt}/${b.max_participants??'?'} pessoas</div>
+      <div class="bolao-card fade-in">
+        <div class="bolao-card-head">
+          <div class="bolao-card-name">${esc(b.name)}</div>
+          <span class="st ${stClass(b.status)}">${stLabel(b.status)}</span>
         </div>
-        <div class="b-avs"><div class="bav">${init}</div>${cnt>1?`<div class="bav more">+${cnt-1}</div>`:''}</div>
-        <div class="b-prize">${fmtMoney(prz)}</div>
-        <span class="st ${stClass(b.status)}">${stLabel(b.status)}</span>
+        <div class="bolao-card-progress"><div class="bolao-card-bar" style="width:${pct}%"></div></div>
+        <div class="bolao-card-foot">
+          <div class="bolao-card-meta">${esc(b.competicao??'')} · ${cnt}/${b.max_participants??'?'} pessoas</div>
+          <div class="bolao-card-prize">${fmtMoney(prz)}</div>
+        </div>
       </div></a>`
-  }).join('')
+  }).join('') + '</div>'
+  document.getElementById('boloesCard').innerHTML = gridHtml
 }
 
 async function loadRanking() {
