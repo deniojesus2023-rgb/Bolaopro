@@ -36,7 +36,11 @@ async function initAuth(opts = {}) {
     setEl('sideName',  name)
     setEl('sideEmail', user.email ?? '')
     showEl('userCard'); hideEl('sideLogin')
+    // Drawer
+    setEl('drawerAv',   av)
+    setEl('drawerName', name)
     showEl('drawerUserCard'); hideEl('drawerLogin')
+    showEl('drawerLogout')
     // Topbar
     hideEl('topLoginBtn')
     showEl('topUserBtn')
