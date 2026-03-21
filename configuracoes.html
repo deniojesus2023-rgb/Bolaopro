@@ -489,6 +489,9 @@ function setTab(name, btn) {
   document.getElementById('tab-' + name).classList.add('on')
   btn.classList.add('on')
   if (name === 'notificacoes') carregarNotificacoes()
+  if (name === 'preferencias') carregarPreferencias()
+  if (name === 'privacidade') carregarPrivacidade()
+  if (name === 'aparencia') { carregarTema(); carregarReduceMotion() }
 }
 
 // ── PERFIL ───────────────────────────────────────────────────
@@ -823,15 +826,6 @@ function carregarReduceMotion() {
   const el = document.getElementById('anim-reduce_motion')
   if (el) el.checked = val
   document.documentElement.classList.toggle('reduce-motion', val)
-}
-
-// ── EXTENSÃO DO setTab PARA CARREGAR DADOS ────────────────────
-const _origSetTab = setTab
-function setTab(name, btn) {
-  _origSetTab(name, btn)
-  if (name === 'preferencias') carregarPreferencias()
-  if (name === 'privacidade') carregarPrivacidade()
-  if (name === 'aparencia') { carregarTema(); carregarReduceMotion() }
 }
 
 // Carregar tema e reduce motion na inicialização
