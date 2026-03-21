@@ -621,8 +621,8 @@ function usrPagAnterior() { if (usrPage > 0) { usrPage--; carregarUsuarios() } }
 function usrPagProxima() { usrPage++; carregarUsuarios() }
 
 async function verUsuario(id) {
-  const { data: u } = await sb().from('profiles').select('*').eq('id', id).single()
-  if (!u) return
+  const { data: u, error } = await sb().from('profiles').select('*').eq('id', id).single()
+  if (error || !u) return
   showToast(`👤 ${u.username} — ${u.plan} | Bolões: ${u.total_boloes} | Pontos: ${u.total_points}`)
 }
 
@@ -860,8 +860,8 @@ async function enviarNotificacao() {
   } else {
     const uname = document.getElementById('nUsername').value.trim()
     if (!uname) { showToast('Informe o username.'); return }
-    const { data } = await sb().from('profiles').select('id').eq('username', uname).single()
-    if (!data) { showToast('Usuário não encontrado.'); return }
+    const { data, error: errUser } = await sb().from('profiles').select('id').eq('username', uname).single()
+    if (errUser || !data) { showToast('Usuário não encontrado.'); return }
     userIds = [data.id]
   }
 
@@ -964,8 +964,8 @@ async function salvarConfig() {
 async function buscarSuporte() {
   const q = document.getElementById('supSearch').value.trim()
   if (!q) return
-  const { data: u } = await sb().from('profiles').select('*').ilike('username', `%${q}%`).limit(1).single()
-  if (!u) { showToast('Usuário não encontrado.'); return }
+  const { data: u, error: errSupSearch } = await sb().from('profiles').select('*').ilike('username', `%${q}%`).limit(1).single()
+  if (errSupSearch || !u) { showToast('Usuário não encontrado.'); return }
   supUserId = u.id
 
   document.getElementById('supResultado').style.display = 'block'

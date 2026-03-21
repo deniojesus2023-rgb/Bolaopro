@@ -261,7 +261,24 @@ function stLabel(s) { return {open:'Aberto',active:'Ao Vivo',finished:'Finalizad
 function stClass(s)  { return {open:'st-open',active:'st-live',finished:'st-done',cancelled:'st-done'}[s] ?? 'st-done' }
 function stDot(s)    { return {open:'dot-open',active:'dot-live',finished:'dot-done',cancelled:'dot-done'}[s] ?? 'dot-done' }
 
+// ── NOTIF BADGE ──────────────────────────────────────────────
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge && count > 0) {
+    badge.textContent = count > 9 ? '9+' : count
+    badge.style.display = 'flex'
+  }
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+
 // ── LUCIDE ICONS ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons()
+  carregarNotifBadge()
 })

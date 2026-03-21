@@ -723,22 +723,5 @@ function prependPost(post){
   </div>`)
 }
 </script>
-<script>
-async function carregarNotifBadge() {
-  const user = await getUser()
-  if (!user) return
-  const { count } = await sb().from('notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('is_read', false)
-  const badge = document.getElementById('notifBadge')
-  if (badge && count > 0) {
-    badge.textContent = count > 9 ? '9+' : count
-    badge.style.display = 'flex'
-  }
-}
-function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
-carregarNotifBadge()
-</script>
 </body>
 </html>

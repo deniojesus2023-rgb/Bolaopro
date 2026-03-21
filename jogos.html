@@ -206,6 +206,7 @@
 let allJogos = []
 let curComp   = ''
 let curStatus = ''
+let realtimeChannel = null
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await initAuth()
@@ -218,7 +219,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadJogos()
 
   // Realtime: atualiza ao vivo quando placar muda
-  sb().channel('matches_rt')
+  if (realtimeChannel) sb().removeChannel(realtimeChannel)
+  realtimeChannel = sb().channel('matches_rt')
     .on('postgres_changes', {
       event: 'UPDATE', schema: 'public', table: 'matches'
     }, () => loadJogos())
@@ -580,23 +582,6 @@ function renderLineupCol(lineup) {
     ${lineup.coach_name ? `<div class="coach-row">🧑‍💼 ${esc(lineup.coach_name)}</div>` : ''}
   </div>`
 }
-</script>
-<script>
-async function carregarNotifBadge() {
-  const user = await getUser()
-  if (!user) return
-  const { count } = await sb().from('notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('is_read', false)
-  const badge = document.getElementById('notifBadge')
-  if (badge && count > 0) {
-    badge.textContent = count > 9 ? '9+' : count
-    badge.style.display = 'flex'
-  }
-}
-function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
-carregarNotifBadge()
 </script>
 </body>
 </html>
