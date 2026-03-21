@@ -41,7 +41,7 @@ async function initAuth(opts = {}) {
     setEl('drawerName', name)
     showEl('drawerUserCard'); hideEl('drawerLogin')
     showEl('drawerLogout')
-    if (p?.plan === 'admin') { showEl('sideAdmin'); showEl('drawerAdmin') }
+    if (p?.plan === 'admin') { showEl('sideAdmin'); showEl('drawerAdmin'); showEl('topAdminBtn') }
     // Topbar
     hideEl('topLoginBtn')
     showEl('topUserBtn')
