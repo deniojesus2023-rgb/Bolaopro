@@ -19,3 +19,14 @@ create index if not exists idx_participants_prize on public.participants(prize_w
 create index if not exists idx_notifications_user on public.notifications(user_id, is_read);
 create index if not exists idx_matches_status on public.matches(status, match_date);
 create index if not exists idx_affiliate_clicks_user on public.affiliate_clicks(user_id);
+
+-- 4. RLS: permitir usuários autenticados inserirem notificações para outros usuários
+--    (necessário para notificações de like/comentário funcionar no frontend)
+do $$ begin
+  if not exists (
+    select 1 from pg_policies
+    where tablename='notifications' and policyname='notifications_insert'
+  ) then
+    execute 'create policy "notifications_insert" on public.notifications for insert with check (auth.uid() is not null)';
+  end if;
+end $$;

@@ -125,10 +125,33 @@ async function trackAffiliateClick(userId, partner, matchId = null, bolaoId = nu
 
 // ── Comunidade ───────────────────────────────────────────────
 async function getPosts(limit = 20) {
-  const { data } = await sb().from('posts')
-    .select('*, author:profiles!user_id(username)')
+  const { data, error } = await sb().from('posts')
+    .select('*')
     .order('created_at', { ascending: false }).limit(limit)
-  return data ?? []
+  if (error) { console.error('getPosts error:', error); return [] }
+  if (!data || !data.length) return []
+  // Fetch author usernames separately (avoids FK join issues)
+  const userIds = [...new Set(data.map(p => p.user_id).filter(Boolean))]
+  let profileMap = {}
+  if (userIds.length) {
+    const { data: profs } = await sb().from('profiles').select('id,username').in('id', userIds)
+    ;(profs ?? []).forEach(p => { profileMap[p.id] = p })
+  }
+  // Fetch like counts
+  const postIds = data.map(p => p.id)
+  let likeMap = {}, replyMap = {}
+  if (postIds.length) {
+    const { data: lks } = await sb().from('post_likes').select('post_id').in('post_id', postIds)
+    ;(lks ?? []).forEach(l => { likeMap[l.post_id] = (likeMap[l.post_id] ?? 0) + 1 })
+    const { data: rps } = await sb().from('post_replies').select('post_id').in('post_id', postIds)
+    ;(rps ?? []).forEach(r => { replyMap[r.post_id] = (replyMap[r.post_id] ?? 0) + 1 })
+  }
+  return data.map(p => ({
+    ...p,
+    author: profileMap[p.user_id] ?? null,
+    likes_count: likeMap[p.id] ?? 0,
+    replies_count: replyMap[p.id] ?? 0,
+  }))
 }
 
 async function publishPost(userId, content, type, bolaoId) {

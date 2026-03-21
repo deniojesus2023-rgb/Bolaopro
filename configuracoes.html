@@ -660,7 +660,7 @@ async function carregarNotificacoes() {
   }
 
   container.innerHTML = '<div class="notif-list">' + data.map(n => {
-    const icon = n.type === 'prize' ? '<i data-lucide="trophy"></i>' : n.type === 'system' ? '<i data-lucide="settings"></i>' : '<i data-lucide="info"></i>'
+    const icon = n.type === 'prize' ? '<i data-lucide="trophy"></i>' : n.type === 'system' ? '<i data-lucide="settings"></i>' : n.type === 'like' ? '❤️' : n.type === 'reply' ? '💬' : '<i data-lucide="info"></i>'
     const unreadClass = n.is_read ? '' : ' unread'
     return `<div class="notif-item${unreadClass}" id="notif-${n.id}" onclick="marcarLida('${n.id}')">
       <div class="notif-icon">${icon}</div>
