@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Meu Perfil</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .profile-hero{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:28px 24px;display:flex;align-items:center;gap:20px;margin-bottom:20px;}
 .profile-av-big{width:72px;height:72px;border-radius:20px;background:var(--green-lt);border:3px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--green);flex-shrink:0;}
@@ -45,17 +46,17 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="configuracoes.html" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="userCard" style="display:none">
       <div class="u-av" id="sideAv">?</div>
@@ -67,18 +68,18 @@
 <!-- DRAWER -->
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()">✕</div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="configuracoes.html" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
-  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="drawerUserCard" style="display:none">
       <div class="u-av" id="drawerAv">?</div>
@@ -91,13 +92,13 @@
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
-      <div class="page-title">👤 Meu Perfil</div>
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title">Meu Perfil</div>
     </div>
     <div class="topbar-right">
       <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
-        🔔
-        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1"></span>
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
       </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
@@ -116,12 +117,12 @@
         <div class="profile-name" id="heroName">Carregando…</div>
         <div class="profile-email" id="heroEmail"></div>
         <div class="profile-badges">
-          <span class="badge green">⚽ Jogador</span>
+          <span class="badge green"><i data-lucide="users"></i> Jogador</span>
           <span class="badge gold" id="heroPlan">Free</span>
           <span class="badge" id="heroSince"></span>
         </div>
       </div>
-      <button class="btn-outline" onclick="toggleEdit()" id="editToggleBtn" style="flex-shrink:0">✏️ Editar</button>
+      <button class="btn-outline" onclick="toggleEdit()" id="editToggleBtn" style="flex-shrink:0"><i data-lucide="pencil"></i> Editar</button>
     </div>
 
     <!-- MINI STATS -->
@@ -162,19 +163,19 @@
 
         <!-- EDIT FORM (hidden by default) -->
         <div class="edit-section" id="editSection" style="display:none">
-          <div class="edit-head">✏️ Editar Perfil</div>
+          <div class="edit-head"><i data-lucide="pencil"></i> Editar Perfil</div>
           <div class="edit-body">
             <div class="fl"><label>Username</label><input id="eUsername" placeholder="seu_username" maxlength="30"/></div>
             <div class="fl"><label>Nome completo</label><input id="eFullName" placeholder="Seu Nome Completo"/></div>
             <div class="fl"><label>Chave Pix</label><input id="ePixKey" placeholder="CPF, e-mail, telefone ou chave aleatória"/></div>
             <div class="err-box" id="editErr"></div>
-            <button class="btn-full" id="saveBtn" onclick="saveProfile()">💾 Salvar Alterações</button>
+            <button class="btn-full" id="saveBtn" onclick="saveProfile()"><i data-lucide="save"></i> Salvar Alterações</button>
           </div>
         </div>
 
         <!-- RANKING POSITION -->
         <div class="edit-section">
-          <div class="edit-head">🏆 Posição no Ranking</div>
+          <div class="edit-head"><i data-lucide="trophy"></i> Posição no Ranking</div>
           <div class="edit-body" style="text-align:center;padding:24px 20px">
             <div style="font-size:42px;font-weight:800;letter-spacing:-2px;color:var(--gold)" id="rankPos">—</div>
             <div style="font-size:12px;color:var(--muted);margin-top:4px">posição global</div>
@@ -184,10 +185,10 @@
 
         <!-- DANGER ZONE -->
         <div class="edit-section">
-          <div class="edit-head" style="color:var(--red)">⚠️ Conta</div>
+          <div class="edit-head" style="color:var(--red)"><i data-lucide="alert-triangle"></i> Conta</div>
           <div class="edit-body">
             <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Ações irreversíveis relacionadas à sua conta.</p>
-            <button class="btn-full" style="background:var(--red)" onclick="confirmSignOut()">🚪 Sair da Conta</button>
+            <button class="btn-full" style="background:var(--red)" onclick="confirmSignOut()"><i data-lucide="log-out"></i> Sair da Conta</button>
           </div>
         </div>
 
@@ -199,11 +200,11 @@
 <!-- BOTTOM NAV -->
 <nav class="bnav">
   <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
-    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
-    <a href="index.html" class="bn-center"><div class="bn-circle">⚽</div></a>
-    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle"><i data-lucide="plus"></i></div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
 

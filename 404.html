@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Página não encontrada</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 body{display:block;background:var(--bg);}
 .err-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -22,10 +23,11 @@ body{display:block;background:var(--bg);}
     <div class="err-title">Página não encontrada</div>
     <div class="err-sub">O link que você acessou não existe ou foi removido.<br>Que tal voltar para o dashboard?</div>
     <div class="err-links">
-      <a href="index.html" class="btn-full">🏠 Voltar ao Início</a>
-      <a href="meus-boloes.html" class="btn-full" style="background:var(--bg);color:var(--text);border:1px solid var(--border)">⚽ Meus Bolões</a>
+      <a href="index.html" class="btn-full"><i data-lucide="home"></i> Voltar ao Início</a>
+      <a href="meus-boloes.html" class="btn-full" style="background:var(--bg);color:var(--text);border:1px solid var(--border)"><i data-lucide="users"></i> Meus Bolões</a>
     </div>
   </div>
 </div>
+<script>document.addEventListener('DOMContentLoaded',()=>{if(window.lucide)lucide.createIcons()})</script>
 </body>
 </html>

@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Comunidade</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .comm-layout{display:flex;height:calc(100vh - var(--topbar));overflow:hidden;}
 .feed-col{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border);min-width:0;overflow:hidden;}
@@ -163,49 +164,49 @@
 <body>
 
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item on"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item on"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="configuracoes.html" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot"><div class="user-card" id="userCard" style="display:none"><div class="u-av" id="sideAv">?</div><div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div></div></div>
 </aside>
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()">✕</div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item on"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item on"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="configuracoes.html" class="nav-item"><span class="nav-icon">⚙️</span>Configurações</a>
-  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div></div>
 </aside>
 
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
       <div class="page-title">Comunidade</div>
     </div>
     <div class="topbar-right">
-      <div class="icon-btn" onclick="openModal('newDm')" title="Nova mensagem">✉️<span class="bdg" id="unreadBdg" style="display:none">0</span></div>
-      <div class="icon-btn" onclick="openModal('inviteLink')" title="Convite por link">🔗</div>
+      <div class="icon-btn" onclick="openModal('newDm')" title="Nova mensagem"><i data-lucide="mail"></i><span class="bdg" id="unreadBdg" style="display:none">0</span></div>
+      <div class="icon-btn" onclick="openModal('inviteLink')" title="Convite por link"><i data-lucide="link"></i></div>
       <button class="btn-primary" onclick="openModal('newPost')">+ Nova Dica</button>
       <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
-        🔔
-        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1"></span>
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
       </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none"><div class="top-user-av" id="topUserAv">?</div><span style="font-size:12px;font-weight:600" id="topUserName">…</span></a>
@@ -273,7 +274,7 @@
             <div class="conv-head-title">Mensagens</div>
             <div style="display:flex;gap:5px">
               <button class="conv-act green" onclick="openModal('newDm')">+ Nova</button>
-              <button class="conv-act outline" onclick="openModal('inviteLink')" title="Convite por link">🔗</button>
+              <button class="conv-act outline" onclick="openModal('inviteLink')" title="Convite por link"><i data-lucide="link"></i></button>
             </div>
           </div>
           <input class="conv-search" placeholder="Buscar conversa…" oninput="filterConvs(this.value)"/>
@@ -300,11 +301,11 @@
 <!-- BOTTOM NAV -->
 <nav class="bnav">
   <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
-    <a href="comunidade.html" class="bn on"><span class="bn-icon">💬</span>Feed</a>
-    <button class="bn-center" onclick="openModal('newPost')"><div class="bn-circle">+</div></button>
-    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn on"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <button class="bn-center" onclick="openModal('newPost')"><div class="bn-circle"><i data-lucide="plus"></i></div></button>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
 
@@ -312,7 +313,7 @@
 <div class="ovl" id="newPost" onclick="ovlClose(event,'newPost')">
   <div class="modal">
     <div class="modal-drag"></div>
-    <div class="modal-head"><div><div class="modal-title">Nova Publicação</div><div class="modal-sub">Compartilhe com a comunidade</div></div><button class="modal-x" onclick="closeModal('newPost')">✕</button></div>
+    <div class="modal-head"><div><div class="modal-title">Nova Publicação</div><div class="modal-sub">Compartilhe com a comunidade</div></div><button class="modal-x" onclick="closeModal('newPost')"><i data-lucide="x"></i></button></div>
     <div class="modal-body">
       <div class="fl"><label>Tipo</label>
         <select id="mType"><option value="tip">💡 Dica de Aposta</option><option value="general">💬 Geral</option><option value="invite">⚽ Convite para Bolão</option><option value="result">🏆 Resultado</option></select>
@@ -327,7 +328,7 @@
 <div class="ovl" id="newDm" onclick="ovlClose(event,'newDm')">
   <div class="modal">
     <div class="modal-drag"></div>
-    <div class="modal-head"><div><div class="modal-title">Nova Conversa</div><div class="modal-sub">Busque um usuário</div></div><button class="modal-x" onclick="closeModal('newDm')">✕</button></div>
+    <div class="modal-head"><div><div class="modal-title">Nova Conversa</div><div class="modal-sub">Busque um usuário</div></div><button class="modal-x" onclick="closeModal('newDm')"><i data-lucide="x"></i></button></div>
     <div class="modal-body">
       <div class="fl"><label>Buscar usuário</label><input id="dmSearch" placeholder="Digite o nome de usuário…" oninput="searchUsers(this.value)"/></div>
       <div id="userResults" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px"></div>
@@ -339,12 +340,12 @@
 <div class="ovl" id="inviteLink" onclick="ovlClose(event,'inviteLink')">
   <div class="modal">
     <div class="modal-drag"></div>
-    <div class="modal-head"><div><div class="modal-title">Convite por Link</div><div class="modal-sub">Quem clicar poderá conversar com você</div></div><button class="modal-x" onclick="closeModal('inviteLink')">✕</button></div>
+    <div class="modal-head"><div><div class="modal-title">Convite por Link</div><div class="modal-sub">Quem clicar poderá conversar com você</div></div><button class="modal-x" onclick="closeModal('inviteLink')"><i data-lucide="x"></i></button></div>
     <div class="modal-body">
       <p style="font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6">Compartilhe esse link. Quando a pessoa aceitar, vocês poderão conversar em privado.</p>
-      <div class="link-box"><div class="link-val" id="invLinkVal">Gerando…</div><span class="link-copy" onclick="copyInvLink()">📋</span></div>
-      <button class="btn-wpp" onclick="shareInvWpp()">📲 Compartilhar no WhatsApp</button>
-      <button class="btn-full" onclick="copyInvLink()">📋 Copiar Link</button>
+      <div class="link-box"><div class="link-val" id="invLinkVal">Gerando…</div><span class="link-copy" onclick="copyInvLink()"><i data-lucide="clipboard"></i></span></div>
+      <button class="btn-wpp" onclick="shareInvWpp()"><i data-lucide="smartphone"></i> Compartilhar no WhatsApp</button>
+      <button class="btn-full" onclick="copyInvLink()"><i data-lucide="clipboard"></i> Copiar Link</button>
     </div>
   </div>
 </div>
@@ -353,7 +354,7 @@
 <div class="ovl" id="selectBolao" onclick="ovlClose(event,'selectBolao')">
   <div class="modal">
     <div class="modal-drag"></div>
-    <div class="modal-head"><div><div class="modal-title">Chat do Bolão</div><div class="modal-sub">Escolha qual bolão</div></div><button class="modal-x" onclick="closeModal('selectBolao')">✕</button></div>
+    <div class="modal-head"><div><div class="modal-title">Chat do Bolão</div><div class="modal-sub">Escolha qual bolão</div></div><button class="modal-x" onclick="closeModal('selectBolao')"><i data-lucide="x"></i></button></div>
     <div class="modal-body" id="bolaoSelectList"><div class="empty"><div class="spin"></div></div></div>
   </div>
 </div>
