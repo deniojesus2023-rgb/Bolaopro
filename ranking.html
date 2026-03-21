@@ -15,9 +15,9 @@
 .pod-pts{font-size:17px;font-weight:800;letter-spacing:-.5px;}
 .rk-table{border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);}
 .rk-head{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:11px 20px;border-bottom:1px solid var(--border);background:var(--bg);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
-.rk-row-full{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:13px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .15s;background:var(--white);}
+.rk-row-full{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:13px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .12s, box-shadow .12s;background:var(--white);}
 .rk-row-full:last-child{border-bottom:none;}
-.rk-row-full:hover{background:var(--bg);}
+.rk-row-full:hover{background:var(--bg);box-shadow:inset 3px 0 0 var(--green);}
 .rk-row-full.you{background:var(--green-lt);}
 @media(max-width:600px){
   .rk-head,.rk-row-full{grid-template-columns:36px 1fr 60px 90px;}
