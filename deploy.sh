@@ -1,4 +1,7 @@
 #!/bin/bash
+# IMPORTANTE: Configure as variáveis de ambiente antes de executar:
+# export SUPABASE_SERVICE_ROLE_KEY="sua_service_role_key"
+# export SUPABASE_DB_PASSWORD="sua_senha_do_banco"
 # ============================================================
 # BolãoPro — Script de Deploy Completo
 # Execute na sua máquina local com internet
@@ -8,7 +11,7 @@ set -e
 
 PROJECT_REF="nfqvwegyqtwbuvyfbsbe"
 SUPABASE_URL="https://nfqvwegyqtwbuvyfbsbe.supabase.co"
-SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5mcXZ3ZWd5cXR3YnV2eWZic2JlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3Mzg4NTQ1MywiZXhwIjoyMDg5NDYxNDUzfQ.wIhRi2xFrcHMIthzIk_4Yt0YC_jwWkAEa66cg7P5KSQ"
+SERVICE_ROLE_KEY="${SUPABASE_SERVICE_ROLE_KEY}"
 
 YELLOW='\033[1;33m'
 GREEN='\033[0;32m'
@@ -47,7 +50,7 @@ supabase login
 echo ""
 echo -e "${YELLOW}→ Passo 2/4: Vinculando ao projeto${NC}"
 echo "  (quando pedir a senha do banco, é a senha que você definiu no Supabase)"
-supabase link --project-ref "$PROJECT_REF" --password "Arthurcorrea13072022!"
+supabase link --project-ref "$PROJECT_REF" --password "${SUPABASE_DB_PASSWORD}"
 
 # ── EXECUTAR SQL FUNCTIONS ───────────────────────────────────
 echo ""
