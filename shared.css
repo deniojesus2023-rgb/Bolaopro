@@ -4,18 +4,20 @@
 /* Note: Font import is handled by design-system.css */
 
 :root {
-  --green:    #1A6B45; --green2:  #228B57; --green-lt: #E8F5EE; --green-m:  #C6E8D5;
-  --white:    #FFFFFF; --bg:      #F4F5F7; --card:     #FFFFFF; --border:   #EAECF0;
-  --text:     #1A1D23; --muted:   #6B7280; --light:    #9CA3AF;
-  --gold:     #D97706; --gold-lt: #FEF3C7;
-  --red:      #DC2626; --red-lt:  #FEE2E2;
-  --sb:       #EA580C; --sb-lt:   #FFF7ED;
-  --sup:      #7C3AED; --sup-lt:  #F5F3FF;
-  --wpp:      #16A34A;
+  /* ── Identidade Visual BolãoPro ── */
+  --green:    #00DF81; --green2:  #2CC295; --green-lt: rgba(0,223,129,.12); --green-m:  rgba(0,223,129,.25);
+  --white:    #032221; --bg:      #02171A; --card:     #032221; --border:   rgba(3,98,76,.4);
+  --text:     #F1F7F6; --muted:   #AAC8C4; --light:    #707D7D;
+  --gold:     #F59E0B; --gold-lt: rgba(245,158,11,.15);
+  --red:      #F87171; --red-lt:  rgba(248,113,113,.15);
+  --sb:       #EA580C; --sb-lt:   rgba(234,88,12,.15);
+  --sup:      #A78BFA; --sup-lt:  rgba(167,139,250,.15);
+  --wpp:      #00DF81;
   --r:12px; --r-sm:8px; --r-lg:16px; --r-xl:20px;
   --sidebar:220px; --topbar:60px; --bnav:68px;
-  --shadow: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
-  --shadow-md: 0 4px 16px rgba(0,0,0,.08);
+  --shadow: 0 2px 8px rgba(0,0,0,.4), 0 0 0 1px rgba(3,98,76,.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.5);
+  --font-family: 'Inter', sans-serif;
 }
 
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
@@ -191,7 +193,7 @@ input, select, textarea { font-family:inherit; }
 .prize-prev { background:var(--bg); border-radius:var(--r-sm); padding:13px 16px; display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
 .pp-lbl { font-size:12px; color:var(--muted); }
 .pp-val { font-size:20px; font-weight:700; color:var(--gold); letter-spacing:-.5px; }
-.err-box { background:var(--red-lt); border:1px solid #FECACA; border-radius:var(--r-sm); padding:10px 12px; font-size:12px; color:var(--red); margin-bottom:12px; display:none; }
+.err-box { background:var(--red-lt); border:1px solid rgba(248,113,113,.3); border-radius:var(--r-sm); padding:10px 12px; font-size:12px; color:var(--red); margin-bottom:12px; display:none; }
 .btn-full { width:100%; height:46px; border-radius:var(--r-sm); background:linear-gradient(135deg, var(--green) 0%, var(--green2) 100%); color:#fff; font-size:14px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; transition:all .15s; cursor:pointer; border:none; box-shadow:0 2px 8px rgba(0,223,129,.20); }
 .btn-full:hover { background:linear-gradient(135deg, var(--green2) 0%, var(--green) 100%); box-shadow:0 4px 12px rgba(0,223,129,.30); }
 .btn-full:active { transform:scale(.98); }
@@ -202,8 +204,8 @@ input, select, textarea { font-family:inherit; }
 .link-val  { flex:1; font-size:11px; color:var(--green); word-break:break-all; font-family:monospace; }
 .link-copy { font-size:16px; cursor:pointer; color:var(--muted); transition:color .15s; flex-shrink:0; }
 .link-copy:hover { color:var(--green); }
-.btn-wpp { width:100%; height:44px; border-radius:var(--r-sm); background:#DCFCE7; color:var(--wpp); border:1px solid #BBF7D0; font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px; cursor:pointer; transition:background .15s; }
-.btn-wpp:hover { background:#BBFAD4; }
+.btn-wpp { width:100%; height:44px; border-radius:var(--r-sm); background:var(--green-lt); color:var(--green); border:1px solid var(--green-m); font-size:13px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px; cursor:pointer; transition:background .15s; }
+.btn-wpp:hover { background:rgba(0,223,129,.2); }
 
 /* ── BOTTOM NAV ── */
 .bnav { display:none; position:fixed; bottom:0; left:0; right:0; z-index:99; background:var(--bg-secondary,#032221); border-top:1px solid var(--border); height:var(--bnav); padding-bottom:env(safe-area-inset-bottom); }
