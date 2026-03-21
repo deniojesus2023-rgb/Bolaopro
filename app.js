@@ -70,7 +70,8 @@ async function getBolao(id) {
   const { data } = await sb().from('boloes')
     .select(`*, owner:profiles!owner_id(username,avatar_url),
       participants(*, profile:profiles(username)),
-      bolao_matches(match:matches(*))`)
+      bolao_matches(match:matches(*)),
+      predictions(user_id, predicted_result)`)
     .eq('id', id).single()
   return data
 }

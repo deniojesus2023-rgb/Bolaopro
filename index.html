@@ -296,7 +296,7 @@ async function loadBoloes() {
     return
   }
   const gridHtml = '<div class="bolao-grid">' + list.map(b => {
-    const cnt  = b.participants?.[0]?.count ?? 0
+    const cnt  = Number(b.participants?.[0]?.count ?? 0)
     const prz  = (b.cota_value??0)*cnt*0.95
     const pct  = b.max_participants ? Math.min(100, Math.round(cnt/(b.max_participants)*100)) : 0
     const dt   = b.data_partida ? fmtDate(b.data_partida) : b.competicao ?? '—'
@@ -336,9 +336,9 @@ function setFil(f,btn) {
 }
 function buscarBolao(q) {
   const term = q.trim().toLowerCase()
-  const rows = document.getElementById('boloesCard').querySelectorAll('.bolao-row')
+  const rows = document.getElementById('boloesCard').querySelectorAll('.bolao-card')
   rows.forEach(row => {
-    const nameEl = row.querySelector('.b-name')
+    const nameEl = row.querySelector('.bolao-card-name')
     const nome = nameEl ? nameEl.textContent.toLowerCase() : ''
     row.closest('a') ? row.closest('a').style.display = (!term || nome.includes(term)) ? '' : 'none'
                      : row.style.display = (!term || nome.includes(term)) ? '' : 'none'

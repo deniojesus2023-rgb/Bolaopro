@@ -438,20 +438,35 @@ async function pubPost(){
 async function pubPostModal(){
   if(!cUser){closeModal('newPost');location.href='login.html';return}
   const c=document.getElementById('mContent').value.trim(); if(!c){showToast('Digite algo');return}
-  await publishPost(cUser.id,c,document.getElementById('mType').value,null)
-  closeModal('newPost');document.getElementById('mContent').value='';showToast('✓ Publicado!');loadFeed()
+  const ok=await publishPost(cUser.id,c,document.getElementById('mType').value,null)
+  if(ok){closeModal('newPost');document.getElementById('mContent').value='';showToast('✓ Publicado!');await loadFeed()}
+  else showToast('Erro ao publicar')
 }
 async function toggleLike(id,el){
   if(!cUser){showToast('Faça login para curtir');return}
   const sp=el.querySelector('span'),n=parseInt(sp.textContent),liked=el.classList.contains('liked')
+  // Optimistic update
   el.classList.toggle('liked');sp.textContent=liked?n-1:n+1
   if(liked){
-    await sb().from('post_likes').delete().eq('post_id',id).eq('user_id',cUser.id)
+    const{error}=await sb().from('post_likes').delete().eq('post_id',id).eq('user_id',cUser.id)
+    if(error){
+      // Rollback optimistic update
+      el.classList.toggle('liked');sp.textContent=n
+      showToast('Erro ao remover curtida');console.error('Erro ao remover like:',error)
+    }
   } else {
-    await sb().from('post_likes').insert({post_id:id,user_id:cUser.id})
+    const{error}=await sb().from('post_likes').insert({post_id:id,user_id:cUser.id})
+    if(error){
+      // Rollback optimistic update
+      el.classList.toggle('liked');sp.textContent=n
+      showToast('Erro ao curtir');console.error('Erro ao inserir like:',error)
+      return
+    }
     const authorId=document.getElementById(`p_${id}`)?.dataset.author
-    if(authorId && authorId!==cUser.id)
-      sb().from('notifications').insert({user_id:authorId,type:'like',title:`@${cUsername} curtiu seu post`,is_read:false})
+    if(authorId && authorId!==cUser.id){
+      const{error:nErr}=await sb().from('notifications').insert({user_id:authorId,type:'like',title:`@${cUsername} curtiu seu post`,is_read:false})
+      if(nErr) console.error('Erro ao inserir notificação de like:',nErr)
+    }
   }
 }
 async function toggleReplies(id){
@@ -467,8 +482,10 @@ async function pubReply(postId){
   const inp=document.getElementById(`ri_${postId}`),c=inp.value.trim(); if(!c)return
   await sb().from('post_replies').insert({post_id:postId,user_id:cUser.id,content:c})
   const authorId=document.getElementById(`p_${postId}`)?.dataset.author
-  if(authorId && authorId!==cUser.id)
-    sb().from('notifications').insert({user_id:authorId,type:'reply',title:`@${cUsername} comentou no seu post`,body:c.slice(0,100),is_read:false})
+  if(authorId && authorId!==cUser.id){
+    const{error:nErr}=await sb().from('notifications').insert({user_id:authorId,type:'reply',title:`@${cUsername} comentou no seu post`,body:c.slice(0,100),is_read:false})
+    if(nErr) console.error('Erro ao inserir notificação de reply:',nErr)
+  }
   inp.value=''
   const l=document.getElementById(`rl_${postId}`)
   l.insertAdjacentHTML('beforeend',`<div class="reply-row"><div class="reply-av">${(cUser.email??'').slice(0,2).toUpperCase()}</div><div class="reply-bub"><div class="reply-auth">Você</div>${esc(c)}</div></div>`)
