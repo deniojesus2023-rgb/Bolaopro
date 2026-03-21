@@ -21,8 +21,8 @@
 }
 
 *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
-html { -webkit-font-smoothing:antialiased; height:100%; }
-body { font-family:var(--font-family,'Inter',sans-serif); background:var(--bg); color:var(--text); min-height:100vh; display:flex; }
+html { -webkit-font-smoothing:antialiased; height:100%; overflow-x:hidden; }
+body { font-family:var(--font-family,'Inter',sans-serif); background:var(--bg); color:var(--text); min-height:100vh; display:flex; overflow-x:hidden; max-width:100vw; }
 a { text-decoration:none; color:inherit; }
 button { font-family:inherit; cursor:pointer; border:none; background:none; }
 input, select, textarea { font-family:inherit; }
@@ -48,7 +48,7 @@ input, select, textarea { font-family:inherit; }
 .u-email { font-size:10.5px; color:var(--light); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 
 /* ── MAIN ── */
-.main { margin-left:var(--sidebar); flex:1; min-height:100vh; display:flex; flex-direction:column; }
+.main { margin-left:var(--sidebar); flex:1; min-height:100vh; display:flex; flex-direction:column; min-width:0; overflow-x:hidden; }
 
 /* ── TOPBAR ── */
 .topbar { height:var(--topbar); background:rgba(6,13,10,.97); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-bottom:1px solid rgba(0,223,129,.1); display:flex; align-items:center; justify-content:space-between; padding:0 28px; position:sticky; top:0; z-index:40; gap:14px; }
@@ -299,7 +299,7 @@ svg.lucide { display:inline-block; vertical-align:middle; }
 .stat-card { position:relative; overflow:hidden; }
 
 /* ── BOLÃO GRID CARDS ── */
-.bolao-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; padding:14px; }
+.bolao-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr)); gap:12px; padding:14px; }
 .bolao-card { background:rgba(14,30,24,.7); border:1px solid rgba(0,223,129,.1); border-radius:var(--r); padding:14px 16px; cursor:pointer; transition:all .18s; display:flex; flex-direction:column; gap:10px; }
 .bolao-card:hover { border-color:rgba(0,223,129,.3); background:rgba(14,30,24,1); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,.4); }
 .bolao-card-head { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; }
