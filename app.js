@@ -14,8 +14,8 @@ function sb() {
 // ── Auth ─────────────────────────────────────────────────────
 async function getUser() {
   try {
-    const { data: { user } } = await sb().auth.getUser()
-    return user
+    const { data: { session } } = await sb().auth.getSession()
+    return session?.user ?? null
   } catch { return null }
 }
 
