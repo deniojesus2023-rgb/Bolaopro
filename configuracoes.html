@@ -183,6 +183,20 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <!-- ── TAB: PERFIL ── -->
     <div class="cfg-section on" id="tab-perfil">
       <div class="cfg-card">
+        <div class="cfg-card-head"><i data-lucide="user"></i> Foto de Perfil</div>
+        <div class="cfg-card-body" style="display:flex;align-items:center;gap:20px;">
+          <div id="cfgAvDiv" onclick="document.getElementById('cfgAvatarInput').click()" style="width:72px;height:72px;border-radius:20px;background:var(--green-lt);border:3px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:var(--green);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden;">
+            <div style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;flex-direction:column;" class="cfgAvHover"><i data-lucide="camera"></i></div>
+          </div>
+          <input type="file" id="cfgAvatarInput" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadAvatarCfg(this)"/>
+          <div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">Foto do perfil</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px">JPG, PNG ou WebP. Máximo 2MB.</div>
+            <button class="btn-outline" style="height:32px;font-size:12px;padding:0 14px" onclick="document.getElementById('cfgAvatarInput').click()"><i data-lucide="upload"></i> Trocar foto</button>
+          </div>
+        </div>
+      </div>
+      <div class="cfg-card">
         <div class="cfg-card-head"><i data-lucide="user"></i> Dados do Perfil</div>
         <div class="cfg-card-body">
           <div class="fl"><label>Nome completo</label><input id="pFullName" placeholder="Seu Nome Completo"/></div>
@@ -470,6 +484,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     const name = p.username ?? currentUser.email?.split('@')[0] ?? '?'
     setEl('topUserName', name)
     setEl('topUserAv', name.slice(0,2).toUpperCase())
+    // Avatar preview
+    const avDiv = document.getElementById('cfgAvDiv')
+    if (avDiv) {
+      if (p.avatar_url) {
+        avDiv.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:17px;" alt="${esc(name)}"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+      } else {
+        avDiv.innerHTML = name.slice(0,2).toUpperCase() + `<div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+      }
+      avDiv.onmouseenter = () => avDiv.querySelector('.cfgAvHover').style.opacity = '1'
+      avDiv.onmouseleave = () => avDiv.querySelector('.cfgAvHover').style.opacity = '0'
+    }
   }
 
   // Verificar hash da URL para tab de notificações
@@ -492,6 +517,33 @@ function setTab(name, btn) {
   if (name === 'preferencias') carregarPreferencias()
   if (name === 'privacidade') carregarPrivacidade()
   if (name === 'aparencia') { carregarTema(); carregarReduceMotion() }
+}
+
+// ── AVATAR UPLOAD ────────────────────────────────────────────
+async function uploadAvatarCfg(input) {
+  const file = input.files?.[0]
+  if (!file) return
+  if (file.size > 2097152) { showToast('Foto muito grande. Máximo 2MB.'); return }
+
+  showToast('Enviando foto…')
+  const ext  = file.name.split('.').pop()
+  const path = `${currentUser.id}/avatar.${ext}`
+
+  const { error: upErr } = await sb().storage.from('avatars').upload(path, file, { upsert: true })
+  if (upErr) { showToast('Erro ao enviar: ' + upErr.message); return }
+
+  const { data: { publicUrl } } = sb().storage.from('avatars').getPublicUrl(path)
+  const avatarUrl = publicUrl + '?t=' + Date.now()
+
+  const { error: dbErr } = await sb().from('profiles').update({ avatar_url: avatarUrl }).eq('id', currentUser.id)
+  if (dbErr) { showToast('Foto enviada, mas erro ao salvar: ' + dbErr.message); return }
+
+  showToast('Foto atualizada!')
+  const avDiv = document.getElementById('cfgAvDiv')
+  if (avDiv) {
+    avDiv.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:17px;"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+  }
+  input.value = ''
 }
 
 // ── PERFIL ───────────────────────────────────────────────────

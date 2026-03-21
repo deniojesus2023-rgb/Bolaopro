@@ -246,9 +246,23 @@
         <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Pagamentos Pendentes</span></div><div class="stat-num" id="fPendentes">—</div></div>
         <div class="stat-card"><div class="stat-head"><span class="stat-lbl">Confirmados</span></div><div class="stat-num" id="fConfirmados">—</div></div>
       </div>
+      <!-- PREMIAÇÕES A PAGAR -->
+      <div class="cfg-card" style="border-top-color:#F59E0B">
+        <div class="cfg-card-head" style="color:#D97706">
+          🏆 Premiações a Pagar via Pix
+          <button class="act-btn grn" onclick="carregarPremiacoes()">↻ Atualizar</button>
+        </div>
+        <div class="table-wrap">
+          <table class="adm-table">
+            <thead><tr><th>Ganhador</th><th>Bolão</th><th>Prêmio</th><th>Chave Pix</th><th>Status</th><th>Ação</th></tr></thead>
+            <tbody id="premiacoesTbody"><tr><td colspan="6" class="empty">Carregando…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <!-- PAGAMENTOS -->
       <div class="cfg-card">
         <div class="cfg-card-head">
-          💳 Pagamentos
+          💳 Pagamentos de Entrada
           <div class="filters" style="margin-bottom:0">
             <button class="fil on" onclick="filtrarPagamentos('',this)">Todos</button>
             <button class="fil" onclick="filtrarPagamentos('pending',this)">Pendentes</button>
@@ -505,7 +519,7 @@ const tabLoaders = {
   usuarios: () => carregarUsuarios(),
   boloes: () => carregarBoloes(''),
   jogos: () => carregarJogos(''),
-  financeiro: () => { carregarFinanceiroStats(); carregarPagamentos('') },
+  financeiro: () => { carregarFinanceiroStats(); carregarPremiacoes(); carregarPagamentos('') },
   moderacao: () => { carregarPosts(); carregarBanidos() },
   notificacoes: () => carregarNotifHistorico(),
   afiliados: carregarAfiliados,
@@ -738,6 +752,48 @@ async function carregarPagamentos(filtro) {
 }
 
 function filtrarPagamentos(filtro, el) { setFil('pagamentos', el); carregarPagamentos(filtro) }
+
+async function carregarPremiacoes() {
+  const tbody = document.getElementById('premiacoesTbody')
+  if (!tbody) return
+  tbody.innerHTML = `<tr><td colspan="6" class="empty">Carregando…</td></tr>`
+  const { data, error } = await sb().from('prize_payouts_pending').select('*')
+  if (error || !data?.length) {
+    tbody.innerHTML = `<tr><td colspan="6" class="empty" style="color:var(--green)">✅ Nenhuma premiação pendente.</td></tr>`
+    return
+  }
+  tbody.innerHTML = data.map(r => `<tr>
+    <td><div style="display:flex;align-items:center;gap:8px;">
+      <div class="adm-av">${(r.username??'?').slice(0,2).toUpperCase()}</div>
+      <div><div style="font-weight:600">@${esc(r.username??'—')}</div>
+      <div style="font-size:11px;color:var(--muted)">${esc(r.full_name??'')}</div></div>
+    </div></td>
+    <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(r.bolao_name??'')}">${esc(r.bolao_name??'—')}</td>
+    <td style="font-weight:700;color:var(--green);font-size:15px">${fmtBRL(r.prize_won)}</td>
+    <td><div style="display:flex;align-items:center;gap:6px;">
+      <code style="font-size:12px;background:var(--bg);padding:3px 8px;border-radius:4px;border:1px solid var(--border)">${esc(r.pix_key??'—')}</code>
+      ${r.pix_key ? `<button class="act-btn" onclick="navigator.clipboard.writeText('${esc(r.pix_key??'')}').then(()=>showToast('Chave Pix copiada!'))">📋</button>` : ''}
+    </div></td>
+    <td>${r.prize_paid ? '<span class="pill pill-confirmed">✅ Pago</span>' : '<span class="pill pill-pending">⏳ Pendente</span>'}</td>
+    <td>${r.prize_paid
+      ? `<span style="font-size:11px;color:var(--muted)">${fmtDateTime(r.prize_paid_at)}</span>`
+      : `<button class="act-btn grn" onclick="marcarPremiacaoPaga('${r.participant_id}', this)">💸 Marcar como Pago</button>`
+    }</td>
+  </tr>`).join('')
+}
+
+async function marcarPremiacaoPaga(participantId, btn) {
+  if (!confirm('Confirmar que o Pix foi enviado para o ganhador?')) return
+  btn.disabled = true; btn.textContent = 'Processando…'
+  const { error } = await sb().rpc('admin_mark_prize_paid', {
+    p_participant_id: participantId,
+    p_admin_id: currentUser.id
+  })
+  if (error) { showToast('Erro: ' + error.message); btn.disabled = false; btn.textContent = '💸 Marcar como Pago'; return }
+  showToast('✅ Premiação marcada como paga! Ganhador foi notificado.')
+  carregarPremiacoes()
+  carregarFinanceiroStats()
+}
 
 // ── MODERAÇÃO ────────────────────────────────────────────────────
 async function carregarPosts() {
