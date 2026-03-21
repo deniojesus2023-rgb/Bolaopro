@@ -14,7 +14,8 @@
 .cfg-section{display:none;}
 .cfg-section.on{display:block;}
 
-.cfg-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;}
+.cfg-card{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;margin-bottom:20px;transition:box-shadow .2s;}
+.cfg-card:hover{box-shadow:var(--shadow-md);}
 .cfg-card-head{padding:16px 20px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;}
 .cfg-card-body{padding:20px;}
 

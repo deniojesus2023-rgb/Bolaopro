@@ -5,8 +5,10 @@
 <title>BolãoPro — Jogos</title>
 <link rel="stylesheet" href="shared.css"/>
 <style>
-.jogo-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);transition:all .2s;}
+.jogo-card{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);transition:all .2s;}
 .jogo-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.jogo-card:has(.live-badge){border-top-color:var(--red);}
+.jogo-card:has(.st-done){border-top-color:var(--light);}
 .jogo-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .comp-tag{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);background:var(--bg);padding:3px 8px;border-radius:6px;text-transform:uppercase;}
 .jogo-dt{font-size:11px;color:var(--muted);}

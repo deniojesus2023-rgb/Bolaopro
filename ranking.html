@@ -6,10 +6,11 @@
 <link rel="stylesheet" href="shared.css"/>
 <style>
 .podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
-.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 12px;text-align:center;gap:6px;box-shadow:var(--shadow);}
-.pod.g1{background:var(--gold-lt);border-color:#FCD34D;}
-.pod.g2{background:#F8FAFC;border-color:#CBD5E1;}
-.pod.g3{background:#FFF7ED;border-color:#FED7AA;}
+.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);padding:16px 12px;text-align:center;gap:6px;box-shadow:var(--shadow);transition:all .2s;}
+.pod:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.pod.g1{background:var(--gold-lt);border-color:#FCD34D;border-top-color:var(--gold);}
+.pod.g2{background:#F8FAFC;border-color:#CBD5E1;border-top-color:#94A3B8;}
+.pod.g3{background:#FFF7ED;border-color:#FED7AA;border-top-color:#C97D34;}
 .pod-av{width:44px;height:44px;border-radius:12px;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--green);}
 .pod-name{font-size:12px;font-weight:700;}
 .pod-pts{font-size:17px;font-weight:800;letter-spacing:-.5px;}
