@@ -235,3 +235,8 @@ function esc(s) {
 function stLabel(s) { return {open:'Aberto',active:'Ao Vivo',finished:'Finalizado',cancelled:'Cancelado'}[s] ?? s }
 function stClass(s)  { return {open:'st-open',active:'st-live',finished:'st-done',cancelled:'st-done'}[s] ?? 'st-done' }
 function stDot(s)    { return {open:'dot-open',active:'dot-live',finished:'dot-done',cancelled:'dot-done'}[s] ?? 'dot-done' }
+
+// ── LUCIDE ICONS ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.lucide) lucide.createIcons()
+})

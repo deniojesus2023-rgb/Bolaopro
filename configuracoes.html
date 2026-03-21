@@ -4,6 +4,7 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Configurações</title>
 <link rel="stylesheet" href="shared.css"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .cfg-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--white);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
 .cfg-tabs::-webkit-scrollbar{display:none;}
@@ -85,23 +86,36 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
 .info-modal h2{font-size:18px;font-weight:700;margin-bottom:16px;}
 .info-modal p{font-size:13px;color:var(--muted);line-height:1.8;margin-bottom:12px;}
 .info-modal-close{width:100%;height:40px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:13px;font-weight:600;margin-top:8px;cursor:pointer;border:none;font-family:'Inter',sans-serif;}
+
+/* Mobile tabs */
+@media (max-width: 768px) {
+  .cfg-tab { padding: 10px 14px; font-size: 12px; }
+  .cfg-tabs { padding: 0; }
+  .cfg-card-head { padding: 14px 16px; font-size: 13px; }
+  .cfg-card-body { padding: 16px; }
+  .danger-card .cfg-card-body { padding: 16px; }
+  .theme-btn { padding: 9px 14px; font-size: 12px; }
+}
+@media (max-width: 400px) {
+  .cfg-tab { padding: 10px 10px; font-size: 11px; }
+}
 </style>
 </head>
 <body>
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="configuracoes.html" class="nav-item on"><span class="nav-icon">⚙️</span>Configurações</a>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="userCard" style="display:none">
       <div class="u-av" id="sideAv">?</div>
@@ -113,18 +127,18 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
 <!-- DRAWER -->
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()">✕</div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark">⚽</div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon">📊</span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon">💬</span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon">⚽</span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon">🏆</span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon">📅</span>Jogos</a>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
   <div class="nav-lbl">Geral</div>
-  <a href="configuracoes.html" class="nav-item on"><span class="nav-icon">⚙️</span>Configurações</a>
-  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon">🔑</span>Entrar</a>
-  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon">🚪</span>Sair</a>
+  <a href="configuracoes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
   <div class="sidebar-bot">
     <div class="user-card" id="drawerUserCard" style="display:none">
       <div class="u-av" id="drawerAv">?</div>
@@ -137,13 +151,13 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
 <div class="main">
   <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()">☰</button>
-      <div class="page-title">⚙️ Configurações</div>
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title">Configurações</div>
     </div>
     <div class="topbar-right">
       <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
-        🔔
-        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1"></span>
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
       </button>
       <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
       <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
@@ -155,13 +169,13 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
 
   <!-- TABS -->
   <div class="cfg-tabs" id="cfgTabs">
-    <button class="cfg-tab on" onclick="setTab('perfil',this)">👤 Perfil</button>
-    <button class="cfg-tab" onclick="setTab('conta',this)">🔐 Conta</button>
-    <button class="cfg-tab" id="notifTab" onclick="setTab('notificacoes',this)">🔔 Notificações</button>
-    <button class="cfg-tab" onclick="setTab('preferencias',this)">🎛️ Preferências</button>
-    <button class="cfg-tab" onclick="setTab('privacidade',this)">🔒 Privacidade</button>
-    <button class="cfg-tab" onclick="setTab('aparencia',this)">🎨 Aparência</button>
-    <button class="cfg-tab" onclick="setTab('sobre',this)">ℹ️ Sobre</button>
+    <button class="cfg-tab on" onclick="setTab('perfil',this)"><i data-lucide="user"></i> Perfil</button>
+    <button class="cfg-tab" onclick="setTab('conta',this)"><i data-lucide="lock"></i> Conta</button>
+    <button class="cfg-tab" id="notifTab" onclick="setTab('notificacoes',this)"><i data-lucide="bell"></i> Notif.</button>
+    <button class="cfg-tab" onclick="setTab('preferencias',this)"><i data-lucide="sliders"></i> Prefs.</button>
+    <button class="cfg-tab" onclick="setTab('privacidade',this)"><i data-lucide="shield"></i> Privac.</button>
+    <button class="cfg-tab" onclick="setTab('aparencia',this)"><i data-lucide="palette"></i> Aparência</button>
+    <button class="cfg-tab" onclick="setTab('sobre',this)"><i data-lucide="info"></i> Sobre</button>
   </div>
 
   <div class="content">
@@ -169,7 +183,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <!-- ── TAB: PERFIL ── -->
     <div class="cfg-section on" id="tab-perfil">
       <div class="cfg-card">
-        <div class="cfg-card-head">👤 Dados do Perfil</div>
+        <div class="cfg-card-head"><i data-lucide="user"></i> Dados do Perfil</div>
         <div class="cfg-card-body">
           <div class="fl"><label>Nome completo</label><input id="pFullName" placeholder="Seu Nome Completo"/></div>
           <div class="fl">
@@ -179,7 +193,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
           <div class="fl"><label>Chave Pix</label><input id="pPixKey" placeholder="CPF, e-mail, telefone ou chave aleatória"/></div>
           <div class="fl"><label>Telefone</label><input id="pPhone" placeholder="(11) 99999-9999" type="tel"/></div>
           <div class="err-box" id="perfilErr"></div>
-          <button class="btn-full" id="salvarPerfilBtn" onclick="salvarPerfil()">💾 Salvar Perfil</button>
+          <button class="btn-full" id="salvarPerfilBtn" onclick="salvarPerfil()"><i data-lucide="save"></i> Salvar Perfil</button>
         </div>
       </div>
     </div>
@@ -188,7 +202,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <div class="cfg-section" id="tab-conta">
 
       <div class="cfg-card">
-        <div class="cfg-card-head">🔒 Alterar Senha</div>
+        <div class="cfg-card-head"><i data-lucide="lock"></i> Alterar Senha</div>
         <div class="cfg-card-body">
           <div class="fl">
             <label>Senha atual</label>
@@ -203,17 +217,17 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
             <input id="cConfirmaSenha" type="password" placeholder="Repita a nova senha"/>
           </div>
           <div class="err-box" id="senhaErr"></div>
-          <button class="btn-full" id="alterarSenhaBtn" onclick="alterarSenha()">🔑 Alterar Senha</button>
+          <button class="btn-full" id="alterarSenhaBtn" onclick="alterarSenha()"><i data-lucide="lock"></i> Alterar Senha</button>
         </div>
       </div>
 
       <div class="danger-card">
-        <div class="cfg-card-head">⚠️ Zona de Perigo</div>
+        <div class="cfg-card-head"><i data-lucide="alert-triangle"></i> Zona de Perigo</div>
         <div class="cfg-card-body">
           <p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">Ações irreversíveis ou de alto impacto relacionadas à sua conta. Prossiga com cuidado.</p>
-          <button class="btn-danger" onclick="sairTodosDispositivos()">🚪 Sair de Todos os Dispositivos</button>
+          <button class="btn-danger" onclick="sairTodosDispositivos()"><i data-lucide="log-out"></i> Sair de Todos os Dispositivos</button>
           <div title="Entre em contato com o suporte">
-            <button class="btn-danger-outline" disabled>🗑️ Excluir minha Conta</button>
+            <button class="btn-danger-outline" disabled><i data-lucide="trash-2"></i> Excluir minha Conta</button>
           </div>
           <p style="font-size:11px;color:var(--light);margin-top:8px;text-align:center">Para excluir sua conta, entre em contato: suporte@bolaopro.com</p>
         </div>
@@ -225,7 +239,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <div class="cfg-section" id="tab-notificacoes">
       <div class="cfg-card" style="margin-bottom:0">
         <div class="cfg-card-head" style="justify-content:space-between">
-          <span>🔔 Notificações</span>
+          <span><i data-lucide="bell"></i> Notificações</span>
           <button class="btn-outline" style="height:30px;font-size:12px;padding:0 12px" onclick="marcarTodasLidas()">✓ Marcar todas como lidas</button>
         </div>
         <div id="notifListContainer">
@@ -237,7 +251,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <!-- ── TAB: PREFERÊNCIAS ── -->
     <div class="cfg-section" id="tab-preferencias">
       <div class="cfg-card">
-        <div class="cfg-card-head">🎛️ Preferências de Notificação</div>
+        <div class="cfg-card-head"><i data-lucide="sliders"></i> Preferências de Notificação</div>
         <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
           <div class="toggle-row">
             <div class="toggle-info">
@@ -296,7 +310,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <!-- ── TAB: PRIVACIDADE ── -->
     <div class="cfg-section" id="tab-privacidade">
       <div class="cfg-card">
-        <div class="cfg-card-head">🔒 Visibilidade do Perfil</div>
+        <div class="cfg-card-head"><i data-lucide="shield"></i> Visibilidade do Perfil</div>
         <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
           <div class="toggle-row">
             <div class="toggle-info">
@@ -332,7 +346,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
       </div>
       <div class="cfg-card" style="border-color:var(--green-lt,#D1FAE5);">
         <div class="cfg-card-body" style="display:flex;align-items:flex-start;gap:12px;">
-          <span style="font-size:20px;flex-shrink:0;">🛡️</span>
+          <span style="font-size:20px;flex-shrink:0;"><i data-lucide="shield"></i></span>
           <p style="font-size:12px;color:var(--muted);line-height:1.7;margin:0;">Seus dados pessoais (e-mail, Pix) <strong>nunca são exibidos publicamente</strong>. Apenas o nome de exibição e o username podem ser vistos por outros usuários, conforme as configurações acima.</p>
         </div>
       </div>
@@ -341,17 +355,17 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <!-- ── TAB: APARÊNCIA ── -->
     <div class="cfg-section" id="tab-aparencia">
       <div class="cfg-card">
-        <div class="cfg-card-head">🎨 Tema</div>
+        <div class="cfg-card-head"><i data-lucide="palette"></i> Tema</div>
         <div class="cfg-card-body">
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="theme-btn" id="theme-light" onclick="setTheme('light')">☀️ Claro</button>
-            <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')">🌙 Escuro</button>
-            <button class="theme-btn" id="theme-auto" onclick="setTheme('auto')">🖥️ Automático</button>
+            <button class="theme-btn" id="theme-light" onclick="setTheme('light')"><i data-lucide="sun"></i> Claro</button>
+            <button class="theme-btn" id="theme-dark" onclick="setTheme('dark')"><i data-lucide="moon"></i> Escuro</button>
+            <button class="theme-btn" id="theme-auto" onclick="setTheme('auto')"><i data-lucide="monitor"></i> Automático</button>
           </div>
         </div>
       </div>
       <div class="cfg-card">
-        <div class="cfg-card-head">🌐 Idioma</div>
+        <div class="cfg-card-head"><i data-lucide="globe"></i> Idioma</div>
         <div class="cfg-card-body">
           <div class="fl" style="margin-bottom:0;">
             <label style="margin-bottom:6px;">Idioma do aplicativo</label>
@@ -363,7 +377,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
         </div>
       </div>
       <div class="cfg-card">
-        <div class="cfg-card-head">✨ Animações</div>
+        <div class="cfg-card-head"><i data-lucide="sparkles"></i> Animações</div>
         <div class="cfg-card-body" style="padding-top:4px;padding-bottom:4px;">
           <div class="toggle-row" style="border-bottom:none;">
             <div class="toggle-info">
@@ -382,7 +396,7 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
     <!-- ── TAB: SOBRE ── -->
     <div class="cfg-section" id="tab-sobre">
       <div class="cfg-card">
-        <div class="cfg-card-head">ℹ️ Sobre o BolãoPro</div>
+        <div class="cfg-card-head"><i data-lucide="info"></i> Sobre o BolãoPro</div>
         <div class="cfg-card-body">
           <div class="about-row">
             <span class="about-lbl">Versão</span>
@@ -414,11 +428,11 @@ html.reduce-motion *{transition:none!important;animation:none!important;}
 <!-- BOTTOM NAV -->
 <nav class="bnav">
   <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon">🏠</span>Início</a>
-    <a href="comunidade.html" class="bn"><span class="bn-icon">💬</span>Feed</a>
-    <a href="index.html" class="bn-center"><div class="bn-circle">⚽</div></a>
-    <a href="ranking.html" class="bn"><span class="bn-icon">🏆</span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon">☰</span>Menu</button>
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <a href="index.html" class="bn-center"><div class="bn-circle"><i data-lucide="plus"></i></div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
 
@@ -465,6 +479,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   carregarNotifBadge()
+  if (window.lucide) lucide.createIcons()
 })
 
 // ── TABS ────────────────────────────────────────────────────
@@ -505,7 +520,7 @@ async function salvarPerfil() {
     updated_at: new Date().toISOString()
   }).eq('id', currentUser.id)
 
-  btn.textContent = '💾 Salvar Perfil'; btn.disabled = false
+  btn.innerHTML = '<i data-lucide="save"></i> Salvar Perfil'; btn.disabled = false; if (window.lucide) lucide.createIcons()
 
   if (error) {
     err.textContent = error.code === '23505' ? 'Este username já está em uso.' : error.message
@@ -545,7 +560,7 @@ async function alterarSenha() {
 
   const { error } = await sb().auth.updateUser({ password: novaSenha })
 
-  btn.textContent = '🔑 Alterar Senha'; btn.disabled = false
+  btn.innerHTML = '<i data-lucide="lock"></i> Alterar Senha'; btn.disabled = false; if (window.lucide) lucide.createIcons()
 
   if (error) {
     err.textContent = error.message; err.style.display = 'block'; return
@@ -580,12 +595,13 @@ async function carregarNotificacoes() {
     .limit(50)
 
   if (error || !data || !data.length) {
-    container.innerHTML = '<div class="empty"><div class="empty-icon">🔔</div><p>Nenhuma notificação ainda</p></div>'
+    container.innerHTML = '<div class="empty"><div class="empty-icon"><i data-lucide="bell"></i></div><p>Nenhuma notificação ainda</p></div>'
+    if (window.lucide) lucide.createIcons()
     return
   }
 
   container.innerHTML = '<div class="notif-list">' + data.map(n => {
-    const icon = n.type === 'prize' ? '🏆' : n.type === 'system' ? '⚙️' : 'ℹ️'
+    const icon = n.type === 'prize' ? '<i data-lucide="trophy"></i>' : n.type === 'system' ? '<i data-lucide="settings"></i>' : '<i data-lucide="info"></i>'
     const unreadClass = n.is_read ? '' : ' unread'
     return `<div class="notif-item${unreadClass}" id="notif-${n.id}" onclick="marcarLida('${n.id}')">
       <div class="notif-icon">${icon}</div>
@@ -599,6 +615,7 @@ async function carregarNotificacoes() {
       </div>
     </div>`
   }).join('') + '</div>'
+  if (window.lucide) lucide.createIcons()
 }
 
 async function marcarLida(notifId) {
