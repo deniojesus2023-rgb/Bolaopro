@@ -97,7 +97,7 @@ select
   pa.total_points,
   pa.prize_paid,
   pa.prize_paid_at,
-  b.finished_at
+  b.updated_at as finished_at
 from public.participants pa
 join public.boloes b on b.id = pa.bolao_id
 join public.profiles pr on pr.id = pa.user_id
