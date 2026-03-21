@@ -507,7 +507,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     setTab('notificacoes', tabBtn)
   }
 
-  carregarNotifBadge()
   if (window.lucide) lucide.createIcons()
 })
 
@@ -729,19 +728,6 @@ async function atualizarBadge() {
     } else {
       badge.style.display = 'none'
     }
-  }
-}
-
-async function carregarNotifBadge() {
-  if (!currentUser) return
-  const { count } = await sb().from('notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', currentUser.id)
-    .eq('is_read', false)
-  const badge = document.getElementById('notifBadge')
-  if (badge && count > 0) {
-    badge.textContent = count > 9 ? '9+' : count
-    badge.style.display = 'flex'
   }
 }
 
