@@ -498,7 +498,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const avDiv = document.getElementById('cfgAvDiv')
     if (avDiv) {
       if (p.avatar_url) {
-        avDiv.innerHTML = `<img src="${p.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:17px;" alt="${esc(name)}"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+        avDiv.innerHTML = `<img src="${p.avatar_url}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:17px;" alt="${esc(name)}"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
       } else {
         avDiv.innerHTML = name.slice(0,2).toUpperCase() + `<div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
       }
@@ -550,7 +550,7 @@ async function uploadAvatarCfg(input) {
   showToast('Foto atualizada!')
   const avDiv = document.getElementById('cfgAvDiv')
   if (avDiv) {
-    avDiv.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:17px;"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
+    avDiv.innerHTML = `<img src="${avatarUrl}" loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:17px;"/><div class="cfgAvHover" style="position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:17px;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;color:#fff;font-size:11px;font-weight:600;"><i data-lucide="camera"></i></div>`
   }
   input.value = ''
 }

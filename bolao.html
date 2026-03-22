@@ -184,8 +184,8 @@ function renderPage() {
   const match  = b.bolao_matches?.[0]?.match
   const home   = match?.home_team ?? b.time_casa ?? 'Time A'
   const away   = match?.away_team ?? b.time_fora ?? 'Time B'
-  const homeLg = match?.home_team_logo ? `<img src="${match.home_team_logo}" style="width:32px;height:32px;object-fit:contain">` : '⚽'
-  const awayLg = match?.away_team_logo ? `<img src="${match.away_team_logo}" style="width:32px;height:32px;object-fit:contain">` : '⚽'
+  const homeLg = match?.home_team_logo ? `<img src="${match.home_team_logo}" loading="lazy" style="width:32px;height:32px;object-fit:contain">` : '⚽'
+  const awayLg = match?.away_team_logo ? `<img src="${match.away_team_logo}" loading="lazy" style="width:32px;height:32px;object-fit:contain">` : '⚽'
   const comp   = match?.round_name ?? b.competicao ?? ''
   const dt     = match?.match_date ? fmtDate(match.match_date) : '—'
   const link   = `${location.origin}${location.pathname}?id=${b.id}`

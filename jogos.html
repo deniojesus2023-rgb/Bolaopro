@@ -307,10 +307,10 @@ function jogoCardHtml(j) {
   const uid    = j.id.slice(0, 8)
 
   const homeLg = j.home_team_logo
-    ? `<img src="${j.home_team_logo}" alt="${esc(j.home_team)}">`
+    ? `<img src="${j.home_team_logo}" alt="${esc(j.home_team)}" loading="lazy">`
     : `<span>${esc(j.home_team.slice(0,3).toUpperCase())}</span>`
   const awayLg = j.away_team_logo
-    ? `<img src="${j.away_team_logo}" alt="${esc(j.away_team)}">`
+    ? `<img src="${j.away_team_logo}" alt="${esc(j.away_team)}" loading="lazy">`
     : `<span>${esc(j.away_team.slice(0,3).toUpperCase())}</span>`
 
   // Placar principal
