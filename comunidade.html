@@ -495,7 +495,7 @@ async function pubReply(postId){
   }
   inp.value=''
   const l=document.getElementById(`rl_${postId}`)
-  l.insertAdjacentHTML('beforeend',`<div class="reply-row"><div class="reply-av">${(cUser.email??'').slice(0,2).toUpperCase()}</div><div class="reply-bub"><div class="reply-auth">Você</div>${esc(c)}</div></div>`)
+  l.insertAdjacentHTML('beforeend',`<div class="reply-row"><div class="reply-av">${(cUsername??cUser.email??'?').slice(0,2).toUpperCase()}</div><div class="reply-bub"><div class="reply-auth">Você</div>${esc(c)}</div></div>`)
   const p=document.getElementById(`p_${postId}`)?.querySelectorAll('.pact')[1]?.querySelector('span')
   if(p)p.textContent=parseInt(p.textContent)+1
 }
@@ -554,11 +554,22 @@ function dmMsgHtml(m){
   }
   return`<div class="dm-msg ${isMe?'mine':''}"><div class="dm-bub">${esc(m.content)}</div><div class="dm-time">${time}</div></div>`
 }
-function appendDmMsg(msg){const el=document.getElementById('dmMsgs');el.insertAdjacentHTML('beforeend',dmMsgHtml(msg));el.scrollTop=el.scrollHeight}
+function appendDmMsg(msg){
+  const el=document.getElementById('dmMsgs')
+  // Evita duplicata: ignora realtime se mensagem própria já foi adicionada otimisticamente
+  if(!msg._optimistic && msg.sender_id===cUser?.id){
+    const last=el.lastElementChild
+    if(last&&last.classList.contains('mine')&&last.querySelector('.dm-bub')?.textContent===msg.content) return
+  }
+  el.insertAdjacentHTML('beforeend',dmMsgHtml(msg));el.scrollTop=el.scrollHeight
+}
 async function sendDm(){
   if(!cUser||!convId)return
   const inp=document.getElementById('dmIn'),c=inp.value.trim(); if(!c)return; inp.value=''
-  await sendMessage(convId,cUser.id,c)
+  // Mostra a mensagem imediatamente (update otimista)
+  appendDmMsg({sender_id:cUser.id,content:c,created_at:new Date().toISOString(),type:'text',_optimistic:true})
+  const ok=await sendMessage(convId,cUser.id,c)
+  if(!ok){showToast('Erro ao enviar mensagem')}
 }
 async function dmFromPost(uid,name){
   if(!cUser){showToast('Faça login para enviar mensagens');return}
@@ -628,8 +639,8 @@ async function declineInv(){
 // ── GROUP CHAT ────────────────────────────────────────────────
 async function loadBolaoSelect(){
   if(!cUser){document.getElementById('bolaoSelectList').innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center;padding:16px">Faça login</p>';return}
-  const{data}=await sb().from('participants').select('bolao_id,boloes(id,name,status)').eq('user_id',cUser.id).eq('payment_status','paid')
-  const boloes=(data??[]).map(d=>d.boloes).filter(Boolean)
+  const{data}=await sb().from('participants').select('bolao_id,boloes(id,name,status)').eq('user_id',cUser.id)
+  const boloes=(data??[]).map(d=>d.boloes).filter(b=>b&&b.status==='open')
   document.getElementById('bolaoSelectList').innerHTML=boloes.length
     ? boloes.map(b=>`<div onclick="selectGroupChat('${b.id}','${esc(b.name)}')" style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:var(--r-sm);cursor:pointer;margin-bottom:8px;transition:border-color .15s" onmouseover="this.style.borderColor='var(--green)'" onmouseout="this.style.borderColor='var(--border)'">
         <div style="width:36px;height:36px;border-radius:50%;background:var(--green-lt);display:flex;align-items:center;justify-content:center;font-size:16px">⚽</div>
@@ -643,12 +654,22 @@ async function selectGroupChat(id,name){
   document.getElementById('chatNone').style.display='none'
   document.getElementById('chatContent').style.display='flex'
   setEl('chatBolaoName',name); setEl('chatBolaoMeta','Carregando…')
-  const msgs=await getGroupChat(id)
+  const [msgs,partRes]=await Promise.all([
+    getGroupChat(id),
+    sb().from('participants').select('*',{count:'exact',head:true}).eq('bolao_id',id)
+  ])
+  const cnt=partRes.count??0
+  setEl('chatBolaoMeta',`${cnt} participante${cnt!==1?'s':''}`)
   const el=document.getElementById('chatMsgs')
   el.innerHTML=msgs.length?msgs.map(m=>chatMsgHtml(m)).join(''):'<div class="sys-msg">Início do chat 👋</div>'
   el.scrollTop=el.scrollHeight
   sb().channel('gchat_'+id).on('postgres_changes',{event:'INSERT',schema:'public',table:'bolao_chat',filter:`bolao_id=eq.${id}`},(p)=>{
     const el=document.getElementById('chatMsgs')
+    // Evita duplicata se mensagem própria já foi adicionada otimisticamente
+    if(p.new.user_id===cUser?.id){
+      const last=el.lastElementChild
+      if(last&&last.classList.contains('mine')&&last.querySelector('.cmsg-bubble')?.textContent===p.new.content) return
+    }
     sb().from('profiles').select('username').eq('id',p.new.user_id).single().then(({data:s})=>{p.new.sender=s;el.insertAdjacentHTML('beforeend',chatMsgHtml(p.new));el.scrollTop=el.scrollHeight})
   }).subscribe()
 }
@@ -667,7 +688,12 @@ function chatMsgHtml(m){
 async function sendGroup(){
   if(!cUser||!bolaoGroupId)return
   const inp=document.getElementById('chatIn'),c=inp.value.trim(); if(!c)return; inp.value=''
-  await sendGroupMsg(bolaoGroupId,cUser.id,c)
+  // Mostra a mensagem imediatamente (update otimista)
+  const chatEl=document.getElementById('chatMsgs')
+  chatEl.insertAdjacentHTML('beforeend',chatMsgHtml({user_id:cUser.id,content:c,created_at:new Date().toISOString(),sender:{username:cUsername},_optimistic:true}))
+  chatEl.scrollTop=chatEl.scrollHeight
+  const ok=await sendGroupMsg(bolaoGroupId,cUser.id,c)
+  if(!ok){showToast('Erro ao enviar mensagem')}
 }
 
 // ── TABS ──────────────────────────────────────────────────────
@@ -770,7 +796,16 @@ function prependPost(post){
   el.insertAdjacentHTML('afterbegin',`<div class="post" id="p_${post.id}" data-author="${post.user_id}">
     <div class="post-hd"><div class="post-av">${av}</div><div><div class="post-author">@${esc(auth)}</div></div><span class="type-tag ${cls}">${lbl.join(' ')}</span><span class="post-time">agora</span></div>
     <div class="post-body">${esc(post.content)}</div>
-    <div class="post-actions"><div class="pact">❤️ <span>0</span></div><div class="pact">💬 <span>0</span></div></div>
+    <div class="post-actions">
+      <div class="pact" onclick="toggleLike('${post.id}',this)">❤️ <span>0</span></div>
+      <div class="pact" onclick="toggleReplies('${post.id}')">💬 <span>0</span></div>
+      ${cUser&&post.user_id!==cUser?.id?`<div class="pact" onclick="dmFromPost('${post.user_id}','${esc(auth)}')">✉️ DM</div>`:''}
+      ${cUser&&post.user_id===cUser?.id?`<div class="pact" style="color:var(--red)" onclick="delPost('${post.id}')">🗑️</div>`:''}
+    </div>
+    <div class="replies-wrap" id="rw_${post.id}">
+      <div id="rl_${post.id}"></div>
+      ${cUser?`<div class="reply-compose"><input class="reply-in" id="ri_${post.id}" placeholder="Responder…" maxlength="300" onkeydown="if(event.key==='Enter'){pubReply('${post.id}');event.preventDefault()}"/><button class="reply-send" onclick="pubReply('${post.id}')">↑</button></div>`:''}
+    </div>
   </div>`)
 }
 </script>
