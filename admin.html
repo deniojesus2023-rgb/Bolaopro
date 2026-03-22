@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>BolãoPro — Admin</title>
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
@@ -114,12 +114,18 @@
   </div>
 </aside>
 
+<!-- LOADING -->
+<div id="adminLoading" style="position:fixed;inset:0;background:var(--bg);z-index:400;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+  <div class="spin" style="width:32px;height:32px;border-width:3px"></div>
+  <p style="color:var(--muted);font-size:13px;">Verificando acesso…</p>
+</div>
+
 <!-- ACESSO NEGADO -->
 <div id="accessDenied" style="display:none;position:fixed;inset:0;background:var(--bg);z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
   <div style="font-size:52px">🔒</div>
-  <h2 style="font-size:20px;font-weight:700;">Acesso Restrito</h2>
-  <p style="color:var(--muted);text-align:center;max-width:280px;font-size:14px;">Você não tem permissão para acessar o painel administrativo.</p>
-  <a href="index.html" class="btn-primary" style="height:40px;padding:0 20px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;">Voltar ao Dashboard</a>
+  <h2 style="font-size:20px;font-weight:700;color:var(--text);">Acesso Restrito</h2>
+  <p style="color:var(--muted);text-align:center;max-width:280px;font-size:14px;" id="accessDeniedMsg">Você não tem permissão para acessar o painel administrativo.</p>
+  <a href="index.html" style="height:40px;padding:0 20px;border-radius:var(--r-sm);background:var(--green);color:#fff;font-size:13px;font-weight:600;display:flex;align-items:center;text-decoration:none;">Voltar ao Dashboard</a>
 </div>
 
 <!-- MAIN -->
@@ -492,26 +498,40 @@ let usrQuery = ''
 let supUserId = null
 
 // ── INIT ─────────────────────────────────────────────────────────
+function _hideLoading() { const el=document.getElementById('adminLoading'); if(el) el.style.display='none' }
+function _showDenied(msg) {
+  _hideLoading()
+  const d=document.getElementById('accessDenied')
+  if(msg) { const m=document.getElementById('accessDeniedMsg'); if(m) m.textContent=msg }
+  if(d) d.style.display='flex'
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
-  currentUser = await initAuth({ requireAuth: true })
-  if (!currentUser) return
+  try {
+    currentUser = await initAuth({ requireAuth: true })
+    if (!currentUser) { _hideLoading(); return }
 
-  adminProfile = await getProfile(currentUser.id)
-  if (!adminProfile || adminProfile.plan !== 'admin') {
-    document.getElementById('accessDenied').style.display = 'flex'
-    return
+    adminProfile = await getProfile(currentUser.id)
+    if (!adminProfile || adminProfile.plan !== 'admin') {
+      _showDenied('Você não tem permissão para acessar o painel administrativo.')
+      return
+    }
+
+    _hideLoading()
+    document.getElementById('adminContent').style.display = 'flex'
+    hideEl('sideLogin'); showEl('sideLogout')
+
+    const name = adminProfile.username ?? currentUser.email?.split('@')[0] ?? '?'
+    setEl('topUserName', name)
+    setEl('topUserAv', name.slice(0,2).toUpperCase())
+    showEl('topUserBtn')
+
+    carregarDashboard()
+    carregarConfig()
+  } catch(e) {
+    console.error('Admin init error:', e)
+    _showDenied('Erro ao carregar painel. Tente recarregar a página.')
   }
-
-  document.getElementById('adminContent').style.display = 'flex'
-  hideEl('sideLogin'); showEl('sideLogout')
-
-  const name = adminProfile.username ?? currentUser.email?.split('@')[0] ?? '?'
-  setEl('topUserName', name)
-  setEl('topUserAv', name.slice(0,2).toUpperCase())
-  showEl('topUserBtn')
-
-  carregarDashboard()
-  carregarConfig()
 })
 
 // ── TABS ─────────────────────────────────────────────────────────
@@ -576,14 +596,14 @@ async function carregarDashboard() {
   const bEl = document.getElementById('dashBoloes')
   bEl.innerHTML = boloesData.data?.length ? boloesData.data.map(b => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);">
-      <div><div style="font-size:13px;font-weight:600;">${b.name}</div><div style="font-size:11px;color:var(--muted);">${fmtDate(b.created_at)}</div></div>
+      <div><div style="font-size:13px;font-weight:600;">${esc(b.name)}</div><div style="font-size:11px;color:var(--muted);">${fmtDate(b.created_at)}</div></div>
       <div style="display:flex;align-items:center;gap:8px;">${pillStatus(b.status)}<span style="font-size:12px;font-weight:600;color:var(--gold);">${fmtBRL(b.total_prize)}</span></div>
     </div>`).join('') : '<div class="empty">Nenhum bolão.</div>'
 
   const pEl = document.getElementById('dashPagamentos')
   pEl.innerHTML = pagData.data?.length ? pagData.data.map(p => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);">
-      <div><div style="font-size:13px;font-weight:600;">${p.user?.username ?? '—'}</div><div style="font-size:11px;color:var(--muted);">${p.bolao?.name ?? '—'}</div></div>
+      <div><div style="font-size:13px;font-weight:600;">${esc(p.user?.username ?? '—')}</div><div style="font-size:11px;color:var(--muted);">${esc(p.bolao?.name ?? '—')}</div></div>
       <span style="font-size:13px;font-weight:700;color:var(--green);">${fmtBRL(p.amount)}</span>
     </div>`).join('') : '<div class="empty">Nenhum pagamento.</div>'
 }
@@ -597,15 +617,15 @@ async function carregarUsuarios() {
   const { data } = await q.order('created_at',{ascending:false}).range(usrPage*PER_PAGE, (usrPage+1)*PER_PAGE-1)
   if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>`; return }
   tbody.innerHTML = data.map(u => `<tr>
-    <td style="display:flex;align-items:center;gap:8px;">${av(u.username)}<div><div style="font-weight:600;">${u.username}</div><div style="font-size:11px;color:var(--muted);">${u.full_name || ''}</div></div></td>
+    <td style="display:flex;align-items:center;gap:8px;">${av(u.username)}<div><div style="font-weight:600;">${esc(u.username)}</div><div style="font-size:11px;color:var(--muted);">${esc(u.full_name || '')}</div></div></td>
     <td>${pillStatus(u.plan || 'free')}</td>
     <td>${u.total_boloes ?? 0}</td>
     <td>${u.total_points ?? 0}</td>
     <td>${fmtDate(u.created_at)}</td>
     <td>
       <button class="act-btn" onclick="verUsuario('${u.id}')">👁️ Ver</button>
-      <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${u.username}')">🔑 Admin</button>
-      <button class="act-btn red" onclick="banirUsuario('${u.id}','${u.username}')">🚫 Banir</button>
+      <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${esc(u.username)}')">🔑 Admin</button>
+      <button class="act-btn red" onclick="banirUsuario('${u.id}','${esc(u.username)}')">🚫 Banir</button>
     </td>
   </tr>`).join('')
   setEl('usrPagInfo', `Página ${usrPage + 1}`)
@@ -652,15 +672,15 @@ async function carregarBoloes(filtro) {
   if (!data?.length) { tbody.innerHTML = `<tr><td colspan="8" class="empty">Nenhum bolão.</td></tr>`; return }
   tbody.innerHTML = data.map(b => `<tr>
     <td><code style="font-size:11px;background:var(--bg);padding:2px 6px;border-radius:4px;">${b.code}</code></td>
-    <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
-    <td>${b.owner?.username ?? '—'}</td>
+    <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(b.name)}</td>
+    <td>${esc(b.owner?.username ?? '—')}</td>
     <td>${b.participant_count ?? 0}</td>
     <td>${fmtBRL(b.cota_value)}</td>
     <td style="font-weight:700;color:var(--gold);">${fmtBRL(b.total_prize)}</td>
     <td>${pillStatus(b.status)}</td>
     <td>
       <button class="act-btn" onclick="window.open('bolao.html?id=${b.id}','_blank')">👁️ Ver</button>
-      ${b.status !== 'cancelled' ? `<button class="act-btn red" onclick="cancelarBolao('${b.id}','${b.name}')">❌ Cancelar</button>` : ''}
+      ${b.status !== 'cancelled' ? `<button class="act-btn red" onclick="cancelarBolao('${b.id}','${esc(b.name)}')">❌ Cancelar</button>` : ''}
     </td>
   </tr>`).join('')
 }
