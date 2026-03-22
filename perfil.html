@@ -254,7 +254,7 @@ async function loadProfile() {
   // Hero: avatar ou iniciais
   const heroAvEl = document.getElementById('heroAv')
   if (p.avatar_url) {
-    heroAvEl.innerHTML = `<img src="${p.avatar_url}" alt="${esc(name)}"/><div class="av-overlay"><i data-lucide="camera"></i> Trocar</div>`
+    heroAvEl.innerHTML = `<img src="${p.avatar_url}" alt="${esc(name)}" loading="lazy"/><div class="av-overlay"><i data-lucide="camera"></i> Trocar</div>`
     if (window.lucide) lucide.createIcons()
   } else {
     heroAvEl.innerHTML = av + `<div class="av-overlay"><i data-lucide="camera"></i> Trocar</div>`
