@@ -275,7 +275,7 @@ async function carregarNotifBadge() {
   const { count } = await sb().from('notifications')
     .select('*', { count: 'exact', head: true })
     .eq('user_id', user.id)
-    .eq('is_read', false)
+    .eq('read', false)
   const badge = document.getElementById('notifBadge')
   if (badge) {
     if (count > 0) {
@@ -296,7 +296,113 @@ async function subscribeNotifBadge() {
     })
     .subscribe()
 }
-function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+
+// ── NOTIF PANEL ──────────────────────────────────────────────
+async function loadNotifications(userId) {
+  const { data } = await sb().from('notifications')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(20)
+  return data ?? []
+}
+
+async function markAllNotifRead(userId) {
+  await sb().from('notifications')
+    .update({ read: true })
+    .eq('user_id', userId)
+    .eq('read', false)
+}
+
+async function marcarNotifLida(notifId) {
+  await sb().from('notifications')
+    .update({ read: true })
+    .eq('id', notifId)
+}
+
+function _notifTypeIcon(type) {
+  if (!type) return '🔔'
+  if (type.includes('prize') || type.includes('winner')) return '🏆'
+  if (type.includes('prediction') || type.includes('palpite')) return '🎯'
+  if (type.includes('participant') || type.includes('join')) return '👤'
+  return '🔔'
+}
+
+function _ensureNotifPanel() {
+  if (document.getElementById('notif-panel')) return
+  document.body.insertAdjacentHTML('beforeend', `
+    <div id="notif-panel" style="display:none;position:fixed;top:62px;right:16px;width:320px;max-height:480px;overflow-y:auto;background:var(--card,#fff);border:1px solid var(--border,#e2e8f0);border-radius:12px;z-index:200;box-shadow:0 8px 32px rgba(0,0,0,.18);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;border-bottom:1px solid var(--border,#e2e8f0);position:sticky;top:0;background:var(--card,#fff);z-index:1;">
+        <span style="font-size:14px;font-weight:700;color:var(--text,#0f172a)">Notificações</span>
+        <button onclick="markAllNotifReadUI()" style="font-size:11px;font-weight:600;color:var(--green,#00DF81);background:none;border:none;cursor:pointer;padding:0">Marcar todas como lidas</button>
+      </div>
+      <div id="notif-panel-list" style="padding:6px 0"></div>
+    </div>
+  `)
+  document.addEventListener('click', function _closeNotifPanel(e) {
+    const panel = document.getElementById('notif-panel')
+    const btn   = document.getElementById('notifBtn')
+    if (panel && !panel.contains(e.target) && btn && !btn.contains(e.target)) {
+      panel.style.display = 'none'
+    }
+  })
+}
+
+async function abrirNotifs() {
+  _ensureNotifPanel()
+  const panel = document.getElementById('notif-panel')
+  if (!panel) return
+  if (panel.style.display !== 'none') { panel.style.display = 'none'; return }
+  panel.style.display = 'block'
+  const listEl = document.getElementById('notif-panel-list')
+  listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted,#94a3b8)"><div class="spin"></div></div>'
+  const user = await getUser()
+  if (!user) { listEl.innerHTML = '<div style="padding:20px;text-align:center;color:var(--muted,#94a3b8);font-size:13px">Faça login para ver notificações.</div>'; return }
+  const notifs = await loadNotifications(user.id)
+  if (!notifs.length) {
+    listEl.innerHTML = '<div style="padding:24px 16px;text-align:center;color:var(--muted,#94a3b8);font-size:13px">Nenhuma notificação ainda.</div>'
+    return
+  }
+  listEl.innerHTML = notifs.map(n => `
+    <div id="nitem_${n.id}" style="display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border,#e2e8f0);cursor:pointer;background:${n.read ? 'transparent' : 'var(--green-lt,rgba(0,223,129,.07))'};transition:background .2s" onclick="notifItemClick('${n.id}')">
+      <span style="font-size:20px;flex-shrink:0;margin-top:1px">${_notifTypeIcon(n.type)}</span>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:${n.read ? '500' : '700'};color:var(--text,#0f172a);margin-bottom:2px">${esc(n.title ?? '')}</div>
+        <div style="font-size:12px;color:var(--muted,#94a3b8);line-height:1.4">${esc(n.body ?? '')}</div>
+        <div style="font-size:10px;color:var(--light,#cbd5e1);margin-top:4px">${timeAgo(n.created_at)}</div>
+      </div>
+      ${n.read ? '' : '<span style="width:8px;height:8px;border-radius:50%;background:var(--green,#00DF81);flex-shrink:0;margin-top:5px;display:inline-block"></span>'}
+    </div>
+  `).join('')
+  carregarNotifBadge()
+}
+
+async function notifItemClick(notifId) {
+  await marcarNotifLida(notifId)
+  const item = document.getElementById('nitem_' + notifId)
+  if (item) {
+    item.style.background = 'transparent'
+    const dot = item.querySelector('span[style*="border-radius:50%"]')
+    if (dot) dot.remove()
+    const title = item.querySelector('div[style*="font-weight"]')
+    if (title) title.style.fontWeight = '500'
+  }
+  carregarNotifBadge()
+}
+
+async function markAllNotifReadUI() {
+  const user = await getUser()
+  if (!user) return
+  await markAllNotifRead(user.id)
+  document.querySelectorAll('#notif-panel-list > div').forEach(el => {
+    el.style.background = 'transparent'
+    const dot = el.querySelector('span[style*="border-radius:50%"]')
+    if (dot) dot.remove()
+    const title = el.querySelector('div[style*="font-weight"]')
+    if (title) title.style.fontWeight = '500'
+  })
+  carregarNotifBadge()
+}
 
 // ── LUCIDE ICONS ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {

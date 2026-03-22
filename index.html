@@ -127,7 +127,7 @@
             <div class="sb-sub">Dispute com amigos no BolãoPro e confirme seus palpites com odds reais na Superbet.</div>
             <div class="sb-actions">
               <button class="sb-btn-primary" onclick="openModal('criar')">+ Criar Bolão</button>
-              <a class="sb-btn-ghost" id="sbCar1" target="_blank">Apostar na Superbet →</a>
+              <a class="sb-btn-ghost" id="sbCar1" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Apostar na Superbet →</a>
             </div>
           </div>
           <div class="sb-deco">⚽</div>
@@ -140,7 +140,7 @@
             <div class="sb-title">Odds reais nas melhores partidas</div>
             <div class="sb-sub">Brasileirão, Libertadores, Champions League e muito mais. Aposte com as melhores odds do mercado.</div>
             <div class="sb-actions">
-              <a class="sb-btn-primary" id="sbCar2" target="_blank">Ver Odds Agora →</a>
+              <a class="sb-btn-primary" id="sbCar2" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Ver Odds Agora →</a>
               <a href="jogos.html" class="sb-btn-ghost">Ver Jogos →</a>
             </div>
           </div>
@@ -154,7 +154,7 @@
             <div class="sb-title">Deposite e ganhe bônus na Superbet</div>
             <div class="sb-sub">Novo na Superbet? Cadastre-se agora e aproveite os bônus exclusivos para parceiros BolãoPro.</div>
             <div class="sb-actions">
-              <a class="sb-btn-primary" id="sbCar3" target="_blank">Cadastrar na Superbet →</a>
+              <a class="sb-btn-primary" id="sbCar3" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Cadastrar na Superbet →</a>
               <button class="sb-btn-ghost" onclick="openModal('criar')">Criar Bolão →</button>
             </div>
           </div>
@@ -235,8 +235,8 @@
             <div class="aff-title">Aposte de verdade também</div>
             <div class="aff-sub">Odds reais nas melhores casas do Brasil.</div>
             <div class="aff-btns">
-              <a href="#" id="sbLink" target="_blank" class="aff-btn sb">⚡ Sportingbet<span class="aff-arrow">→</span></a>
-              <a href="#" id="supLink" target="_blank" class="aff-btn sup">⚡ Superbet<span class="aff-arrow">→</span></a>
+              <a href="#" id="sbLink" target="_blank" class="aff-btn sb" onclick="trackAffiliateClick(window.currentUser?.id,'sportingbet',null,null)">⚡ Sportingbet<span class="aff-arrow">→</span></a>
+              <a href="#" id="supLink" target="_blank" class="aff-btn sup" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">⚡ Superbet<span class="aff-arrow">→</span></a>
             </div>
           </div>
         </div>
@@ -323,6 +323,7 @@
 <script src="config.js"></script><script src="app.js"></script>
 <script>
 let curFil='', curSplit='100% ao 1º', newBolId=null, _searchTimer
+window.currentUser = null
 
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sbLink').href  = CONFIG.SPORTINGBET
@@ -331,6 +332,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sbCar2').href = CONFIG.SUPERBET
   document.getElementById('sbCar3').href = CONFIG.SUPERBET
   const user = await initAuth()
+  window.currentUser = user
   if (user) {
     hideEl('sideLogin'); showEl('sideLogout')
     const p = await getProfile(user.id)
