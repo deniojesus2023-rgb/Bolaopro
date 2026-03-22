@@ -5,7 +5,7 @@
 <title>BolãoPro — Admin</title>
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .adm-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--white);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
 .adm-tabs::-webkit-scrollbar{display:none;}
@@ -823,8 +823,8 @@ async function carregarPosts() {
   const { data } = await sb().from('posts').select('id,content,type,likes_count,created_at,user:profiles!user_id(username)').order('created_at',{ascending:false}).limit(30)
   if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum post.</td></tr>`; return }
   tbody.innerHTML = data.map(p => `<tr>
-    <td>${p.user?.username ?? '—'}</td>
-    <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.content}</td>
+    <td>${esc(p.user?.username ?? '—')}</td>
+    <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.content)}</td>
     <td><span class="pill pill-${p.type === 'tip' ? 'open' : 'pending'}">${p.type}</span></td>
     <td>${p.likes_count ?? 0}</td>
     <td>${fmtDateTime(p.created_at)}</td>
@@ -846,10 +846,10 @@ async function carregarBanidos() {
   const { data } = await sb().from('profiles').select('id,username,full_name,created_at').eq('plan','banned').order('created_at',{ascending:false})
   if (!data?.length) { tbody.innerHTML = `<tr><td colspan="4" class="empty">Nenhum usuário banido.</td></tr>`; return }
   tbody.innerHTML = data.map(u => `<tr>
-    <td style="font-weight:600;">${u.username}</td>
-    <td>${u.full_name || '—'}</td>
+    <td style="font-weight:600;">${esc(u.username)}</td>
+    <td>${esc(u.full_name || '—')}</td>
     <td>${fmtDate(u.created_at)}</td>
-    <td><button class="act-btn grn" onclick="desbanirUsuario('${u.id}','${u.username}')">✅ Desbanir</button></td>
+    <td><button class="act-btn grn" onclick="desbanirUsuario('${u.id}','${esc(u.username)}')">✅ Desbanir</button></td>
   </tr>`).join('')
 }
 
@@ -1020,9 +1020,9 @@ async function buscarSuporte() {
     </div>`).join('') : '<div class="empty">Nenhum pagamento.</div>'
 
   document.getElementById('supAcoes').innerHTML = `
-    <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${u.username}')">🔑 Promover Admin</button>
-    <button class="act-btn red" onclick="banirUsuario('${u.id}','${u.username}')">🚫 Banir</button>
-    <button class="act-btn" onclick="setTab('notificacoes',document.querySelectorAll('.adm-tab')[6]);document.getElementById('nDestino').value='one';toggleUsernameField();document.getElementById('nUsername').value='${u.username}'">📧 Enviar Notificação</button>`
+    <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${esc(u.username)}')">🔑 Promover Admin</button>
+    <button class="act-btn red" onclick="banirUsuario('${u.id}','${esc(u.username)}')">🚫 Banir</button>
+    <button class="act-btn" onclick="setTab('notificacoes',document.querySelectorAll('.adm-tab')[6]);document.getElementById('nDestino').value='one';toggleUsernameField();document.getElementById('nUsername').value='${esc(u.username)}'">📧 Enviar Notificação</button>`
 }
 </script>
 </body>

@@ -77,15 +77,20 @@ async function getBolao(id) {
 }
 
 async function criarBolao(dados, userId) {
+  if (!dados.nome?.trim()) return { error: 'Nome do bolão é obrigatório.' }
+  if (!dados.cota || dados.cota < 5) return { error: 'Cota mínima: R$ 5,00.' }
+  if (!dados.max || dados.max < 2) return { error: 'Mínimo de 2 participantes.' }
+  if (dados.deadline && new Date(dados.deadline) < new Date()) return { error: 'Prazo deve ser uma data futura.' }
   const { data, error } = await sb().from('boloes').insert({
-    owner_id: userId, name: dados.nome,
+    owner_id: userId, name: dados.nome.trim(),
     cota_value: dados.cota, max_participants: dados.max,
     prize_split: dados.split, deadline: dados.deadline || null,
     competicao: dados.competicao, status: 'open',
   }).select('id, code').single()
   if (error) return { error: error.message }
   const paymentStatus = dados.cota > 0 ? 'pending' : 'paid'
-  await sb().from('participants').insert({ bolao_id: data.id, user_id: userId, payment_status: paymentStatus, amount_paid: 0 })
+  const { error: partErr } = await sb().from('participants').insert({ bolao_id: data.id, user_id: userId, payment_status: paymentStatus, amount_paid: 0 })
+  if (partErr) console.error('Erro ao inserir participante criador:', partErr)
   return { data }
 }
 
