@@ -190,6 +190,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!bolaoData) { document.getElementById('pageContent').innerHTML='<div class="empty"><div class="empty-icon">❌</div><p>Bolão não encontrado</p><a href="index.html" class="btn-full" style="max-width:200px;margin-top:12px">Voltar</a></div>'; return }
   renderPage()
   subscribeRealtime()
+  // Se jogo já está finished mas bolão ainda não foi finalizado, calcular agora
+  const _initMatch = bolaoData.bolao_matches?.[0]?.match
+  if (_initMatch?.status === 'finished' && (bolaoData.status === 'open' || bolaoData.status === 'active')) {
+    await calcPontosEFinalizarBolao(_initMatch.id)
+  }
 })
 
 function renderPage() {
@@ -279,8 +284,8 @@ function renderPage() {
           })()}
         </div>
         <div class="aff-row">
-          <a href="${CONFIG.SPORTINGBET}" target="_blank" class="aff-sb">⚡ Sportingbet</a>
-          <a href="${CONFIG.SUPERBET}"    target="_blank" class="aff-sup">⚡ Superbet</a>
+          <a href="${CONFIG.SPORTINGBET}" target="_blank" class="aff-sb" onclick="trackAffiliateClick(currentUser?.id,'sportingbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">⚡ Sportingbet</a>
+          <a href="${CONFIG.SUPERBET}"    target="_blank" class="aff-sup" onclick="trackAffiliateClick(currentUser?.id,'superbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">⚡ Superbet</a>
         </div>
         <div class="extra-row">
           <div class="fl" style="margin:0"><label>Placar exato (bônus +8pts)</label>
@@ -300,8 +305,8 @@ function renderPage() {
           <div class="cta-after">
             <p>🔥 Aposte de verdade no seu palpite!</p>
             <div class="pills">
-              <a href="${CONFIG.SPORTINGBET}" target="_blank" class="cta-pill pill-sb">Sportingbet — 1.90</a>
-              <a href="${CONFIG.SUPERBET}"    target="_blank" class="cta-pill pill-sup">Superbet — 1.95</a>
+              <a href="${CONFIG.SPORTINGBET}" target="_blank" class="cta-pill pill-sb" onclick="trackAffiliateClick(currentUser?.id,'sportingbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">Sportingbet — 1.90</a>
+              <a href="${CONFIG.SUPERBET}"    target="_blank" class="cta-pill pill-sup" onclick="trackAffiliateClick(currentUser?.id,'superbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">Superbet — 1.95</a>
             </div>
           </div>` : `
           <div id="predErr" class="err-box" style="margin-bottom:10px"></div>
@@ -436,10 +441,37 @@ async function vincularJogo() {
   if (bolaoData) renderPage()
 }
 
+async function calcPontosEFinalizarBolao(matchId) {
+  try {
+    await sb().rpc('calculate_prediction_points', { p_match_id: matchId })
+    await sb().rpc('finalize_bolao', { p_bolao_id: pid })
+  } catch(e) { console.error('Erro ao calcular pontos/finalizar bolão:', e) }
+  bolaoData = await getBolao(pid)
+  if (bolaoData) renderPage()
+}
+
 function subscribeRealtime() {
   if (realtimeChannel) { sb().removeChannel(realtimeChannel); realtimeChannel=null }
   realtimeChannel = sb().channel(`bolao_${pid}`)
     .on('postgres_changes',{event:'*',schema:'public',table:'participants',filter:`bolao_id=eq.${pid}`},async()=>{ bolaoData=await getBolao(pid); if(bolaoData) renderPage() })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'matches'},async(payload)=>{
+      const newStatus = payload?.new?.status
+      const matchId = payload?.new?.id
+      const bm = bolaoData?.bolao_matches ?? []
+      const isOurMatch = bm.some(bm => bm.match?.id === matchId)
+      if (!isOurMatch) return
+      if (newStatus === 'finished') {
+        showToast('🏁 Jogo finalizado! Calculando pontos…')
+        await calcPontosEFinalizarBolao(matchId)
+      } else if (newStatus === 'live') {
+        // Atualiza bolão para 'active' se ainda está 'open'
+        if (bolaoData?.status === 'open') {
+          await sb().from('boloes').update({ status: 'active' }).eq('id', pid).eq('status', 'open')
+        }
+        bolaoData = await getBolao(pid)
+        if (bolaoData) renderPage()
+      }
+    })
     .subscribe()
 }
 </script>
