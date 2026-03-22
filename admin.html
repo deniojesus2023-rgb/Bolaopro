@@ -596,14 +596,14 @@ async function carregarDashboard() {
   const bEl = document.getElementById('dashBoloes')
   bEl.innerHTML = boloesData.data?.length ? boloesData.data.map(b => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);">
-      <div><div style="font-size:13px;font-weight:600;">${b.name}</div><div style="font-size:11px;color:var(--muted);">${fmtDate(b.created_at)}</div></div>
+      <div><div style="font-size:13px;font-weight:600;">${esc(b.name)}</div><div style="font-size:11px;color:var(--muted);">${fmtDate(b.created_at)}</div></div>
       <div style="display:flex;align-items:center;gap:8px;">${pillStatus(b.status)}<span style="font-size:12px;font-weight:600;color:var(--gold);">${fmtBRL(b.total_prize)}</span></div>
     </div>`).join('') : '<div class="empty">Nenhum bolão.</div>'
 
   const pEl = document.getElementById('dashPagamentos')
   pEl.innerHTML = pagData.data?.length ? pagData.data.map(p => `
     <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 20px;border-bottom:1px solid var(--border);">
-      <div><div style="font-size:13px;font-weight:600;">${p.user?.username ?? '—'}</div><div style="font-size:11px;color:var(--muted);">${p.bolao?.name ?? '—'}</div></div>
+      <div><div style="font-size:13px;font-weight:600;">${esc(p.user?.username ?? '—')}</div><div style="font-size:11px;color:var(--muted);">${esc(p.bolao?.name ?? '—')}</div></div>
       <span style="font-size:13px;font-weight:700;color:var(--green);">${fmtBRL(p.amount)}</span>
     </div>`).join('') : '<div class="empty">Nenhum pagamento.</div>'
 }
@@ -617,15 +617,15 @@ async function carregarUsuarios() {
   const { data } = await q.order('created_at',{ascending:false}).range(usrPage*PER_PAGE, (usrPage+1)*PER_PAGE-1)
   if (!data?.length) { tbody.innerHTML = `<tr><td colspan="6" class="empty">Nenhum usuário encontrado.</td></tr>`; return }
   tbody.innerHTML = data.map(u => `<tr>
-    <td style="display:flex;align-items:center;gap:8px;">${av(u.username)}<div><div style="font-weight:600;">${u.username}</div><div style="font-size:11px;color:var(--muted);">${u.full_name || ''}</div></div></td>
+    <td style="display:flex;align-items:center;gap:8px;">${av(u.username)}<div><div style="font-weight:600;">${esc(u.username)}</div><div style="font-size:11px;color:var(--muted);">${esc(u.full_name || '')}</div></div></td>
     <td>${pillStatus(u.plan || 'free')}</td>
     <td>${u.total_boloes ?? 0}</td>
     <td>${u.total_points ?? 0}</td>
     <td>${fmtDate(u.created_at)}</td>
     <td>
       <button class="act-btn" onclick="verUsuario('${u.id}')">👁️ Ver</button>
-      <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${u.username}')">🔑 Admin</button>
-      <button class="act-btn red" onclick="banirUsuario('${u.id}','${u.username}')">🚫 Banir</button>
+      <button class="act-btn grn" onclick="promoverAdmin('${u.id}','${esc(u.username)}')">🔑 Admin</button>
+      <button class="act-btn red" onclick="banirUsuario('${u.id}','${esc(u.username)}')">🚫 Banir</button>
     </td>
   </tr>`).join('')
   setEl('usrPagInfo', `Página ${usrPage + 1}`)
@@ -672,15 +672,15 @@ async function carregarBoloes(filtro) {
   if (!data?.length) { tbody.innerHTML = `<tr><td colspan="8" class="empty">Nenhum bolão.</td></tr>`; return }
   tbody.innerHTML = data.map(b => `<tr>
     <td><code style="font-size:11px;background:var(--bg);padding:2px 6px;border-radius:4px;">${b.code}</code></td>
-    <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${b.name}</td>
-    <td>${b.owner?.username ?? '—'}</td>
+    <td style="font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(b.name)}</td>
+    <td>${esc(b.owner?.username ?? '—')}</td>
     <td>${b.participant_count ?? 0}</td>
     <td>${fmtBRL(b.cota_value)}</td>
     <td style="font-weight:700;color:var(--gold);">${fmtBRL(b.total_prize)}</td>
     <td>${pillStatus(b.status)}</td>
     <td>
       <button class="act-btn" onclick="window.open('bolao.html?id=${b.id}','_blank')">👁️ Ver</button>
-      ${b.status !== 'cancelled' ? `<button class="act-btn red" onclick="cancelarBolao('${b.id}','${b.name}')">❌ Cancelar</button>` : ''}
+      ${b.status !== 'cancelled' ? `<button class="act-btn red" onclick="cancelarBolao('${b.id}','${esc(b.name)}')">❌ Cancelar</button>` : ''}
     </td>
   </tr>`).join('')
 }
