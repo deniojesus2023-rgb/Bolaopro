@@ -21,64 +21,63 @@ body{
   overflow-x:hidden;
 }
 
-/* ── Splash hero (top half) ───────────────────── */
+/* ── Splash hero (top) ────────────────────────── */
 .splash{
   position:relative;flex:0 0 auto;
   display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
-  padding:0 24px 36px;
-  min-height:42vh;
-  background:radial-gradient(ellipse 80% 80% at 50% 110%, rgba(0,223,129,.18) 0%, transparent 70%);
+  padding:48px 24px 28px;
+  background:radial-gradient(ellipse 70% 120% at 50% 100%, rgba(0,223,129,.15) 0%, transparent 70%);
   overflow:hidden;
 }
 /* Decorative circles */
 .splash::before{
-  content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);
-  width:340px;height:340px;border-radius:50%;
-  border:1px solid rgba(0,223,129,.08);pointer-events:none;
+  content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:280px;height:280px;border-radius:50%;
+  border:1px solid rgba(0,223,129,.07);pointer-events:none;
 }
 .splash::after{
-  content:'';position:absolute;top:-40px;left:50%;transform:translateX(-50%);
-  width:240px;height:240px;border-radius:50%;
-  border:1px solid rgba(0,223,129,.12);pointer-events:none;
+  content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  width:180px;height:180px;border-radius:50%;
+  border:1px solid rgba(0,223,129,.10);pointer-events:none;
 }
 
 /* Logo mark */
 .splash-mark{
-  width:88px;height:88px;border-radius:24px;
+  width:72px;height:72px;border-radius:20px;
   background:linear-gradient(145deg, #04312E 0%, #032221 100%);
   border:1.5px solid rgba(0,223,129,.3);
-  box-shadow:0 0 40px rgba(0,223,129,.20), 0 8px 32px rgba(0,0,0,.5);
+  box-shadow:0 0 30px rgba(0,223,129,.18), 0 6px 24px rgba(0,0,0,.5);
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:20px;
+  margin-bottom:14px;
   position:relative;z-index:1;
 }
 .splash-wordmark{
   text-align:center;position:relative;z-index:1;
 }
 .splash-wordmark h1{
-  font-size:30px;font-weight:800;letter-spacing:-.5px;
+  font-size:26px;font-weight:800;letter-spacing:-.5px;
   color:var(--text-primary);line-height:1;
 }
 .splash-wordmark h1 span{color:var(--accent-primary);}
 .splash-wordmark p{
-  margin-top:6px;font-size:13px;color:var(--text-muted);letter-spacing:.2px;
+  margin-top:5px;font-size:12px;color:var(--text-muted);letter-spacing:.2px;
 }
 
-/* ── Auth card (bottom half) ──────────────────── */
+/* ── Auth card (bottom) ───────────────────────── */
 .auth-card{
   flex:1;
   background:var(--bg-secondary);
   border-top:1px solid var(--border-subtle);
-  border-radius:28px 28px 0 0;
-  padding:28px 24px 40px;
+  border-radius:24px 24px 0 0;
+  padding:22px 24px 36px;
   position:relative;
   box-shadow:0 -8px 40px rgba(0,0,0,.4);
 }
 
 /* Pill handle */
 .auth-card::before{
-  content:'';display:block;width:36px;height:4px;border-radius:2px;
-  background:rgba(0,223,129,.25);margin:0 auto 24px;
+  content:'';display:block;width:32px;height:3px;border-radius:2px;
+  background:rgba(0,223,129,.22);margin:0 auto 20px;
 }
 
 /* Tabs */
