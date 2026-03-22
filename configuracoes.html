@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Configurações</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BolãoPro">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .cfg-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--white);overflow-x:auto;scrollbar-width:none;flex-shrink:0;}
 .cfg-tabs::-webkit-scrollbar{display:none;}
@@ -874,5 +880,6 @@ function carregarReduceMotion() {
 carregarTema()
 carregarReduceMotion()
 </script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
 </body>
 </html>

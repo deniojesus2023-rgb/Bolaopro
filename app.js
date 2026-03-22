@@ -97,6 +97,7 @@ async function salvarPalpite(bolaoId, matchId, userId, result, homeScore, awaySc
     predicted_away_score: awayScore ? parseInt(awayScore) : null,
     predicted_top_scorer: topScorer || null,
   }, { onConflict: 'bolao_id,match_id,user_id' })
+  if (!error && navigator.vibrate) navigator.vibrate(50)
   return !error
 }
 
@@ -213,6 +214,7 @@ function showEl(id) { const e = document.getElementById(id); if (e) e.style.disp
 function hideEl(id) { const e = document.getElementById(id); if (e) e.style.display = 'none' }
 
 function showToast(msg, dur = 2600) {
+  if (navigator.vibrate) navigator.vibrate(10)
   let t = document.getElementById('toast')
   if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t) }
   t.textContent = msg; t.classList.add('on')
@@ -281,4 +283,13 @@ function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons()
   carregarNotifBadge()
+})
+
+// ── CONECTIVIDADE ────────────────────────────────────────────
+window.addEventListener('offline', () => {
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50])
+  showToast('⚠️ Sem conexão — algumas funções indisponíveis', 5000)
+})
+window.addEventListener('online', () => {
+  showToast('✅ Conexão restaurada')
 })

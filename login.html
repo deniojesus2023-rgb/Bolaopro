@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Entrar</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BolãoPro">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 body{display:block;background:var(--bg);}
 .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
@@ -99,5 +105,6 @@ async function doReg(){
   showOk('✅ Conta criada! Verifique seu e-mail para confirmar.')
 }
 </script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
 </body>
 </html>
