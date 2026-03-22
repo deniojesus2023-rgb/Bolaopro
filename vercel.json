@@ -7,20 +7,16 @@
   ],
   "headers": [
     {
-      "source": "/(.*\\.css)",
+      "source": "/:path*.css",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     },
     {
-      "source": "/(.*\\.js)",
+      "source": "/:path*.js",
       "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
     },
     {
-      "source": "/(.*\\.html)",
+      "source": "/:path*.html",
       "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
-    },
-    {
-      "source": "/(.*\\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2))",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000" }]
     }
   ]
 }
