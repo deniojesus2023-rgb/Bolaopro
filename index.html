@@ -99,6 +99,62 @@
       </div>
     </div>
 
+    <!-- SUPERBET CAROUSEL -->
+    <div class="sb-carousel fade-in" id="sbCarousel">
+      <div class="sb-track" id="sbTrack">
+        <!-- Banner 1: Crie seu bolão -->
+        <div class="sb-slide sb-slide-1">
+          <div class="sb-badge">PARCEIRO OFICIAL</div>
+          <div class="sb-content">
+            <div class="sb-tag">🏆 BolãoPro + Superbet</div>
+            <div class="sb-title">Crie seu bolão e aposte de verdade</div>
+            <div class="sb-sub">Dispute com amigos no BolãoPro e confirme seus palpites com odds reais na Superbet.</div>
+            <div class="sb-actions">
+              <button class="sb-btn-primary" onclick="openModal('criar')">+ Criar Bolão</button>
+              <a class="sb-btn-ghost" id="sbCar1" target="_blank">Apostar na Superbet →</a>
+            </div>
+          </div>
+          <div class="sb-deco">⚽</div>
+        </div>
+        <!-- Banner 2: Odds reais -->
+        <div class="sb-slide sb-slide-2">
+          <div class="sb-badge">ODDS AO VIVO</div>
+          <div class="sb-content">
+            <div class="sb-tag">⚡ Superbet Brasil</div>
+            <div class="sb-title">Odds reais nas melhores partidas</div>
+            <div class="sb-sub">Brasileirão, Libertadores, Champions League e muito mais. Aposte com as melhores odds do mercado.</div>
+            <div class="sb-actions">
+              <a class="sb-btn-primary" id="sbCar2" target="_blank">Ver Odds Agora →</a>
+              <a href="jogos.html" class="sb-btn-ghost">Ver Jogos →</a>
+            </div>
+          </div>
+          <div class="sb-deco">🎯</div>
+        </div>
+        <!-- Banner 3: Bônus -->
+        <div class="sb-slide sb-slide-3">
+          <div class="sb-badge">OFERTA ESPECIAL</div>
+          <div class="sb-content">
+            <div class="sb-tag">💰 Bônus de Boas-Vindas</div>
+            <div class="sb-title">Deposite e ganhe bônus na Superbet</div>
+            <div class="sb-sub">Novo na Superbet? Cadastre-se agora e aproveite os bônus exclusivos para parceiros BolãoPro.</div>
+            <div class="sb-actions">
+              <a class="sb-btn-primary" id="sbCar3" target="_blank">Cadastrar na Superbet →</a>
+              <button class="sb-btn-ghost" onclick="openModal('criar')">Criar Bolão →</button>
+            </div>
+          </div>
+          <div class="sb-deco">🎰</div>
+        </div>
+      </div>
+      <!-- Controls -->
+      <button class="sb-arrow sb-prev" onclick="sbMove(-1)" aria-label="Anterior">‹</button>
+      <button class="sb-arrow sb-next" onclick="sbMove(1)" aria-label="Próximo">›</button>
+      <div class="sb-dots" id="sbDots">
+        <button class="sb-dot on" onclick="sbGoto(0)"></button>
+        <button class="sb-dot" onclick="sbGoto(1)"></button>
+        <button class="sb-dot" onclick="sbGoto(2)"></button>
+      </div>
+    </div>
+
     <!-- STATS -->
     <div class="stats-row">
       <div class="stat-card feat fade-in fade-in-1">
@@ -255,6 +311,9 @@ let curFil='', curSplit='100% ao 1º', newBolId=null, _searchTimer
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sbLink').href  = CONFIG.SPORTINGBET
   document.getElementById('supLink').href = CONFIG.SUPERBET
+  document.getElementById('sbCar1').href = CONFIG.SUPERBET
+  document.getElementById('sbCar2').href = CONFIG.SUPERBET
+  document.getElementById('sbCar3').href = CONFIG.SUPERBET
   const user = await initAuth()
   if (user) {
     hideEl('sideLogin'); showEl('sideLogout')
@@ -384,6 +443,32 @@ async function submitCriar() {
 }
 function copyLink(){navigator.clipboard.writeText(document.getElementById('sucLink').textContent);showToast('📋 Link copiado!')}
 function irBolao(){if(newBolId)location.href=`bolao.html?id=${newBolId}`}
+let _sbIdx=0, _sbTimer=null
+const _sbTotal=3
+function sbRender(){
+  document.getElementById('sbTrack').style.transform=`translateX(-${_sbIdx*100}%)`
+  document.querySelectorAll('.sb-dot').forEach((d,i)=>d.classList.toggle('on',i===_sbIdx))
+}
+function sbMove(d){
+  _sbIdx=(_sbIdx+d+_sbTotal)%_sbTotal; sbRender(); sbResetTimer()
+}
+function sbGoto(i){ _sbIdx=i; sbRender(); sbResetTimer() }
+function sbResetTimer(){
+  clearInterval(_sbTimer)
+  _sbTimer=setInterval(()=>sbMove(1), 4500)
+}
+document.addEventListener('DOMContentLoaded',()=>{ sbResetTimer() })
+// swipe touch
+;(function(){
+  let sx=0
+  const el=document.getElementById('sbCarousel')
+  if(!el)return
+  el.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true})
+  el.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx
+    if(Math.abs(dx)>40) sbMove(dx>0?-1:1)
+  },{passive:true})
+})()
 </script>
 <script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
 </body>
