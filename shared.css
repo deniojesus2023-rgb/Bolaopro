@@ -336,7 +336,7 @@ svg.lucide { display:inline-block; vertical-align:middle; }
   position: relative;
   border-radius: var(--r-lg);
   overflow: hidden;
-  margin-bottom: 0;
+  margin-bottom: 20px;
   user-select: none;
 }
 .sb-track {
