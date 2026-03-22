@@ -391,10 +391,22 @@ create or replace function create_dm_invite(p_from_user uuid)
 returns text as $$
 declare v_code text;
 begin
+  -- Retorna convite pendente existente, se houver
+  select invite_code into v_code
+  from public.conversations
+  where user_a = p_from_user and user_b is null and invite_status = 'pending'
+  limit 1;
+
+  if v_code is not null then
+    return v_code;
+  end if;
+
+  -- Cria novo convite
   v_code := upper(substring(md5(p_from_user::text || now()::text), 1, 10));
   insert into public.conversations (user_a, invite_code, invite_status)
   values (p_from_user, v_code, 'pending')
-  on conflict do nothing;
+  on conflict (invite_code) do update set invite_status = excluded.invite_status
+  returning invite_code into v_code;
   return v_code;
 end;
 $$ language plpgsql security definer;

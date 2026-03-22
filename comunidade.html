@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Comunidade</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BolãoPro">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .comm-layout{display:flex;height:calc(100dvh - var(--topbar));overflow:hidden;}
 .feed-col{flex:1;display:flex;flex-direction:column;border-right:1px solid var(--border);min-width:0;overflow:hidden;}
@@ -231,6 +237,7 @@
 
       <!-- FEED -->
       <div class="feed-area" id="feedArea">
+        <div id="ptr-indicator" style="display:none;justify-content:center;padding:12px;color:var(--accent)">↻ Atualizando…</div>
         <div class="inv-banner" id="invBanner" style="display:none">
           <div class="inv-banner-info"><strong id="invFrom">@alguém</strong> quer conversar<p>Aceite para trocar mensagens privadas</p></div>
           <div class="inv-btns"><button class="ib acc" onclick="acceptInv()">Aceitar</button><button class="ib dec" onclick="declineInv()">Recusar</button></div>
@@ -438,20 +445,35 @@ async function pubPost(){
 async function pubPostModal(){
   if(!cUser){closeModal('newPost');location.href='login.html';return}
   const c=document.getElementById('mContent').value.trim(); if(!c){showToast('Digite algo');return}
-  await publishPost(cUser.id,c,document.getElementById('mType').value,null)
-  closeModal('newPost');document.getElementById('mContent').value='';showToast('✓ Publicado!');loadFeed()
+  const ok=await publishPost(cUser.id,c,document.getElementById('mType').value,null)
+  if(ok){closeModal('newPost');document.getElementById('mContent').value='';showToast('✓ Publicado!');await loadFeed()}
+  else showToast('Erro ao publicar')
 }
 async function toggleLike(id,el){
   if(!cUser){showToast('Faça login para curtir');return}
   const sp=el.querySelector('span'),n=parseInt(sp.textContent),liked=el.classList.contains('liked')
+  // Optimistic update
   el.classList.toggle('liked');sp.textContent=liked?n-1:n+1
   if(liked){
-    await sb().from('post_likes').delete().eq('post_id',id).eq('user_id',cUser.id)
+    const{error}=await sb().from('post_likes').delete().eq('post_id',id).eq('user_id',cUser.id)
+    if(error){
+      // Rollback optimistic update
+      el.classList.toggle('liked');sp.textContent=n
+      showToast('Erro ao remover curtida');console.error('Erro ao remover like:',error)
+    }
   } else {
-    await sb().from('post_likes').insert({post_id:id,user_id:cUser.id})
+    const{error}=await sb().from('post_likes').insert({post_id:id,user_id:cUser.id})
+    if(error){
+      // Rollback optimistic update
+      el.classList.toggle('liked');sp.textContent=n
+      showToast('Erro ao curtir');console.error('Erro ao inserir like:',error)
+      return
+    }
     const authorId=document.getElementById(`p_${id}`)?.dataset.author
-    if(authorId && authorId!==cUser.id)
-      sb().from('notifications').insert({user_id:authorId,type:'like',title:`@${cUsername} curtiu seu post`,is_read:false})
+    if(authorId && authorId!==cUser.id){
+      const{error:nErr}=await sb().from('notifications').insert({user_id:authorId,type:'like',title:`@${cUsername} curtiu seu post`,is_read:false})
+      if(nErr) console.error('Erro ao inserir notificação de like:',nErr)
+    }
   }
 }
 async function toggleReplies(id){
@@ -467,8 +489,10 @@ async function pubReply(postId){
   const inp=document.getElementById(`ri_${postId}`),c=inp.value.trim(); if(!c)return
   await sb().from('post_replies').insert({post_id:postId,user_id:cUser.id,content:c})
   const authorId=document.getElementById(`p_${postId}`)?.dataset.author
-  if(authorId && authorId!==cUser.id)
-    sb().from('notifications').insert({user_id:authorId,type:'reply',title:`@${cUsername} comentou no seu post`,body:c.slice(0,100),is_read:false})
+  if(authorId && authorId!==cUser.id){
+    const{error:nErr}=await sb().from('notifications').insert({user_id:authorId,type:'reply',title:`@${cUsername} comentou no seu post`,body:c.slice(0,100),is_read:false})
+    if(nErr) console.error('Erro ao inserir notificação de reply:',nErr)
+  }
   inp.value=''
   const l=document.getElementById(`rl_${postId}`)
   l.insertAdjacentHTML('beforeend',`<div class="reply-row"><div class="reply-av">${(cUser.email??'').slice(0,2).toUpperCase()}</div><div class="reply-bub"><div class="reply-auth">Você</div>${esc(c)}</div></div>`)
@@ -692,7 +716,51 @@ function subscribeRealtime(){
   sb().channel('pub_feed').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'},(p)=>{
     sb().from('profiles').select('username').eq('id',p.new.user_id).single().then(({data:a})=>{p.new.author=a;prependPost(p.new)})
   }).subscribe()
+
+  // Atualiza contagem de curtidas em tempo real para todos os usuários
+  sb().channel('post_likes_rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'post_likes'},(p)=>{
+      const post=document.getElementById(`p_${p.new.post_id}`)
+      if(!post) return
+      const sp=post.querySelectorAll('.pact')[0]?.querySelector('span')
+      if(sp) sp.textContent=parseInt(sp.textContent)+1
+    })
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'post_likes'},(p)=>{
+      const postId=p.old?.post_id; if(!postId) return
+      const post=document.getElementById(`p_${postId}`)
+      if(!post) return
+      const sp=post.querySelectorAll('.pact')[0]?.querySelector('span')
+      if(sp) sp.textContent=Math.max(0,parseInt(sp.textContent)-1)
+    })
+    .subscribe()
+
+  // Atualiza contagem de comentários em tempo real para todos os usuários
+  sb().channel('post_replies_rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'post_replies'},(p)=>{
+      const post=document.getElementById(`p_${p.new.post_id}`)
+      if(!post) return
+      const sp=post.querySelectorAll('.pact')[1]?.querySelector('span')
+      if(sp) sp.textContent=parseInt(sp.textContent)+1
+    })
+    .subscribe()
 }
+// Pull-to-refresh
+let _ptrStart = 0, _ptrActive = false
+const _ptrEl = document.getElementById('ptr-indicator')
+document.addEventListener('touchstart', e => { _ptrStart = e.touches[0].clientY }, {passive:true})
+document.addEventListener('touchmove', e => {
+  if (window.scrollY > 0) return
+  const dy = e.touches[0].clientY - _ptrStart
+  if (dy > 60 && !_ptrActive) { _ptrActive = true; if(_ptrEl) _ptrEl.style.display='flex' }
+}, {passive:true})
+document.addEventListener('touchend', async () => {
+  if (!_ptrActive) return
+  _ptrActive = false
+  if(_ptrEl) _ptrEl.style.display='none'
+  _ptrStart = 0
+  await loadFeed()
+})
+
 function prependPost(post){
   const tmap={tip:'tt-tip 💡 Dica',invite:'tt-invite ⚽ Convite',result:'tt-result 🏆 Resultado',general:'tt-general 💬 Geral'}
   const auth=post.author?.username??'Usuário', av=auth.slice(0,2).toUpperCase()
@@ -706,22 +774,6 @@ function prependPost(post){
   </div>`)
 }
 </script>
-<script>
-async function carregarNotifBadge() {
-  const user = await getUser()
-  if (!user) return
-  const { count } = await sb().from('notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('is_read', false)
-  const badge = document.getElementById('notifBadge')
-  if (badge && count > 0) {
-    badge.textContent = count > 9 ? '9+' : count
-    badge.style.display = 'flex'
-  }
-}
-function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
-carregarNotifBadge()
-</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
 </body>
 </html>

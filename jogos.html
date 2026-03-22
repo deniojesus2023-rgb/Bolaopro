@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Jogos</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BolãoPro">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
 .jogo-card{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow);transition:all .2s;}
 .jogo-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px);}
@@ -206,6 +212,7 @@
 let allJogos = []
 let curComp   = ''
 let curStatus = ''
+let realtimeChannel = null
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await initAuth()
@@ -218,7 +225,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   loadJogos()
 
   // Realtime: atualiza ao vivo quando placar muda
-  sb().channel('matches_rt')
+  if (realtimeChannel) sb().removeChannel(realtimeChannel)
+  realtimeChannel = sb().channel('matches_rt')
     .on('postgres_changes', {
       event: 'UPDATE', schema: 'public', table: 'matches'
     }, () => loadJogos())
@@ -299,10 +307,10 @@ function jogoCardHtml(j) {
   const uid    = j.id.slice(0, 8)
 
   const homeLg = j.home_team_logo
-    ? `<img src="${j.home_team_logo}" alt="${esc(j.home_team)}">`
+    ? `<img src="${j.home_team_logo}" alt="${esc(j.home_team)}" loading="lazy">`
     : `<span>${esc(j.home_team.slice(0,3).toUpperCase())}</span>`
   const awayLg = j.away_team_logo
-    ? `<img src="${j.away_team_logo}" alt="${esc(j.away_team)}">`
+    ? `<img src="${j.away_team_logo}" alt="${esc(j.away_team)}" loading="lazy">`
     : `<span>${esc(j.away_team.slice(0,3).toUpperCase())}</span>`
 
   // Placar principal
@@ -581,22 +589,6 @@ function renderLineupCol(lineup) {
   </div>`
 }
 </script>
-<script>
-async function carregarNotifBadge() {
-  const user = await getUser()
-  if (!user) return
-  const { count } = await sb().from('notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('is_read', false)
-  const badge = document.getElementById('notifBadge')
-  if (badge && count > 0) {
-    badge.textContent = count > 9 ? '9+' : count
-    badge.style.display = 'flex'
-  }
-}
-function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
-carregarNotifBadge()
-</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
 </body>
 </html>

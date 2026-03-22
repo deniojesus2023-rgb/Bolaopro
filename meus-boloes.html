@@ -3,9 +3,15 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>BolãoPro — Meus Bolões</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BolãoPro">
+<meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 </head>
 <body>
 <aside class="sidebar">
@@ -59,7 +65,10 @@
     </div>
   </header>
   <div class="content" id="content">
-    <div class="empty" style="min-height:60vh"><div class="spin spin-lg"></div></div>
+    <div id="ptr-indicator" style="display:none;justify-content:center;padding:12px;color:var(--accent)">↻ Atualizando…</div>
+    <div id="boloes-list">
+      <div class="empty" style="min-height:60vh"><div class="spin spin-lg"></div></div>
+    </div>
   </div>
 </div>
 
@@ -76,56 +85,68 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script><script src="app.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded',async()=>{
-  const user=await initAuth()
-  if(!user){
-    document.getElementById('content').innerHTML='<div class="empty"><div class="empty-icon">🔒</div><p>Faça login para ver seus bolões</p><a href="login.html" class="btn-full" style="max-width:200px;margin-top:12px">Entrar</a></div>'
+let _mbUser = null
+
+async function loadMeusBoloes() {
+  if (!_mbUser) return
+  const listEl = document.getElementById('boloes-list')
+  listEl.innerHTML = '<div class="empty" style="min-height:60vh"><div class="spin spin-lg"></div></div>'
+  const data = await getMeusBoloes(_mbUser.id)
+  if (!data.length) {
+    listEl.innerHTML = '<div class="empty"><div class="empty-icon">⚽</div><p>Você ainda não tem bolões.<br>Crie o primeiro!</p><a href="index.html" class="btn-full" style="max-width:220px;margin-top:14px">Criar Bolão Grátis</a></div>'
     return
   }
-  hideEl('sideLogin');showEl('sideLogout')
-  const p=await getProfile(user.id);const n=p?.username??user.email?.split('@')[0]??'?'
-  setEl('topUserName',n);setEl('topUserAv',n.slice(0,2).toUpperCase())
-  const data=await getMeusBoloes(user.id)
-  if(!data.length){
-    document.getElementById('content').innerHTML='<div class="empty"><div class="empty-icon">⚽</div><p>Você ainda não tem bolões.<br>Crie o primeiro!</p><a href="index.html" class="btn-full" style="max-width:220px;margin-top:14px">Criar Bolão Grátis</a></div>'
-    return
-  }
-  const cards=data.map(d=>{
-    const b=d.boloes; if(!b) return ''
-    const cnt=b.participants?.[0]?.count??0
-    const prz=(b.cota_value??0)*cnt*0.95
-    return`<a href="bolao.html?id=${b.id}" style="text-decoration:none;color:inherit;display:block;margin-bottom:10px">
+  const cards = data.map(d => {
+    const b = d.boloes; if (!b) return ''
+    const cnt = b.participants?.[0]?.count ?? 0
+    const prz = (b.cota_value ?? 0) * cnt * 0.95
+    return `<a href="bolao.html?id=${b.id}" style="text-decoration:none;color:inherit;display:block;margin-bottom:10px">
       <div class="card">
         <div class="bolao-row" style="border:none;padding:16px 18px">
           <div class="b-dot ${stDot(b.status)}"></div>
           <div class="b-info">
             <div class="b-name">${esc(b.name)}</div>
-            <div class="b-meta">${esc(b.competicao??'')} · ${cnt}/${b.max_participants??'?'} pessoas · ${b.deadline?fmtDate(b.deadline):'sem prazo'}</div>
+            <div class="b-meta">${esc(b.competicao ?? '')} · ${cnt}/${b.max_participants ?? '?'} pessoas · ${b.deadline ? fmtDate(b.deadline) : 'sem prazo'}</div>
           </div>
           <div class="b-prize">${fmtMoney(prz)}</div>
           <span class="st ${stClass(b.status)}">${stLabel(b.status)}</span>
         </div>
       </div>
-    </a>`}).join('')
-  document.getElementById('content').innerHTML=`<div style="margin-bottom:6px"><p style="font-size:13px;color:var(--muted)">${data.length} bolão(ões) encontrado(s)</p></div>${cards}`
+    </a>`
+  }).join('')
+  listEl.innerHTML = `<div style="margin-bottom:6px"><p style="font-size:13px;color:var(--muted)">${data.length} bolão(ões) encontrado(s)</p></div>${cards}`
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  const user = await initAuth()
+  if (!user) {
+    document.getElementById('boloes-list').innerHTML = '<div class="empty"><div class="empty-icon">🔒</div><p>Faça login para ver seus bolões</p><a href="login.html" class="btn-full" style="max-width:200px;margin-top:12px">Entrar</a></div>'
+    return
+  }
+  _mbUser = user
+  hideEl('sideLogin'); showEl('sideLogout')
+  const p = await getProfile(user.id); const n = p?.username ?? user.email?.split('@')[0] ?? '?'
+  setEl('topUserName', n); setEl('topUserAv', n.slice(0, 2).toUpperCase())
+  await loadMeusBoloes()
+})
+
+// Pull-to-refresh
+let _ptrStart = 0, _ptrActive = false
+const _ptrEl = document.getElementById('ptr-indicator')
+document.addEventListener('touchstart', e => { _ptrStart = e.touches[0].clientY }, {passive:true})
+document.addEventListener('touchmove', e => {
+  if (window.scrollY > 0) return
+  const dy = e.touches[0].clientY - _ptrStart
+  if (dy > 60 && !_ptrActive) { _ptrActive = true; if(_ptrEl) _ptrEl.style.display='flex' }
+}, {passive:true})
+document.addEventListener('touchend', async () => {
+  if (!_ptrActive) return
+  _ptrActive = false
+  if(_ptrEl) _ptrEl.style.display='none'
+  _ptrStart = 0
+  await loadMeusBoloes()
 })
 </script>
-<script>
-async function carregarNotifBadge() {
-  const user = await getUser()
-  if (!user) return
-  const { count } = await sb().from('notifications')
-    .select('*', { count: 'exact', head: true })
-    .eq('user_id', user.id)
-    .eq('is_read', false)
-  const badge = document.getElementById('notifBadge')
-  if (badge && count > 0) {
-    badge.textContent = count > 9 ? '9+' : count
-    badge.style.display = 'flex'
-  }
-}
-function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
-carregarNotifBadge()
-</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
 </body>
 </html>

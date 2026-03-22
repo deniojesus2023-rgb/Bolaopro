@@ -70,7 +70,8 @@ async function getBolao(id) {
   const { data } = await sb().from('boloes')
     .select(`*, owner:profiles!owner_id(username,avatar_url),
       participants(*, profile:profiles(username)),
-      bolao_matches(match:matches(*))`)
+      bolao_matches(match:matches(*)),
+      predictions(user_id, predicted_result)`)
     .eq('id', id).single()
   return data
 }
@@ -96,6 +97,7 @@ async function salvarPalpite(bolaoId, matchId, userId, result, homeScore, awaySc
     predicted_away_score: awayScore ? parseInt(awayScore) : null,
     predicted_top_scorer: topScorer || null,
   }, { onConflict: 'bolao_id,match_id,user_id' })
+  if (!error && navigator.vibrate) navigator.vibrate(50)
   return !error
 }
 
@@ -212,6 +214,7 @@ function showEl(id) { const e = document.getElementById(id); if (e) e.style.disp
 function hideEl(id) { const e = document.getElementById(id); if (e) e.style.display = 'none' }
 
 function showToast(msg, dur = 2600) {
+  if (navigator.vibrate) navigator.vibrate(10)
   let t = document.getElementById('toast')
   if (!t) { t = document.createElement('div'); t.id = 'toast'; t.className = 'toast'; document.body.appendChild(t) }
   t.textContent = msg; t.classList.add('on')
@@ -260,7 +263,48 @@ function stLabel(s) { return {open:'Aberto',active:'Ao Vivo',finished:'Finalizad
 function stClass(s)  { return {open:'st-open',active:'st-live',finished:'st-done',cancelled:'st-done'}[s] ?? 'st-done' }
 function stDot(s)    { return {open:'dot-open',active:'dot-live',finished:'dot-done',cancelled:'dot-done'}[s] ?? 'dot-done' }
 
+// ── NOTIF BADGE ──────────────────────────────────────────────
+async function carregarNotifBadge() {
+  const user = await getUser()
+  if (!user) return
+  const { count } = await sb().from('notifications')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+    .eq('is_read', false)
+  const badge = document.getElementById('notifBadge')
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count > 9 ? '9+' : count
+      badge.style.display = 'flex'
+    } else {
+      badge.style.display = 'none'
+    }
+  }
+}
+let _notifChannel = null
+async function subscribeNotifBadge() {
+  const user = await getUser()
+  if (!user || _notifChannel) return
+  _notifChannel = sb().channel('notif_badge_' + user.id)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => {
+      carregarNotifBadge()
+    })
+    .subscribe()
+}
+function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
+
 // ── LUCIDE ICONS ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons()
+  carregarNotifBadge()
+  subscribeNotifBadge()
+})
+
+// ── CONECTIVIDADE ────────────────────────────────────────────
+window.addEventListener('offline', () => {
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50])
+  showToast('⚠️ Sem conexão — algumas funções indisponíveis', 5000)
+})
+window.addEventListener('online', () => {
+  showToast('✅ Conexão restaurada')
 })

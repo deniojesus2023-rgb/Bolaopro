@@ -4,5 +4,23 @@
   "routes": [
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/404.html", "status": 404 }
+  ],
+  "headers": [
+    {
+      "source": "/(.*\\.css)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*\\.js)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/(.*\\.html)",
+      "headers": [{ "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }]
+    },
+    {
+      "source": "/(.*\\.(png|jpg|jpeg|gif|webp|svg|ico|woff|woff2))",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=2592000" }]
+    }
   ]
 }
