@@ -716,6 +716,33 @@ function subscribeRealtime(){
   sb().channel('pub_feed').on('postgres_changes',{event:'INSERT',schema:'public',table:'posts'},(p)=>{
     sb().from('profiles').select('username').eq('id',p.new.user_id).single().then(({data:a})=>{p.new.author=a;prependPost(p.new)})
   }).subscribe()
+
+  // Atualiza contagem de curtidas em tempo real para todos os usuários
+  sb().channel('post_likes_rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'post_likes'},(p)=>{
+      const post=document.getElementById(`p_${p.new.post_id}`)
+      if(!post) return
+      const sp=post.querySelectorAll('.pact')[0]?.querySelector('span')
+      if(sp) sp.textContent=parseInt(sp.textContent)+1
+    })
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'post_likes'},(p)=>{
+      const postId=p.old?.post_id; if(!postId) return
+      const post=document.getElementById(`p_${postId}`)
+      if(!post) return
+      const sp=post.querySelectorAll('.pact')[0]?.querySelector('span')
+      if(sp) sp.textContent=Math.max(0,parseInt(sp.textContent)-1)
+    })
+    .subscribe()
+
+  // Atualiza contagem de comentários em tempo real para todos os usuários
+  sb().channel('post_replies_rt')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'post_replies'},(p)=>{
+      const post=document.getElementById(`p_${p.new.post_id}`)
+      if(!post) return
+      const sp=post.querySelectorAll('.pact')[1]?.querySelector('span')
+      if(sp) sp.textContent=parseInt(sp.textContent)+1
+    })
+    .subscribe()
 }
 // Pull-to-refresh
 let _ptrStart = 0, _ptrActive = false

@@ -272,10 +272,24 @@ async function carregarNotifBadge() {
     .eq('user_id', user.id)
     .eq('is_read', false)
   const badge = document.getElementById('notifBadge')
-  if (badge && count > 0) {
-    badge.textContent = count > 9 ? '9+' : count
-    badge.style.display = 'flex'
+  if (badge) {
+    if (count > 0) {
+      badge.textContent = count > 9 ? '9+' : count
+      badge.style.display = 'flex'
+    } else {
+      badge.style.display = 'none'
+    }
   }
+}
+let _notifChannel = null
+async function subscribeNotifBadge() {
+  const user = await getUser()
+  if (!user || _notifChannel) return
+  _notifChannel = sb().channel('notif_badge_' + user.id)
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => {
+      carregarNotifBadge()
+    })
+    .subscribe()
 }
 function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
 
@@ -283,6 +297,7 @@ function abrirNotifs() { location.href = 'configuracoes.html#notificacoes' }
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) lucide.createIcons()
   carregarNotifBadge()
+  subscribeNotifBadge()
 })
 
 // ── CONECTIVIDADE ────────────────────────────────────────────
