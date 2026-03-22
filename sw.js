@@ -1,6 +1,6 @@
 const CACHE = 'bolaopro-v3'
 const ASSETS = [
-  '/', '/index.html', '/login.html', '/bolao.html', '/comunidade.html',
+  '/', '/index.html', '/login.html', '/admin.html', '/bolao.html', '/comunidade.html',
   '/configuracoes.html', '/jogos.html', '/meus-boloes.html', '/perfil.html',
   '/ranking.html', '/404.html',
   '/shared.css', '/design-system.css', '/app.js', '/config.js'

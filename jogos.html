@@ -444,7 +444,7 @@ function jogoCardHtml(j) {
     <div class="jogo-footer" style="margin-top:10px">
       <a href="${CONFIG.SPORTINGBET}" target="_blank" class="jf-sb">⚡ Sportingbet</a>
       <a href="${CONFIG.SUPERBET}"    target="_blank" class="jf-sup">⚡ Superbet</a>
-      <a href="index.html" class="jf-bolao" onclick="openBolaoFromJogo('${esc(j.home_team)}','${esc(j.away_team)}');return false">⚽ Criar Bolão</a>
+      <a href="index.html" class="jf-bolao" data-home="${esc(j.home_team)}" data-away="${esc(j.away_team)}" onclick="openBolaoFromJogo(this.dataset.home,this.dataset.away);return false">⚽ Criar Bolão</a>
     </div>
   </div>`
 }
@@ -571,7 +571,8 @@ async function toggleLineups(matchId, uid) {
 
 function renderLineupCol(lineup) {
   if (!lineup) return '<div></div>'
-  const players = typeof lineup.players === 'string' ? JSON.parse(lineup.players) : (lineup.players ?? [])
+  let players = []
+  try { players = typeof lineup.players === 'string' ? JSON.parse(lineup.players) : (lineup.players ?? []) } catch { players = [] }
   const starters = players.filter(p => !p.substitute)
   const subs     = players.filter(p => p.substitute)
   const pRows = starters.map(p =>
