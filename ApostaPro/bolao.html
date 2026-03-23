@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>ApostaPro — Palpites</title>
+<meta name="theme-color" content="#00E676"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="app.css"/>
+<style>
+.bolao-header {
+  background: linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.bolao-header-prize {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.bolao-header-name {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.bolao-header-meta {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--muted2);
+}
+
+.sub-tabs {
+  display: flex;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 4px;
+  margin-bottom: 18px;
+}
+.sub-tab {
+  flex: 1;
+  height: 36px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  transition: all .15s;
+}
+.sub-tab.on { background: var(--green); color: #000; }
+
+.matches-section { display: block; }
+.ranking-section { display: none; }
+
+.match-time {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+.result-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: 8px;
+}
+.result-correct { background: var(--green-lt); color: var(--green); }
+.result-wrong   { background: var(--red-lt);   color: var(--red); }
+
+.pts-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--green);
+  background: var(--green-lt);
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.submit-area {
+  position: fixed;
+  bottom: 60px; left: 0; right: 0;
+  padding: 12px 16px;
+  background: rgba(7,13,26,.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  z-index: 50;
+}
+.submit-area .btn { max-width: 480px; margin: 0 auto; }
+
+.join-wall {
+  text-align: center;
+  padding: 32px 0;
+}
+
+.my-rank-bar {
+  background: var(--green-lt);
+  border: 1px solid var(--green-m);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.my-rank-bar .pos { color: var(--green); font-size: 16px; font-weight: 800; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadScreen">
+  <div class="spin"></div>
+  <p>Carregando bolão...</p>
+</div>
+
+<!-- TOPBAR -->
+<header class="topbar" style="display:none" id="topbar">
+  <a href="dashboard.html" style="color:var(--muted2);text-decoration:none;font-size:13px;display:flex;align-items:center;gap:6px">
+    ← Voltar
+  </a>
+  <span class="logo" style="font-size:15px">Aposta<span>Pro</span></span>
+  <div style="width:52px"></div>
+</header>
+
+<!-- CONTENT -->
+<main class="page" id="mainContent" style="display:none">
+
+  <!-- HEADER DO BOLÃO -->
+  <div class="bolao-header">
+    <div class="bolao-header-prize" id="bPrize">—</div>
+    <div class="bolao-header-name" id="bName">…</div>
+    <div class="bolao-header-meta">
+      <span id="bDeadline">⏰ —</span>
+      <span id="bParticipants">👥 — participantes</span>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="sub-tabs">
+    <button class="sub-tab on" onclick="setTab('matches', this)">⚽ Palpites</button>
+    <button class="sub-tab" onclick="setTab('ranking', this)">🏆 Ranking</button>
+  </div>
+
+  <!-- PALPITES -->
+  <div class="matches-section" id="matchesSection">
+
+    <!-- Muro de entrada (se não inscrito) -->
+    <div id="joinWall" style="display:none">
+      <div class="join-wall">
+        <div style="font-size:48px;margin-bottom:16px">⚽</div>
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:8px">Entre neste bolão</h2>
+        <p style="color:var(--muted2);font-size:14px;margin-bottom:24px;line-height:1.6">
+          Confirme sua inscrição para liberar os palpites e concorrer ao prêmio.
+        </p>
+        <button class="btn btn-green" onclick="entrarNoBolao()" id="btnEntrar">
+          Entrar no bolão →
+        </button>
+      </div>
+    </div>
+
+    <!-- Jogos -->
+    <div id="matchesList"></div>
+
+  </div>
+
+  <!-- RANKING -->
+  <div class="ranking-section" id="rankingSection">
+    <div id="myRankBar" style="display:none">
+      <div class="my-rank-bar">
+        <span>Sua posição</span>
+        <span class="pos" id="myPos">—º</span>
+        <span id="myPts" style="color:var(--green)">0 pts</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">Classificação</div>
+      <div class="card-body" id="rankingList">
+        <div class="empty"><div class="spin"></div></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <a href="dashboard.html" class="nav-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Início
+  </a>
+  <a href="ranking.html" class="nav-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    Ranking
+  </a>
+  <a href="deposito.html" class="nav-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+    Depositar
+  </a>
+</nav>
+
+<!-- SUBMIT BUTTON (aparece quando inscrito) -->
+<div class="submit-area" id="submitArea" style="display:none">
+  <button class="btn btn-green" onclick="salvarPalpites()" id="btnSalvar">
+    💾 Salvar palpites
+  </button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+let currentUser = null
+let userProfile = null
+let bolao = null
+let matches = []
+let myParticipantId = null
+let isJoined = false
+let existingPredictions = {}
+
+const bolaoId = new URLSearchParams(location.search).get('id')
+
+;(async () => {
+  if (!bolaoId) { window.location.href = 'dashboard.html'; return }
+
+  currentUser = await requireAuth()
+  if (!currentUser) return
+
+  userProfile = await getProfile(currentUser.id)
+  if (!userProfile?.deposit_verified) { window.location.href = 'deposito.html'; return }
+
+  // Carrega bolão
+  const { data: b } = await sb().from('boloes').select('*').eq('id', bolaoId).single()
+  if (!b) { window.location.href = 'dashboard.html'; return }
+  bolao = b
+
+  // Verifica se já inscrito
+  const { data: part } = await sb()
+    .from('bolao_participants')
+    .select('id, pontuacao, posicao')
+    .eq('bolao_id', bolaoId)
+    .eq('user_id', currentUser.id)
+    .maybeSingle()
+
+  if (part) {
+    isJoined = true
+    myParticipantId = part.id
+  }
+
+  // Carrega jogos
+  const { data: matchData } = await sb()
+    .from('bolao_matches')
+    .select('id, match_date, home_team, away_team, home_score, away_score, finished')
+    .eq('bolao_id', bolaoId)
+    .order('match_date', { ascending: true })
+
+  matches = matchData || []
+
+  // Carrega palpites existentes
+  if (isJoined && myParticipantId) {
+    const { data: preds } = await sb()
+      .from('predictions')
+      .select('*')
+      .eq('participant_id', myParticipantId)
+    if (preds) preds.forEach(p => existingPredictions[p.match_id] = p)
+  }
+
+  renderPage()
+})()
+
+function renderPage() {
+  // Header
+  setText('bPrize', fmtBRL(bolao.prize))
+  setText('bName', bolao.name)
+  setText('bDeadline', '⏰ ' + timeLeft(bolao.deadline))
+  setText('bParticipants', '👥 ' + (bolao.participant_count || 0) + ' participantes')
+
+  // Mostra UI
+  document.getElementById('loadScreen').style.display = 'none'
+  document.getElementById('topbar').style.display = 'flex'
+  document.getElementById('mainContent').style.display = 'block'
+  document.getElementById('bottomNav').style.display = 'flex'
+
+  if (isJoined) {
+    document.getElementById('joinWall').style.display = 'none'
+    renderMatches()
+    if (bolao.status !== 'finalizado') {
+      document.getElementById('submitArea').style.display = 'block'
+    }
+  } else {
+    document.getElementById('joinWall').style.display = 'block'
+    renderMatchesLocked()
+  }
+}
+
+function renderMatches() {
+  const el = document.getElementById('matchesList')
+  const finished = bolao.status === 'finalizado' || bolao.status === 'em_andamento'
+
+  if (!matches.length) {
+    el.innerHTML = '<div class="empty">Nenhum jogo cadastrado ainda.</div>'
+    return
+  }
+
+  el.innerHTML = matches.map(m => {
+    const pred = existingPredictions[m.id]
+    const h = pred?.home_score ?? ''
+    const a = pred?.away_score ?? ''
+
+    let resultBadge = ''
+    if (m.finished && pred) {
+      const correct = pred.home_score === m.home_score && pred.away_score === m.away_score
+      resultBadge = correct
+        ? `<span class="result-badge result-correct">✓ Acertou</span>`
+        : `<span class="result-badge result-wrong">✗ Errou</span>`
+      if (pred.pontos_ganhos > 0) {
+        resultBadge += `<span class="pts-badge">+${pred.pontos_ganhos} pts</span>`
+      }
+    }
+
+    const readonly = m.finished || bolao.status === 'finalizado' ? 'readonly' : ''
+    const realScore = m.finished ? `<div style="font-size:11px;color:var(--muted);text-align:center;margin-top:6px">Resultado: ${m.home_score} × ${m.away_score}</div>` : ''
+
+    return `
+    <div class="match-row">
+      <div class="match-time">${fmtDateTime(m.match_date)} ${resultBadge}</div>
+      <div class="match-teams">
+        <div class="match-team">${m.home_team}</div>
+        <div class="match-vs">vs</div>
+        <div class="match-team">${m.away_team}</div>
+      </div>
+      <div class="match-score-inputs">
+        <input class="score-input" type="number" min="0" max="20" value="${h}"
+          data-match="${m.id}" data-side="home" ${readonly} placeholder="0"/>
+        <span class="score-sep">×</span>
+        <input class="score-input" type="number" min="0" max="20" value="${a}"
+          data-match="${m.id}" data-side="away" ${readonly} placeholder="0"/>
+      </div>
+      ${realScore}
+    </div>`
+  }).join('')
+}
+
+function renderMatchesLocked() {
+  // Mostra jogos sem input (preview)
+  const el = document.getElementById('matchesList')
+  el.innerHTML = matches.slice(0, 3).map(m => `
+    <div class="match-row" style="opacity:.4;pointer-events:none">
+      <div class="match-time">${fmtDateTime(m.match_date)}</div>
+      <div class="match-teams">
+        <div class="match-team">${m.home_team}</div>
+        <div class="match-vs">vs</div>
+        <div class="match-team">${m.away_team}</div>
+      </div>
+      <div class="match-score-inputs">
+        <input class="score-input" type="number" placeholder="?" disabled/>
+        <span class="score-sep">×</span>
+        <input class="score-input" type="number" placeholder="?" disabled/>
+      </div>
+    </div>`).join('')
+}
+
+async function entrarNoBolao() {
+  const btn = document.getElementById('btnEntrar')
+  btn.disabled = true
+  btn.textContent = 'Entrando...'
+
+  const { data, error } = await sb()
+    .from('bolao_participants')
+    .insert({ bolao_id: bolaoId, user_id: currentUser.id, pontuacao: 0 })
+    .select('id')
+    .single()
+
+  if (error) {
+    btn.disabled = false
+    btn.textContent = 'Entrar no bolão →'
+    toast('Erro ao entrar no bolão. Tente novamente.', 'error')
+    return
+  }
+
+  isJoined = true
+  myParticipantId = data.id
+
+  // Incrementa contador
+  await sb().from('boloes')
+    .update({ participant_count: (bolao.participant_count || 0) + 1 })
+    .eq('id', bolaoId)
+
+  toast('✅ Você entrou no bolão! Faça seus palpites.')
+  renderMatches()
+  document.getElementById('joinWall').style.display = 'none'
+  if (bolao.status !== 'finalizado') {
+    document.getElementById('submitArea').style.display = 'block'
+  }
+}
+
+async function salvarPalpites() {
+  const btn = document.getElementById('btnSalvar')
+  btn.disabled = true
+  btn.textContent = 'Salvando...'
+
+  const inputs = document.querySelectorAll('.score-input:not([readonly])')
+  const preds = {}
+
+  inputs.forEach(inp => {
+    const matchId = inp.dataset.match
+    const side = inp.dataset.side
+    if (!preds[matchId]) preds[matchId] = {}
+    preds[matchId][side] = parseInt(inp.value) || 0
+  })
+
+  const upserts = Object.entries(preds).map(([matchId, scores]) => ({
+    participant_id: myParticipantId,
+    bolao_id: bolaoId,
+    match_id: matchId,
+    home_score: scores.home ?? 0,
+    away_score: scores.away ?? 0,
+    pontos_ganhos: 0
+  }))
+
+  const { error } = await sb()
+    .from('predictions')
+    .upsert(upserts, { onConflict: 'participant_id,match_id' })
+
+  btn.disabled = false
+  btn.textContent = '💾 Salvar palpites'
+
+  if (error) { toast('Erro ao salvar. Tente novamente.', 'error'); return }
+  toast('✅ Palpites salvos com sucesso!')
+}
+
+function setTab(tab, el) {
+  document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('on'))
+  el.classList.add('on')
+  document.getElementById('matchesSection').style.display = tab === 'matches' ? 'block' : 'none'
+  document.getElementById('rankingSection').style.display = tab === 'ranking' ? 'block' : 'none'
+  if (tab === 'ranking') carregarRanking()
+}
+
+async function carregarRanking() {
+  const el = document.getElementById('rankingList')
+  el.innerHTML = '<div class="empty"><div class="spin"></div></div>'
+
+  const { data } = await sb()
+    .from('bolao_participants')
+    .select('id, user_id, pontuacao, posicao, profiles(username)')
+    .eq('bolao_id', bolaoId)
+    .order('pontuacao', { ascending: false })
+    .limit(50)
+
+  if (!data?.length) {
+    el.innerHTML = '<div class="empty">Nenhum participante ainda.</div>'
+    return
+  }
+
+  let myPos = null
+  el.innerHTML = data.map((p, i) => {
+    const pos = i + 1
+    const name = p.profiles?.username ?? 'Jogador'
+    const isMe = p.user_id === currentUser.id
+    if (isMe) myPos = pos
+
+    const posClass = pos === 1 ? 'top1' : pos === 2 ? 'top2' : pos === 3 ? 'top3' : ''
+    const medal = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : pos
+
+    return `
+    <div class="rank-row" style="${isMe ? 'background:var(--green-lt);border-radius:8px;padding:12px 8px;margin:-2px -4px;' : ''}">
+      <div class="rank-pos ${posClass}">${medal}</div>
+      <div class="rank-av">${name.slice(0,2).toUpperCase()}</div>
+      <div class="rank-name">${name}${isMe ? ' <span style="font-size:10px;color:var(--green)">(você)</span>' : ''}</div>
+      <div class="rank-pts">${p.pontuacao ?? 0} pts</div>
+    </div>`
+  }).join('')
+
+  if (myPos) {
+    document.getElementById('myRankBar').style.display = 'block'
+    setText('myPos', myPos + 'º')
+    const myData = data.find(p => p.user_id === currentUser.id)
+    setText('myPts', (myData?.pontuacao ?? 0) + ' pts')
+  }
+}
+</script>
+</body>
+</html>
