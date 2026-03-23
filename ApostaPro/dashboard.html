@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>ApostaPro — Bolões</title>
+<meta name="theme-color" content="#00E676"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="app.css"/>
+<style>
+.user-welcome {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0 20px;
+}
+.user-av-lg {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--green-lt);
+  border: 2px solid var(--green-m);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: var(--green);
+  flex-shrink: 0;
+}
+.user-greet { font-size: 12px; color: var(--muted2); }
+.user-name  { font-size: 16px; font-weight: 700; }
+
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.filter-tabs::-webkit-scrollbar { display: none; }
+.filter-btn {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted2);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Inter', sans-serif;
+  transition: all .15s;
+  flex-shrink: 0;
+}
+.filter-btn.on {
+  background: var(--green);
+  border-color: var(--green);
+  color: #000;
+}
+
+.locked-banner {
+  background: linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.locked-banner-icon { font-size: 24px; flex-shrink: 0; }
+.locked-banner-text { flex: 1; }
+.locked-banner-text strong { display: block; font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+.locked-banner-text p { font-size: 12px; color: var(--muted2); }
+.locked-banner a {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Bolão card bloqueado */
+.bolao-card.locked {
+  opacity: .75;
+  position: relative;
+}
+.bolao-lock-badge {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--muted);
+  padding: 3px 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-screen" id="loadScreen">
+  <div class="spin"></div>
+  <p>Carregando bolões...</p>
+</div>
+
+<!-- TOPBAR -->
+<header class="topbar" style="display:none" id="topbar">
+  <a href="index.html" class="logo">
+    <div class="logo-icon">⚽</div>
+    Aposta<span>Pro</span>
+  </a>
+  <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit">Sair</button>
+</header>
+
+<!-- CONTENT -->
+<main class="page" id="mainContent" style="display:none">
+
+  <!-- WELCOME -->
+  <div class="user-welcome">
+    <div class="user-av-lg" id="userAv">?</div>
+    <div>
+      <div class="user-greet">Bem-vindo de volta 👋</div>
+      <div class="user-name" id="userName">…</div>
+    </div>
+  </div>
+
+  <!-- BANNER: precisa depositar -->
+  <div class="locked-banner" id="lockedBanner" style="display:none">
+    <div class="locked-banner-icon">🔒</div>
+    <div class="locked-banner-text">
+      <strong>Deposite para participar</strong>
+      <p>Faça R$20 na Superbet e desbloqueie os bolões</p>
+    </div>
+    <a href="deposito.html">Ativar →</a>
+  </div>
+
+  <!-- STATS (só para verificados) -->
+  <div id="statsSection" style="display:none">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val green" id="statBoloes">0</div>
+        <div class="stat-lbl">Bolões participando</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statPontos">0</div>
+        <div class="stat-lbl">Pontos acumulados</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filter-tabs">
+    <button class="filter-btn on" onclick="filtrar('aberto', this)">⚽ Abertos</button>
+    <button class="filter-btn" onclick="filtrar('em_andamento', this)">⚡ Ao vivo</button>
+    <button class="filter-btn" onclick="filtrar('finalizado', this)">✅ Encerrados</button>
+  </div>
+
+  <!-- LISTA DE BOLÕES -->
+  <div id="boloesList">
+    <div class="empty"><div class="empty-icon">⚽</div>Carregando bolões...</div>
+  </div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <a href="dashboard.html" class="nav-btn on">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Início
+  </a>
+  <a href="ranking.html" class="nav-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    Ranking
+  </a>
+  <a href="deposito.html" class="nav-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+    Depositar
+  </a>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+let currentUser = null
+let userProfile = null
+let currentFilter = 'aberto'
+
+;(async () => {
+  currentUser = await requireAuth()
+  if (!currentUser) return
+
+  userProfile = await getProfile(currentUser.id)
+
+  // Mostra UI
+  document.getElementById('loadScreen').style.display = 'none'
+  document.getElementById('topbar').style.display = 'flex'
+  document.getElementById('mainContent').style.display = 'block'
+  document.getElementById('bottomNav').style.display = 'flex'
+
+  // Nome / avatar
+  const name = userProfile?.username ?? currentUser.email?.split('@')[0] ?? 'Jogador'
+  setText('userName', name)
+  setText('userAv', name.slice(0, 2).toUpperCase())
+
+  // Verificado ou não
+  if (!userProfile?.deposit_verified) {
+    document.getElementById('lockedBanner').style.display = 'flex'
+  } else {
+    document.getElementById('statsSection').style.display = 'block'
+    carregarStats()
+  }
+
+  carregarBoloes('aberto')
+})()
+
+async function carregarStats() {
+  const { data } = await sb()
+    .from('bolao_participants')
+    .select('id, pontuacao')
+    .eq('user_id', currentUser.id)
+
+  if (data) {
+    setText('statBoloes', data.length)
+    setText('statPontos', data.reduce((s, r) => s + (r.pontuacao || 0), 0))
+  }
+}
+
+async function carregarBoloes(status) {
+  const el = document.getElementById('boloesList')
+  el.innerHTML = '<div class="empty"><div class="spin"></div></div>'
+
+  const { data, error } = await sb()
+    .from('boloes')
+    .select('id, name, description, prize, status, deadline, max_participants, participant_count')
+    .eq('status', status)
+    .order('deadline', { ascending: true })
+
+  if (error || !data?.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">⚽</div>Nenhum bolão ${status === 'aberto' ? 'aberto' : status === 'em_andamento' ? 'ao vivo' : 'encerrado'} no momento.</div>`
+    return
+  }
+
+  // Quais bolões o usuário já entrou
+  let meusBoloes = new Set()
+  if (userProfile?.deposit_verified && currentUser) {
+    const { data: parts } = await sb()
+      .from('bolao_participants')
+      .select('bolao_id')
+      .eq('user_id', currentUser.id)
+    if (parts) parts.forEach(p => meusBoloes.add(p.bolao_id))
+  }
+
+  el.innerHTML = data.map(b => renderBolaoCard(b, meusBoloes.has(b.id))).join('')
+}
+
+function renderBolaoCard(b, joined) {
+  const locked = !userProfile?.deposit_verified
+  const pct = Math.min(100, Math.round((b.participant_count || 0) / (b.max_participants || 50) * 100))
+  const tl = timeLeft(b.deadline)
+
+  const statusPill = b.status === 'aberto'
+    ? '<span class="pill pill-open">Aberto</span>'
+    : b.status === 'em_andamento'
+    ? '<span class="pill pill-live">⚡ Ao vivo</span>'
+    : '<span class="pill pill-closed">Encerrado</span>'
+
+  const actionBtn = joined
+    ? `<span class="pill pill-open" style="padding:6px 12px;font-size:11px">✓ Inscrito</span>`
+    : locked
+    ? `<a href="deposito.html" class="btn btn-ghost btn-sm" style="font-size:11px">🔒 Depositar</a>`
+    : `<a href="bolao.html?id=${b.id}" class="btn btn-green btn-sm" style="font-size:11px">Entrar →</a>`
+
+  return `
+  <div class="bolao-card ${locked ? 'locked' : ''}" onclick="abrirBolao('${b.id}', ${locked})">
+    ${locked ? '<div class="bolao-lock-badge">🔒 Deposite para entrar</div>' : ''}
+    <div class="bolao-card-top">
+      <div class="bolao-prize">
+        <div>
+          <div class="bolao-prize-lbl">Prêmio</div>
+          <div class="bolao-prize-val">${fmtBRL(b.prize)}</div>
+        </div>
+        ${statusPill}
+      </div>
+      <div class="bolao-name">${b.name}</div>
+      <div class="bolao-meta">
+        <span>⏰ ${tl}</span>
+        <span>👥 ${b.participant_count || 0}/${b.max_participants || 50}</span>
+      </div>
+    </div>
+    <div class="bolao-card-bot">
+      <div class="bolao-progress-wrap">
+        <div class="bolao-progress-lbl">
+          <span>Vagas</span>
+          <span>${pct}%</span>
+        </div>
+        <div class="bolao-progress-bar">
+          <div class="bolao-progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      ${actionBtn}
+    </div>
+  </div>`
+}
+
+function abrirBolao(id, locked) {
+  if (locked) { window.location.href = 'deposito.html'; return }
+  window.location.href = 'bolao.html?id=' + id
+}
+
+function filtrar(status, el) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('on'))
+  el.classList.add('on')
+  currentFilter = status
+  carregarBoloes(status)
+}
+</script>
+</body>
+</html>

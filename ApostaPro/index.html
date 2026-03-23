@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>ApostaPro — Bolão com Prêmio em Dinheiro</title>
+<meta name="description" content="Faça seus palpites, concorra a prêmios em dinheiro. Depósito mínimo de R$20 na Superbet para participar."/>
+<meta name="theme-color" content="#00E676"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="app.css"/>
+<style>
+/* ── LANDING ONLY ── */
+.hero {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px 120px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px; left: 50%;
+  transform: translateX(-50%);
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(0,230,118,.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--green-lt);
+  border: 1px solid var(--green-m);
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 20px;
+}
+.hero-title {
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 16px;
+}
+.hero-title span { color: var(--green); }
+.hero-sub {
+  font-size: 16px;
+  color: var(--muted2);
+  line-height: 1.6;
+  max-width: 340px;
+  margin-bottom: 32px;
+}
+.hero-cta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 320px;
+}
+.hero-note {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+
+.prize-showcase {
+  padding: 48px 24px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.prize-showcase h2 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 24px;
+}
+.prize-cards {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: none;
+  justify-content: center;
+}
+.prize-cards::-webkit-scrollbar { display: none; }
+.prize-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 20px 16px;
+  min-width: 140px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.prize-card-icon { font-size: 28px; margin-bottom: 8px; }
+.prize-card-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--green);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.prize-card-name { font-size: 11px; color: var(--muted2); }
+
+.how-section { padding: 48px 24px; max-width: 480px; margin: 0 auto; }
+.how-section h2 {
+  font-size: 22px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 32px;
+  letter-spacing: -.3px;
+}
+
+.proof-section {
+  padding: 48px 24px;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.proof-section h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  letter-spacing: -.3px;
+}
+.proof-section p { font-size: 14px; color: var(--muted2); margin-bottom: 28px; }
+.proof-winners {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+  margin: 0 auto 28px;
+}
+.winner-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  text-align: left;
+}
+.winner-av {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--green-lt);
+  border: 2px solid var(--green-m);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--green);
+  flex-shrink: 0;
+}
+.winner-info { flex: 1; }
+.winner-name { font-size: 13px; font-weight: 600; }
+.winner-meta { font-size: 11px; color: var(--muted); }
+.winner-prize { font-size: 16px; font-weight: 800; color: var(--green); }
+
+.faq-section { padding: 48px 24px; max-width: 480px; margin: 0 auto; }
+.faq-section h2 {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  letter-spacing: -.3px;
+}
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  padding: 16px 0;
+}
+.faq-q {
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.faq-a {
+  font-size: 13px;
+  color: var(--muted2);
+  line-height: 1.6;
+  margin-top: 10px;
+  display: none;
+}
+.faq-a.open { display: block; }
+
+.cta-bottom {
+  padding: 48px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(0,230,118,.05) 0%, transparent 100%);
+  border-top: 1px solid var(--border);
+}
+.cta-bottom h2 {
+  font-size: 24px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  letter-spacing: -.3px;
+}
+.cta-bottom p { font-size: 14px; color: var(--muted2); margin-bottom: 24px; }
+.cta-bottom .btn { max-width: 320px; margin: 0 auto 10px; }
+
+.footer {
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+  padding: 24px;
+  text-align: center;
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.8;
+}
+.footer a { color: var(--muted2); text-decoration: none; }
+
+/* sticky bottom CTA on mobile */
+.sticky-cta {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: rgba(7,13,26,.95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  z-index: 100;
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="index.html" class="logo">
+    <div class="logo-icon">⚽</div>
+    Aposta<span>Pro</span>
+  </a>
+  <a href="auth.html" class="btn btn-ghost btn-sm" style="width:auto">Entrar</a>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🏆 Bolão com prêmio real</div>
+  <h1 class="hero-title">
+    Acerte os jogos.<br>
+    <span>Ganhe dinheiro.</span>
+  </h1>
+  <p class="hero-sub">
+    Faça seus palpites, entre no bolão da rodada
+    e concorra a prêmios em dinheiro toda semana.
+  </p>
+  <div class="hero-cta">
+    <a href="auth.html" class="btn btn-green" style="font-size:16px;height:52px">
+      Quero Participar →
+    </a>
+    <p class="hero-note">Depósito mínimo de R$20 na Superbet para entrar</p>
+  </div>
+</section>
+
+<!-- BOLÕES ATIVOS -->
+<section class="prize-showcase">
+  <h2>Bolões abertos agora</h2>
+  <div class="prize-cards" id="liveBoloes">
+    <div class="prize-card">
+      <div class="prize-card-icon">🏆</div>
+      <div class="prize-card-val">R$ 500</div>
+      <div class="prize-card-name">Brasileirão — Rod. 15</div>
+    </div>
+    <div class="prize-card">
+      <div class="prize-card-icon">⚡</div>
+      <div class="prize-card-val">R$ 300</div>
+      <div class="prize-card-name">Copa do Brasil</div>
+    </div>
+    <div class="prize-card">
+      <div class="prize-card-icon">🌎</div>
+      <div class="prize-card-val">R$ 1.000</div>
+      <div class="prize-card-name">Champions League</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="how-section">
+  <h2>Como funciona?</h2>
+  <div class="how-step">
+    <div class="how-num">1</div>
+    <div class="how-text">
+      <strong>Crie sua conta grátis</strong>
+      Cadastro em menos de 1 minuto. Só email e senha.
+    </div>
+  </div>
+  <div class="how-step">
+    <div class="how-num">2</div>
+    <div class="how-text">
+      <strong>Deposite R$20 na Superbet</strong>
+      Faça seu primeiro depósito na Superbet pelo nosso link
+      e desbloqueie o acesso aos bolões.
+    </div>
+  </div>
+  <div class="how-step">
+    <div class="how-num">3</div>
+    <div class="how-text">
+      <strong>Faça seus palpites</strong>
+      Escolha os placares dos jogos da rodada. Quanto mais
+      acertar, maior sua pontuação no ranking.
+    </div>
+  </div>
+  <div class="how-step">
+    <div class="how-num">4</div>
+    <div class="how-text">
+      <strong>Ganhe o prêmio</strong>
+      O jogador com mais pontos leva o prêmio. Resultado
+      divulgado após o último jogo da rodada.
+    </div>
+  </div>
+</section>
+
+<!-- PROVA SOCIAL -->
+<section class="proof-section">
+  <h2>Vencedores recentes</h2>
+  <p>Participantes reais que ganharam nos últimos bolões</p>
+  <div class="proof-winners">
+    <div class="winner-row">
+      <div class="winner-av">RM</div>
+      <div class="winner-info">
+        <div class="winner-name">Rafael M.</div>
+        <div class="winner-meta">Acertou 7 de 8 jogos · Rod. 14</div>
+      </div>
+      <div class="winner-prize">+R$500</div>
+    </div>
+    <div class="winner-row">
+      <div class="winner-av">JS</div>
+      <div class="winner-info">
+        <div class="winner-name">Julia S.</div>
+        <div class="winner-meta">Acertou 6 de 8 jogos · Rod. 13</div>
+      </div>
+      <div class="winner-prize">+R$300</div>
+    </div>
+    <div class="winner-row">
+      <div class="winner-av">PC</div>
+      <div class="winner-info">
+        <div class="winner-name">Pedro C.</div>
+        <div class="winner-meta">Acertou 5 de 6 jogos · Copa BR</div>
+      </div>
+      <div class="winner-prize">+R$200</div>
+    </div>
+  </div>
+  <a href="auth.html" class="btn btn-green" style="max-width:280px;margin:0 auto">
+    Quero ser o próximo →
+  </a>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <h2>Perguntas frequentes</h2>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Por que preciso depositar na Superbet?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      O depósito na Superbet é a forma de entrada no bolão. Com ele
+      você desbloqueia o acesso e ainda tem créditos para apostar nos
+      jogos com as melhores odds do mercado.
+    </div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Qual o valor mínimo de depósito?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      O depósito mínimo é de R$20. Você pode usar esse valor para
+      apostar na Superbet normalmente — o acesso ao ApostaPro é um
+      bônus por ter feito seu cadastro pelo nosso link.
+    </div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Como são distribuídos os prêmios?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      O jogador com maior pontuação no ranking ao final da rodada
+      leva o prêmio integral. Em caso de empate, o prêmio é dividido
+      igualmente entre os primeiros colocados.
+    </div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Como recebo meu prêmio?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      Os prêmios são pagos via PIX em até 24h após a finalização do
+      bolão. Você receberá uma notificação quando o pagamento for
+      processado.
+    </div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q" onclick="toggleFaq(this)">
+      Posso participar de vários bolões?
+      <span>+</span>
+    </div>
+    <div class="faq-a">
+      Sim! Após verificar seu depósito uma única vez, você tem acesso
+      a todos os bolões ativos na plataforma sem custo adicional.
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-bottom">
+  <h2>Pronto para ganhar?</h2>
+  <p>Mais de 2.300 jogadores já participaram. Próximo bolão abre em breve.</p>
+  <a href="auth.html" class="btn btn-green" style="font-size:16px;height:52px">
+    Criar conta grátis →
+  </a>
+  <p class="hero-note" style="text-align:center">Acesso liberado após depósito de R$20 na Superbet</p>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>ApostaPro · Bolões esportivos com prêmios em dinheiro</p>
+  <p>Jogue com responsabilidade. Maior de 18 anos.</p>
+  <p style="margin-top:8px">
+    <a href="#">Termos de Uso</a> · <a href="#">Privacidade</a>
+  </p>
+</footer>
+
+<!-- STICKY CTA -->
+<div class="sticky-cta">
+  <a href="auth.html" class="btn btn-green" style="height:46px;font-size:14px">
+    ⚽ Participar do Bolão — Prêmio R$500
+  </a>
+</div>
+
+<script>
+function toggleFaq(el) {
+  const ans = el.nextElementSibling
+  const icon = el.querySelector('span')
+  const open = ans.classList.toggle('open')
+  icon.textContent = open ? '−' : '+'
+}
+
+// Esconde sticky CTA quando scroll está no topo
+window.addEventListener('scroll', () => {
+  const cta = document.querySelector('.sticky-cta')
+  cta.style.display = window.scrollY > 200 ? 'block' : 'none'
+}, { passive: true })
+document.querySelector('.sticky-cta').style.display = 'none'
+</script>
+</body>
+</html>

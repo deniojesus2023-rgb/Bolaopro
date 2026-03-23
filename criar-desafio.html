@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#060D0A"/>
+<title>BolãoPro — Criar Desafio</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="stylesheet" href="design-system.css"/>
+<link rel="stylesheet" href="shared.css"/>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+/* ── CRIAR DESAFIO — page styles ── */
+.cd-breadcrumb { font-size:12px; color:var(--muted); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+.cd-breadcrumb a { color:var(--green); transition:opacity .15s; }
+.cd-breadcrumb a:hover { opacity:.7; }
+.cd-breadcrumb span { color:var(--light); }
+
+/* Stepper */
+.cd-stepper { display:flex; align-items:center; gap:0; margin-bottom:28px; overflow-x:auto; scrollbar-width:none; }
+.cd-stepper::-webkit-scrollbar { display:none; }
+.cd-step { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.cd-step-num { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,.07); border:1.5px solid rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:var(--muted); transition:all .2s; }
+.cd-step.active .cd-step-num { background:var(--green); border-color:var(--green); color:#000; }
+.cd-step.done .cd-step-num { background:rgba(0,223,129,.2); border-color:rgba(0,223,129,.4); color:var(--green); }
+.cd-step-lbl { font-size:12px; font-weight:500; color:var(--muted); white-space:nowrap; }
+.cd-step.active .cd-step-lbl { color:var(--text); font-weight:600; }
+.cd-step.done .cd-step-lbl { color:var(--green); }
+.cd-step-line { flex:1; height:1px; background:rgba(0,223,129,.15); margin:0 10px; min-width:24px; }
+.cd-step-line.done { background:rgba(0,223,129,.5); }
+
+/* Layout 2 colunas */
+.cd-layout { display:grid; grid-template-columns:1fr 360px; gap:24px; align-items:start; }
+@media(max-width:1100px){ .cd-layout { grid-template-columns:1fr; } }
+
+/* Form container */
+.cd-form-col {}
+.cd-section { background:var(--card); border:1px solid rgba(0,223,129,.12); border-radius:var(--r-lg); padding:22px 24px; margin-bottom:18px; }
+.cd-section-title { font-size:14px; font-weight:700; color:var(--text); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+.cd-section-title .sec-icon { width:26px; height:26px; border-radius:var(--r-sm); background:var(--green-lt); display:flex; align-items:center; justify-content:center; font-size:12px; color:var(--green); }
+
+/* Fields */
+.cd-field { margin-bottom:16px; }
+.cd-field:last-child { margin-bottom:0; }
+.cd-label { font-size:12px; font-weight:600; color:var(--muted); margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+.cd-label .required { color:var(--red); font-size:10px; }
+.cd-label .tip-icon { width:14px; height:14px; border-radius:50%; background:rgba(255,255,255,.1); display:inline-flex; align-items:center; justify-content:center; font-size:8px; cursor:help; color:var(--muted); position:relative; }
+.cd-label .tip-icon:hover::after { content:attr(data-tip); position:absolute; left:50%; transform:translateX(-50%); bottom:calc(100% + 6px); background:#0A1F18; border:1px solid rgba(0,223,129,.25); border-radius:6px; padding:6px 10px; font-size:11px; color:var(--text); white-space:nowrap; min-width:180px; z-index:100; pointer-events:none; }
+.cd-input { width:100%; background:rgba(255,255,255,.04); border:1.5px solid rgba(0,223,129,.15); border-radius:var(--r-sm); padding:10px 14px; font-size:13.5px; color:var(--text); outline:none; transition:border-color .15s, box-shadow .15s; }
+.cd-input:focus { border-color:rgba(0,223,129,.5); box-shadow:0 0 0 3px rgba(0,223,129,.08); }
+.cd-input::placeholder { color:var(--light); }
+.cd-input.error { border-color:rgba(248,113,113,.5); box-shadow:0 0 0 3px rgba(248,113,113,.08); }
+textarea.cd-input { resize:vertical; min-height:80px; }
+select.cd-input { cursor:pointer; }
+select.cd-input option { background:#0E1E18; color:var(--text); }
+
+/* Financial calc */
+.cd-calc { background:rgba(0,223,129,.06); border:1px solid rgba(0,223,129,.18); border-radius:var(--r-sm); padding:14px 16px; margin-top:12px; }
+.cd-calc-row { display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--muted); padding:3px 0; }
+.cd-calc-row.total { border-top:1px solid rgba(0,223,129,.2); margin-top:6px; padding-top:8px; }
+.cd-calc-row.total span:last-child { font-size:14px; font-weight:700; color:var(--green); }
+.cd-calc-row span:last-child { font-weight:600; color:var(--text); }
+.cd-calc-row.you span:last-child { color:var(--green); }
+
+/* Period alert */
+.cd-alert { display:none; align-items:center; gap:8px; padding:10px 14px; border-radius:var(--r-sm); font-size:12px; font-weight:500; margin-top:10px; }
+.cd-alert.warn { background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.25); color:var(--gold); }
+.cd-alert.error { background:rgba(248,113,113,.1); border:1px solid rgba(248,113,113,.25); color:var(--red); }
+.cd-alert.show { display:flex; }
+
+/* Matches list */
+.cd-matches-search { margin-bottom:12px; }
+.cd-matches-list { max-height:280px; overflow-y:auto; border:1.5px solid rgba(0,223,129,.15); border-radius:var(--r-sm); background:rgba(255,255,255,.02); }
+.cd-matches-list::-webkit-scrollbar { width:4px; }
+.cd-matches-list::-webkit-scrollbar-track { background:transparent; }
+.cd-matches-list::-webkit-scrollbar-thumb { background:rgba(0,223,129,.2); border-radius:2px; }
+.cd-match-item { display:flex; align-items:center; gap:12px; padding:12px 14px; border-bottom:1px solid rgba(0,223,129,.07); cursor:pointer; transition:background .12s; }
+.cd-match-item:last-child { border-bottom:none; }
+.cd-match-item:hover { background:rgba(0,223,129,.04); }
+.cd-match-item.selected { background:rgba(0,223,129,.08); }
+.cd-match-cb { width:16px; height:16px; accent-color:var(--green); cursor:pointer; flex-shrink:0; }
+.cd-match-teams { flex:1; font-size:12.5px; font-weight:600; color:var(--text); }
+.cd-match-meta { font-size:11px; color:var(--muted); }
+.cd-match-badge { font-size:10px; font-weight:600; padding:2px 7px; border-radius:20px; background:rgba(0,223,129,.1); color:var(--green); flex-shrink:0; }
+.cd-matches-empty { text-align:center; padding:28px; color:var(--muted); font-size:13px; }
+
+/* Row of 2 inputs */
+.cd-row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:560px){ .cd-row2 { grid-template-columns:1fr; } }
+
+/* Publish button */
+.cd-publish-btn { width:100%; height:52px; background:var(--green); color:#000; font-size:15px; font-weight:700; border-radius:var(--r-sm); display:flex; align-items:center; justify-content:center; gap:8px; cursor:pointer; transition:all .2s; box-shadow:0 4px 20px rgba(0,223,129,.3); border:none; margin-top:6px; }
+.cd-publish-btn:hover:not(:disabled) { background:#2CC295; transform:translateY(-1px); box-shadow:0 6px 24px rgba(0,223,129,.4); }
+.cd-publish-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.cd-publish-btn .spinner { width:18px; height:18px; border:2.5px solid rgba(0,0,0,.2); border-top-color:#000; border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to{ transform:rotate(360deg); } }
+
+/* Draft badge */
+.cd-draft-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,.1); border:1px solid rgba(245,158,11,.2); border-radius:20px; padding:4px 10px; font-size:11px; font-weight:600; color:var(--gold); margin-bottom:14px; }
+
+/* Preview col */
+.cd-preview-col { position:sticky; top:82px; }
+.cd-preview-label { font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.cd-preview-badge { background:rgba(0,223,129,.12); color:var(--green); font-size:9px; font-weight:700; letter-spacing:.5px; padding:3px 8px; border-radius:20px; }
+/* Challenge preview card */
+.ch-card { background:var(--card); border:1px solid rgba(0,223,129,.15); border-radius:var(--r-lg); overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.4); transition:all .2s; }
+.ch-card:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(0,0,0,.5); }
+.ch-header { padding:18px 20px 14px; background:linear-gradient(135deg,rgba(0,223,129,.08),rgba(0,223,129,.02)); border-bottom:1px solid rgba(0,223,129,.1); }
+.ch-influencer { display:flex; align-items:center; gap:9px; margin-bottom:12px; }
+.ch-av { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#00DF81,#2CC295); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#000; border:2px solid rgba(0,223,129,.3); }
+.ch-inf-info { flex:1; min-width:0; }
+.ch-inf-name { font-size:13px; font-weight:700; color:var(--text); }
+.ch-inf-handle { font-size:11px; color:var(--muted); }
+.ch-type-badge { font-size:9.5px; font-weight:700; padding:3px 8px; border-radius:20px; background:rgba(0,223,129,.12); color:var(--green); border:1px solid rgba(0,223,129,.2); flex-shrink:0; }
+.ch-title { font-size:17px; font-weight:800; color:var(--text); letter-spacing:-.3px; margin-bottom:6px; line-height:1.3; }
+.ch-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+.ch-body { padding:14px 20px; }
+.ch-stats { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px; }
+.ch-stat { text-align:center; }
+.ch-stat-val { font-size:16px; font-weight:700; color:var(--green); }
+.ch-stat-lbl { font-size:10px; color:var(--muted); margin-top:2px; }
+.ch-footer { padding:12px 20px; border-top:1px solid rgba(0,223,129,.08); display:flex; align-items:center; justify-content:space-between; }
+.ch-period { font-size:11px; color:var(--muted); }
+.ch-join-btn { height:36px; padding:0 16px; background:var(--green); color:#000; border-radius:var(--r-sm); font-size:12px; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer; border:none; }
+
+/* Error msg */
+.cd-err-msg { font-size:11.5px; color:var(--red); margin-top:4px; display:none; }
+.cd-err-msg.show { display:block; }
+
+/* Mobile stepper nav */
+.cd-mobile-nav { display:none; gap:10px; margin-bottom:20px; }
+@media(max-width:768px){
+  .cd-mobile-nav { display:flex; }
+  .cd-stepper { display:none; }
+  .cd-step-mobile { flex:1; height:44px; border-radius:var(--r-sm); background:rgba(255,255,255,.05); border:1px solid rgba(0,223,129,.15); font-size:12.5px; font-weight:600; color:var(--muted); cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; }
+  .cd-step-mobile.active { background:var(--green); color:#000; border-color:var(--green); }
+}
+@media(max-width:768px){
+  .cd-section.mobile-hidden { display:none; }
+  .cd-section.mobile-show { display:block; }
+  .cd-preview-col { position:static; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="desafios.html" class="nav-item on"><span class="nav-icon"><i data-lucide="zap"></i></span>Desafios</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Configurações</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="userCard" style="display:none">
+      <div class="u-av" id="sideAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- DRAWER -->
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="desafios.html" class="nav-item on"><span class="nav-icon"><i data-lucide="zap"></i></span>Desafios</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Configurações</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="drawerUserCard" style="display:none">
+      <div class="u-av" id="drawerAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title">Criar Desafio</div>
+    </div>
+    <div class="topbar-right">
+      <a href="desafios.html" class="btn-outline" style="font-size:12px"><i data-lucide="arrow-left" style="width:14px;height:14px"></i> Desafios</a>
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="admin.html" class="icon-btn" id="topAdminBtn" style="display:none" title="Admin"><i data-lucide="shield"></i></a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Breadcrumb -->
+    <div class="cd-breadcrumb">
+      <a href="desafios.html">Desafios</a>
+      <span>&rsaquo;</span>
+      <span style="color:var(--text)">Criar Novo</span>
+    </div>
+
+    <!-- Draft badge -->
+    <div id="draftBadge" style="display:none">
+      <span class="cd-draft-badge"><i data-lucide="save" style="width:12px;height:12px"></i> Rascunho salvo automaticamente</span>
+    </div>
+
+    <!-- Stepper desktop -->
+    <div class="cd-stepper" id="stepperDesktop">
+      <div class="cd-step active" id="step1">
+        <div class="cd-step-num">1</div>
+        <div class="cd-step-lbl">Informações</div>
+      </div>
+      <div class="cd-step-line" id="line12"></div>
+      <div class="cd-step" id="step2">
+        <div class="cd-step-num">2</div>
+        <div class="cd-step-lbl">Financeiro</div>
+      </div>
+      <div class="cd-step-line" id="line23"></div>
+      <div class="cd-step" id="step3">
+        <div class="cd-step-num">3</div>
+        <div class="cd-step-lbl">Jogos & Publicar</div>
+      </div>
+    </div>
+
+    <!-- Mobile stepper -->
+    <div class="cd-mobile-nav">
+      <button class="cd-step-mobile active" onclick="goMobileStep(1)" id="mstep1">1. Info</button>
+      <button class="cd-step-mobile" onclick="goMobileStep(2)" id="mstep2">2. Financeiro</button>
+      <button class="cd-step-mobile" onclick="goMobileStep(3)" id="mstep3">3. Publicar</button>
+    </div>
+
+    <!-- 2-col layout -->
+    <div class="cd-layout">
+
+      <!-- LEFT: Form -->
+      <div class="cd-form-col">
+
+        <!-- SECTION 1: Básico -->
+        <div class="cd-section" id="secBasico">
+          <div class="cd-section-title">
+            <span class="sec-icon"><i data-lucide="pencil" style="width:13px;height:13px"></i></span>
+            Informações Básicas
+          </div>
+
+          <div class="cd-field">
+            <label class="cd-label">Nome do Desafio <span class="required">*</span></label>
+            <input class="cd-input" id="fNome" type="text" maxlength="80" placeholder="Ex: Me Vença no Brasileirão!" oninput="onFieldChange()" />
+            <div class="cd-err-msg" id="errNome">Nome do desafio é obrigatório.</div>
+          </div>
+
+          <div class="cd-field">
+            <label class="cd-label">Descrição curta <span class="required">*</span></label>
+            <textarea class="cd-input" id="fDesc" rows="3" maxlength="200" placeholder="Descreva o desafio em poucas palavras..." oninput="onFieldChange()"></textarea>
+            <div class="cd-err-msg" id="errDesc">Descrição é obrigatória.</div>
+          </div>
+
+          <div class="cd-field">
+            <label class="cd-label">Regras do Desafio <span class="required">*</span></label>
+            <textarea class="cd-input" id="fRegras" rows="4" maxlength="600" placeholder="Ex: Quem acertar mais resultados dos jogos selecionados vence. Em caso de empate..." oninput="onFieldChange()"></textarea>
+            <div class="cd-err-msg" id="errRegras">Regras são obrigatórias.</div>
+          </div>
+
+          <div class="cd-field">
+            <label class="cd-label">Tipo de Desafio <span class="required">*</span></label>
+            <select class="cd-input" id="fTipo" onchange="onFieldChange()">
+              <option value="ranking">Ranking — quem acertar mais pontos vence</option>
+              <option value="vencer_influencer">Vencer Influencer — supere o palpite do criador</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- SECTION 2: Financeiro -->
+        <div class="cd-section" id="secFinanceiro">
+          <div class="cd-section-title">
+            <span class="sec-icon"><i data-lucide="dollar-sign" style="width:13px;height:13px"></i></span>
+            Configuração Financeira
+          </div>
+
+          <div class="cd-row2">
+            <div class="cd-field">
+              <label class="cd-label">
+                Valor de Entrada (R$) <span class="required">*</span>
+                <span class="tip-icon" data-tip="Valor pago por cada participante para entrar no desafio">?</span>
+              </label>
+              <input class="cd-input" id="fEntrada" type="number" min="1" step="1" placeholder="10" oninput="updateFinancialCalc()" />
+              <div class="cd-err-msg" id="errEntrada">Valor mínimo R$1.</div>
+            </div>
+            <div class="cd-field">
+              <label class="cd-label">
+                Prêmio (R$)
+                <span class="tip-icon" data-tip="Valor total do prêmio ao vencedor. Deixe em branco para calcular automaticamente">?</span>
+              </label>
+              <input class="cd-input" id="fPremio" type="number" min="0" step="1" placeholder="Auto" oninput="updateFinancialCalc()" />
+            </div>
+          </div>
+
+          <div class="cd-field">
+            <label class="cd-label">
+              Limite de Participantes <span class="required">*</span>
+              <span class="tip-icon" data-tip="Mínimo 5, máximo 500 participantes">?</span>
+            </label>
+            <input class="cd-input" id="fLimite" type="number" min="5" max="500" step="1" placeholder="50" oninput="updateFinancialCalc()" />
+            <div class="cd-err-msg" id="errLimite">Entre 5 e 500 participantes.</div>
+          </div>
+
+          <!-- Calculadora automática -->
+          <div class="cd-calc" id="calcBox">
+            <div class="cd-calc-row">
+              <span id="calcLabel">Arrecadação estimada (50 × R$10)</span>
+              <span id="calcTotal">R$ 500,00</span>
+            </div>
+            <div class="cd-calc-row">
+              <span>Lucro da plataforma (50%)</span>
+              <span id="calcPlataforma">R$ 250,00</span>
+            </div>
+            <div class="cd-calc-row you total">
+              <span>Sua comissão (50%)</span>
+              <span id="calcComissao">R$ 250,00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECTION 3: Período -->
+        <div class="cd-section" id="secPeriodo">
+          <div class="cd-section-title">
+            <span class="sec-icon"><i data-lucide="calendar-range" style="width:13px;height:13px"></i></span>
+            Período do Desafio
+          </div>
+
+          <div class="cd-row2">
+            <div class="cd-field">
+              <label class="cd-label">Data de Início <span class="required">*</span></label>
+              <input class="cd-input" id="fInicio" type="datetime-local" onchange="checkPeriod()" />
+              <div class="cd-err-msg" id="errInicio">Data de início obrigatória.</div>
+            </div>
+            <div class="cd-field">
+              <label class="cd-label">Data de Fim <span class="required">*</span></label>
+              <input class="cd-input" id="fFim" type="datetime-local" onchange="checkPeriod()" />
+              <div class="cd-err-msg" id="errFim">Data de fim obrigatória.</div>
+            </div>
+          </div>
+
+          <div class="cd-alert warn" id="alertPeriodo">
+            <i data-lucide="alert-triangle" style="width:14px;height:14px;flex-shrink:0"></i>
+            <span id="alertPeriodoMsg">Período recomendado: entre 1 e 30 dias.</span>
+          </div>
+        </div>
+
+        <!-- SECTION 4: Jogos -->
+        <div class="cd-section" id="secJogos">
+          <div class="cd-section-title">
+            <span class="sec-icon"><i data-lucide="trophy" style="width:13px;height:13px"></i></span>
+            Jogos Incluídos
+            <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:400"><span id="matchCount">0</span> selecionado(s)</span>
+          </div>
+
+          <div class="cd-matches-search cd-field">
+            <input class="cd-input" id="matchSearch" type="text" placeholder="Buscar jogo por time ou campeonato..." oninput="filterMatches(this.value)" />
+          </div>
+
+          <div class="cd-matches-list" id="matchesList">
+            <div class="cd-matches-empty" id="matchesEmpty">
+              <i data-lucide="loader" style="width:20px;height:20px;animation:spin .7s linear infinite"></i>
+              <p style="margin-top:8px">Carregando jogos disponíveis…</p>
+            </div>
+          </div>
+          <div class="cd-err-msg" id="errJogos" style="margin-top:8px">Selecione pelo menos 1 jogo.</div>
+        </div>
+
+        <!-- SECTION 5: Perfil Influencer -->
+        <div class="cd-section" id="secPerfil">
+          <div class="cd-section-title">
+            <span class="sec-icon"><i data-lucide="user-check" style="width:13px;height:13px"></i></span>
+            Perfil de Influencer
+            <span style="margin-left:auto;font-size:10px;background:rgba(0,223,129,.1);color:var(--green);padding:2px 8px;border-radius:20px;font-weight:600">Opcional</span>
+          </div>
+
+          <div id="perfilExistenteMsg" style="display:none;background:rgba(0,223,129,.07);border:1px solid rgba(0,223,129,.2);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:14px;font-size:12.5px;color:var(--green)">
+            <i data-lucide="check-circle" style="width:13px;height:13px;display:inline;margin-right:6px"></i>
+            Seu perfil de influencer já está configurado!
+          </div>
+
+          <div id="perfilFields">
+            <div class="cd-field">
+              <label class="cd-label">@handle Instagram</label>
+              <input class="cd-input" id="fHandle" type="text" placeholder="@seuhandle" oninput="onFieldChange()" />
+            </div>
+            <div class="cd-field">
+              <label class="cd-label">Bio curta</label>
+              <textarea class="cd-input" id="fBio" rows="3" maxlength="160" placeholder="Apresente-se para os participantes do desafio..." oninput="onFieldChange()"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Publish button -->
+        <button class="cd-publish-btn" id="publishBtn" onclick="createChallenge()">
+          <i data-lucide="zap" style="width:18px;height:18px"></i>
+          Publicar Desafio
+        </button>
+
+      </div><!-- end form col -->
+
+      <!-- RIGHT: Preview -->
+      <div class="cd-preview-col">
+        <div class="cd-preview-label">
+          Prévia do card
+          <span class="cd-preview-badge">PRÉVIA</span>
+        </div>
+        <div class="ch-card" id="previewCard">
+          <div class="ch-header">
+            <div class="ch-influencer">
+              <div class="ch-av" id="prevAv">?</div>
+              <div class="ch-inf-info">
+                <div class="ch-inf-name" id="prevName">Seu Nome</div>
+                <div class="ch-inf-handle" id="prevHandle">@handle</div>
+              </div>
+              <span class="ch-type-badge" id="prevType">Ranking</span>
+            </div>
+            <div class="ch-title" id="prevTitle">Nome do Desafio</div>
+            <div class="ch-desc" id="prevDesc">Descrição do desafio aparece aqui...</div>
+          </div>
+          <div class="ch-body">
+            <div class="ch-stats">
+              <div class="ch-stat">
+                <div class="ch-stat-val" id="prevEntrada">R$0</div>
+                <div class="ch-stat-lbl">Entrada</div>
+              </div>
+              <div class="ch-stat">
+                <div class="ch-stat-val" id="prevPremio">R$0</div>
+                <div class="ch-stat-lbl">Prêmio</div>
+              </div>
+              <div class="ch-stat">
+                <div class="ch-stat-val" id="prevVagas">0</div>
+                <div class="ch-stat-lbl">Vagas</div>
+              </div>
+            </div>
+          </div>
+          <div class="ch-footer">
+            <div class="ch-period" id="prevPeriod">Período não definido</div>
+            <button class="ch-join-btn"><i data-lucide="zap" style="width:12px;height:12px"></i> Entrar</button>
+          </div>
+        </div>
+
+        <!-- Preview jogos -->
+        <div style="background:var(--card);border:1px solid rgba(0,223,129,.1);border-radius:var(--r-lg);padding:16px 18px;margin-top:14px">
+          <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:10px">Jogos selecionados</div>
+          <div id="prevJogos" style="font-size:12px;color:var(--light)">Nenhum jogo selecionado ainda.</div>
+        </div>
+      </div>
+
+    </div><!-- end layout -->
+
+  </div><!-- end content -->
+</div><!-- end main -->
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="app.js"></script>
+<script>
+// ============================================================
+// criar-desafio.js — inline
+// ============================================================
+
+let currentUser = null
+let allMatches   = []
+let selectedMatches = new Set()
+let draftTimer   = null
+let influencerProfile = null
+let mobileStep   = 1
+
+// ── Init ────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  lucide.createIcons()
+  currentUser = await initAuth({ requireAuth: true })
+  if (!currentUser) return
+
+  // Preenche avatar no preview
+  const p = await getProfile(currentUser.id)
+  if (p) {
+    const name = p.username ?? currentUser.email?.split('@')[0] ?? '?'
+    document.getElementById('prevName').textContent = name
+    document.getElementById('prevAv').textContent   = name.slice(0,2).toUpperCase()
+    // Verifica se já tem perfil de influencer
+    await checkInfluencerProfile()
+  }
+
+  // Datas padrão: hoje + 7 dias
+  const now  = new Date()
+  const plus7 = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+  document.getElementById('fInicio').value = toLocalDatetime(now)
+  document.getElementById('fFim').value    = toLocalDatetime(plus7)
+  updatePreview()
+  checkPeriod()
+
+  // Carrega jogos
+  await loadAvailableMatches()
+
+  // Carrega rascunho
+  loadDraft()
+
+  // Responsivo hamburger
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+function toLocalDatetime(date) {
+  const pad = n => String(n).padStart(2,'0')
+  return `${date.getFullYear()}-${pad(date.getMonth()+1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
+function checkMobile() {
+  const hb = document.querySelector('.hamburger')
+  if (window.innerWidth <= 768) { hb && (hb.style.display = 'flex') }
+  else { hb && (hb.style.display = 'none') }
+}
+
+// ── Influencer Profile ──────────────────────────────────────
+async function checkInfluencerProfile() {
+  try {
+    const { data } = await sb().from('influencer_profiles').select('*').eq('user_id', currentUser.id).single()
+    if (data) {
+      influencerProfile = data
+      document.getElementById('perfilExistenteMsg').style.display = 'block'
+      document.getElementById('fHandle').value = data.instagram_handle ?? ''
+      document.getElementById('fBio').value    = data.bio ?? ''
+    }
+  } catch {}
+}
+
+// ── Load Matches ────────────────────────────────────────────
+async function loadAvailableMatches() {
+  const list = document.getElementById('matchesList')
+  try {
+    const today = new Date().toISOString()
+    const { data, error } = await sb()
+      .from('matches')
+      .select('id, home_team, away_team, match_date, competition, status')
+      .eq('status', 'scheduled')
+      .gte('match_date', today)
+      .order('match_date', { ascending: true })
+      .limit(100)
+
+    if (error) throw error
+    allMatches = data ?? []
+    renderMatches(allMatches)
+  } catch (e) {
+    list.innerHTML = `<div class="cd-matches-empty" style="color:var(--red)">
+      <i data-lucide="alert-circle" style="width:20px;height:20px"></i>
+      <p style="margin-top:8px">Erro ao carregar jogos: ${e.message}</p>
+    </div>`
+    lucide.createIcons()
+  }
+}
+
+function renderMatches(matches) {
+  const list = document.getElementById('matchesList')
+  if (!matches.length) {
+    list.innerHTML = `<div class="cd-matches-empty">Nenhum jogo disponível no momento.</div>`
+    return
+  }
+  list.innerHTML = matches.map(m => {
+    const date = new Date(m.match_date)
+    const dateStr = date.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })
+    const checked = selectedMatches.has(m.id) ? 'checked' : ''
+    const selClass = selectedMatches.has(m.id) ? 'selected' : ''
+    return `<div class="cd-match-item ${selClass}" onclick="toggleMatch('${m.id}',this)">
+      <input class="cd-match-cb" type="checkbox" id="mc${m.id}" ${checked} onclick="event.stopPropagation();toggleMatch('${m.id}',this.closest('.cd-match-item'))" />
+      <div style="flex:1;min-width:0">
+        <div class="cd-match-teams">${escHtml(m.home_team)} × ${escHtml(m.away_team)}</div>
+        <div class="cd-match-meta">${escHtml(m.competition ?? '')} · ${dateStr}</div>
+      </div>
+      <span class="cd-match-badge">${dateStr}</span>
+    </div>`
+  }).join('')
+  lucide.createIcons()
+  updateMatchCount()
+}
+
+function toggleMatch(id, el) {
+  if (selectedMatches.has(id)) {
+    selectedMatches.delete(id)
+    el.classList.remove('selected')
+    const cb = el.querySelector('.cd-match-cb') || document.getElementById('mc'+id)
+    if (cb) cb.checked = false
+  } else {
+    selectedMatches.add(id)
+    el.classList.add('selected')
+    const cb = el.querySelector('.cd-match-cb') || document.getElementById('mc'+id)
+    if (cb) cb.checked = true
+  }
+  updateMatchCount()
+  updatePreview()
+  saveDraft()
+}
+
+function updateMatchCount() {
+  document.getElementById('matchCount').textContent = selectedMatches.size
+}
+
+function filterMatches(q) {
+  const term = q.toLowerCase().trim()
+  if (!term) { renderMatches(allMatches); return }
+  const filtered = allMatches.filter(m =>
+    m.home_team.toLowerCase().includes(term) ||
+    m.away_team.toLowerCase().includes(term) ||
+    (m.competition ?? '').toLowerCase().includes(term)
+  )
+  renderMatches(filtered)
+}
+
+// ── Financial Calc ──────────────────────────────────────────
+function updateFinancialCalc() {
+  const entrada = parseFloat(document.getElementById('fEntrada').value) || 0
+  const limite  = parseInt(document.getElementById('fLimite').value)    || 50
+  const premio  = parseFloat(document.getElementById('fPremio').value)
+
+  const arrecadacao = entrada * limite
+  const plataforma  = arrecadacao * 0.5
+  const comissao    = arrecadacao * 0.5
+  const premioFinal = (!isNaN(premio) && premio > 0) ? premio : comissao
+
+  const fmt = v => 'R$ ' + v.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+
+  document.getElementById('calcLabel').textContent     = `Arrecadação estimada (${limite} × ${fmt(entrada)})`
+  document.getElementById('calcTotal').textContent     = fmt(arrecadacao)
+  document.getElementById('calcPlataforma').textContent= fmt(plataforma)
+  document.getElementById('calcComissao').textContent  = fmt(comissao)
+
+  // Update preview
+  document.getElementById('prevEntrada').textContent = entrada ? fmt(entrada) : 'R$0'
+  document.getElementById('prevPremio').textContent  = fmt(premioFinal)
+  document.getElementById('prevVagas').textContent   = limite
+
+  saveDraft()
+}
+
+// ── Period Check ────────────────────────────────────────────
+function checkPeriod() {
+  const inicio = document.getElementById('fInicio').value
+  const fim    = document.getElementById('fFim').value
+  const alert  = document.getElementById('alertPeriodo')
+  const msg    = document.getElementById('alertPeriodoMsg')
+
+  if (!inicio || !fim) { alert.className = 'cd-alert warn'; alert.classList.remove('show'); return }
+
+  const d1 = new Date(inicio)
+  const d2 = new Date(fim)
+  const diffDays = (d2 - d1) / (1000 * 60 * 60 * 24)
+
+  if (d2 <= d1) {
+    alert.className = 'cd-alert error show'
+    msg.textContent = 'A data de fim deve ser após a data de início.'
+  } else if (diffDays < 1) {
+    alert.className = 'cd-alert warn show'
+    msg.textContent = 'Período muito curto (menos de 1 dia). Recomendamos pelo menos 1 dia.'
+  } else if (diffDays > 30) {
+    alert.className = 'cd-alert warn show'
+    msg.textContent = 'Período muito longo (mais de 30 dias). Considere reduzir para maior engajamento.'
+  } else {
+    alert.className = 'cd-alert warn'
+    alert.classList.remove('show')
+  }
+
+  // Update preview period
+  const d1str = d1.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' })
+  const d2str = d2.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' })
+  document.getElementById('prevPeriod').textContent = `${d1str} – ${d2str}`
+
+  saveDraft()
+}
+
+// ── Live Preview ────────────────────────────────────────────
+function updatePreview() {
+  const nome  = document.getElementById('fNome').value.trim()
+  const desc  = document.getElementById('fDesc').value.trim()
+  const tipo  = document.getElementById('fTipo').value
+  const handle= document.getElementById('fHandle').value.trim()
+
+  document.getElementById('prevTitle').textContent = nome  || 'Nome do Desafio'
+  document.getElementById('prevDesc').textContent  = desc  || 'Descrição do desafio aparece aqui...'
+  document.getElementById('prevType').textContent  = tipo === 'ranking' ? 'Ranking' : 'Vencer Influencer'
+  if (handle) document.getElementById('prevHandle').textContent = handle.startsWith('@') ? handle : '@'+handle
+
+  // Jogos no preview
+  const prevJogos = document.getElementById('prevJogos')
+  const selGames  = allMatches.filter(m => selectedMatches.has(m.id))
+  if (!selGames.length) {
+    prevJogos.innerHTML = '<span style="color:var(--light)">Nenhum jogo selecionado ainda.</span>'
+  } else {
+    prevJogos.innerHTML = selGames.slice(0,4).map(m =>
+      `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,223,129,.06)">
+        <span style="font-size:9px;background:rgba(0,223,129,.1);color:var(--green);padding:2px 6px;border-radius:10px;flex-shrink:0">⚽</span>
+        <span style="font-size:12px;font-weight:600">${escHtml(m.home_team)} × ${escHtml(m.away_team)}</span>
+      </div>`
+    ).join('') + (selGames.length > 4 ? `<div style="font-size:11px;color:var(--muted);padding-top:6px">+${selGames.length-4} mais jogos</div>` : '')
+  }
+
+  updateFinancialCalc()
+}
+
+function onFieldChange() {
+  updatePreview()
+  saveDraft()
+}
+
+// ── Draft localStorage ──────────────────────────────────────
+function saveDraft() {
+  clearTimeout(draftTimer)
+  draftTimer = setTimeout(() => {
+    const draft = {
+      nome:    document.getElementById('fNome').value,
+      desc:    document.getElementById('fDesc').value,
+      regras:  document.getElementById('fRegras').value,
+      tipo:    document.getElementById('fTipo').value,
+      entrada: document.getElementById('fEntrada').value,
+      premio:  document.getElementById('fPremio').value,
+      limite:  document.getElementById('fLimite').value,
+      inicio:  document.getElementById('fInicio').value,
+      fim:     document.getElementById('fFim').value,
+      handle:  document.getElementById('fHandle').value,
+      bio:     document.getElementById('fBio').value,
+      matches: [...selectedMatches]
+    }
+    localStorage.setItem('cd_draft', JSON.stringify(draft))
+    const badge = document.getElementById('draftBadge')
+    badge.style.display = 'block'
+    setTimeout(() => { badge.style.opacity = '0'; badge.style.transition = 'opacity .5s' }, 3000)
+    setTimeout(() => { badge.style.display = 'none'; badge.style.opacity = '1'; badge.style.transition = '' }, 3600)
+  }, 800)
+}
+
+function loadDraft() {
+  try {
+    const raw = localStorage.getItem('cd_draft')
+    if (!raw) return
+    const d = JSON.parse(raw)
+    if (d.nome)    document.getElementById('fNome').value   = d.nome
+    if (d.desc)    document.getElementById('fDesc').value   = d.desc
+    if (d.regras)  document.getElementById('fRegras').value = d.regras
+    if (d.tipo)    document.getElementById('fTipo').value   = d.tipo
+    if (d.entrada) document.getElementById('fEntrada').value= d.entrada
+    if (d.premio)  document.getElementById('fPremio').value = d.premio
+    if (d.limite)  document.getElementById('fLimite').value = d.limite
+    if (d.inicio)  document.getElementById('fInicio').value = d.inicio
+    if (d.fim)     document.getElementById('fFim').value    = d.fim
+    if (d.handle)  document.getElementById('fHandle').value = d.handle
+    if (d.bio)     document.getElementById('fBio').value    = d.bio
+    if (d.matches) {
+      d.matches.forEach(id => selectedMatches.add(id))
+      updateMatchCount()
+    }
+    updatePreview()
+    checkPeriod()
+  } catch {}
+}
+
+// ── Validation ──────────────────────────────────────────────
+function showErr(id, show) {
+  const el = document.getElementById(id)
+  if (el) el.className = show ? 'cd-err-msg show' : 'cd-err-msg'
+  const inp = document.getElementById(id.replace('err','f').replace('Jogos',''))
+  if (inp && id !== 'errJogos') inp.className = show ? 'cd-input error' : 'cd-input'
+}
+
+function validateForm() {
+  let ok = true
+  const nome   = document.getElementById('fNome').value.trim()
+  const desc   = document.getElementById('fDesc').value.trim()
+  const regras = document.getElementById('fRegras').value.trim()
+  const entrada= parseFloat(document.getElementById('fEntrada').value)
+  const limite = parseInt(document.getElementById('fLimite').value)
+  const inicio = document.getElementById('fInicio').value
+  const fim    = document.getElementById('fFim').value
+
+  showErr('errNome',   !nome);       if (!nome) ok = false
+  showErr('errDesc',   !desc);       if (!desc) ok = false
+  showErr('errRegras', !regras);     if (!regras) ok = false
+  showErr('errEntrada',!(entrada >= 1)); if (!(entrada >= 1)) ok = false
+  showErr('errLimite', !(limite >= 5 && limite <= 500)); if (!(limite >= 5 && limite <= 500)) ok = false
+  showErr('errInicio', !inicio);     if (!inicio) ok = false
+  showErr('errFim',    !fim);        if (!fim) ok = false
+  showErr('errJogos',  selectedMatches.size < 1); if (selectedMatches.size < 1) ok = false
+
+  if (inicio && fim && new Date(fim) <= new Date(inicio)) {
+    showErr('errFim', true)
+    document.getElementById('errFim').textContent = 'Data de fim deve ser após a de início.'
+    ok = false
+  }
+
+  // Scroll to first error
+  if (!ok) {
+    const firstErr = document.querySelector('.cd-err-msg.show')
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }
+  return ok
+}
+
+// ── Create Challenge ────────────────────────────────────────
+async function createChallenge() {
+  if (!currentUser) { location.href = 'login.html'; return }
+  if (!validateForm()) return
+
+  const btn = document.getElementById('publishBtn')
+  btn.disabled = true
+  btn.innerHTML = '<div class="spinner"></div> Publicando…'
+
+  try {
+    // 1. Cria ou atualiza influencer_profile
+    const handle = document.getElementById('fHandle').value.trim()
+    const bio    = document.getElementById('fBio').value.trim()
+
+    if (!influencerProfile) {
+      const { data: ip, error: ipErr } = await sb()
+        .from('influencer_profiles')
+        .insert({ user_id: currentUser.id, instagram_handle: handle || null, bio: bio || null })
+        .select().single()
+      if (ipErr) throw ipErr
+      influencerProfile = ip
+    } else if (handle || bio) {
+      await sb().from('influencer_profiles')
+        .update({ instagram_handle: handle || null, bio: bio || null })
+        .eq('id', influencerProfile.id)
+    }
+
+    // 2. Insere o desafio
+    const entrada = parseFloat(document.getElementById('fEntrada').value)
+    const limite  = parseInt(document.getElementById('fLimite').value)
+    const premio  = parseFloat(document.getElementById('fPremio').value) || (entrada * limite * 0.5)
+
+    const { data: ch, error: chErr } = await sb()
+      .from('challenges')
+      .insert({
+        influencer_id:  influencerProfile.id,
+        created_by:     currentUser.id,
+        name:           document.getElementById('fNome').value.trim(),
+        description:    document.getElementById('fDesc').value.trim(),
+        rules:          document.getElementById('fRegras').value.trim(),
+        type:           document.getElementById('fTipo').value,
+        entry_fee:      entrada,
+        prize_pool:     premio,
+        max_participants: limite,
+        starts_at:      new Date(document.getElementById('fInicio').value).toISOString(),
+        ends_at:        new Date(document.getElementById('fFim').value).toISOString(),
+        status:         'open'
+      })
+      .select().single()
+
+    if (chErr) throw chErr
+
+    // 3. Insere challenge_matches
+    if (selectedMatches.size > 0) {
+      const rows = [...selectedMatches].map(mid => ({ challenge_id: ch.id, match_id: mid }))
+      const { error: cmErr } = await sb().from('challenge_matches').insert(rows)
+      if (cmErr) throw cmErr
+    }
+
+    // 4. Limpa rascunho e redireciona
+    localStorage.removeItem('cd_draft')
+    location.href = `desafio.html?id=${ch.id}`
+
+  } catch (e) {
+    console.error(e)
+    btn.disabled = false
+    btn.innerHTML = '<i data-lucide="zap" style="width:18px;height:18px"></i> Publicar Desafio'
+    lucide.createIcons()
+    showToast('Erro ao publicar: ' + (e.message ?? 'Tente novamente.'), 'error')
+  }
+}
+
+// ── Mobile Stepper ──────────────────────────────────────────
+function goMobileStep(n) {
+  mobileStep = n
+  const sections = {
+    1: ['secBasico'],
+    2: ['secFinanceiro','secPeriodo'],
+    3: ['secJogos','secPerfil']
+  }
+  const allSecs = ['secBasico','secFinanceiro','secPeriodo','secJogos','secPerfil']
+  const publishBtn = document.getElementById('publishBtn')
+
+  if (window.innerWidth > 768) { // Desktop: show all
+    allSecs.forEach(s => { const el = document.getElementById(s); if(el) el.style.display = '' })
+    publishBtn.style.display = ''
+    return
+  }
+
+  allSecs.forEach(s => { const el = document.getElementById(s); if(el) el.style.display = 'none' })
+  ;(sections[n] || []).forEach(s => { const el = document.getElementById(s); if(el) el.style.display = 'block' })
+  publishBtn.style.display = n === 3 ? 'flex' : 'none'
+
+  for (let i = 1; i <= 3; i++) {
+    const b = document.getElementById('mstep'+i)
+    if (b) b.className = i === n ? 'cd-step-mobile active' : 'cd-step-mobile'
+  }
+
+  // Update desktop stepper dots
+  for (let i = 1; i <= 3; i++) {
+    const s = document.getElementById('step'+i)
+    if (!s) continue
+    s.className = i < n ? 'cd-step done' : i === n ? 'cd-step active' : 'cd-step'
+  }
+  for (let i = 1; i <= 2; i++) {
+    const l = document.getElementById('line1'+(i+1) === 'line12' ? '12' : (i+1 === 3 ? '23':'12'))
+    const line = document.getElementById(i === 1 ? 'line12' : 'line23')
+    if (line) line.className = i < n ? 'cd-step-line done' : 'cd-step-line'
+  }
+}
+
+// ── Toast util ───────────────────────────────────────────────
+function showToast(msg, type='info') {
+  const t = document.createElement('div')
+  t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;max-width:360px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.5);transition:opacity .3s`
+  t.style.background = type === 'error' ? 'rgba(248,113,113,.15)' : 'rgba(0,223,129,.15)'
+  t.style.border     = type === 'error' ? '1px solid rgba(248,113,113,.4)' : '1px solid rgba(0,223,129,.3)'
+  t.style.color      = type === 'error' ? '#F87171' : '#00DF81'
+  t.textContent = msg
+  document.body.appendChild(t)
+  setTimeout(() => { t.style.opacity = '0'; setTimeout(() => t.remove(), 300) }, 4000)
+}
+
+// ── Escape HTML ─────────────────────────────────────────────
+function escHtml(str) {
+  return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+// ── Drawer utils ────────────────────────────────────────────
+function openDrawer()  { document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOvl').classList.add('on') }
+function closeDrawer() { document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOvl').classList.remove('on') }
+
+// Init mobile stepper
+window.addEventListener('resize', () => { if(window.innerWidth > 768) goMobileStep(mobileStep) })
+</script>
+</body>
+</html>

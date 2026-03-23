@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>BolãoPro — Bolão</title>
 <link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -86,13 +88,22 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
   <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
   <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
   <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -103,13 +114,22 @@
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
   <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
   <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
   <a href="meus-boloes.html" class="nav-item on"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -148,7 +168,7 @@
     <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
     <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
     <button class="bn-center" onclick="confirmarPalpite()"><div class="bn-circle" style="width:40px;height:40px;font-size:16px;font-weight:700">✓</div></button>
-    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="star"></i></span>Ranking</a>
     <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
@@ -174,6 +194,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!bolaoData) { document.getElementById('pageContent').innerHTML='<div class="empty"><div class="empty-icon">❌</div><p>Bolão não encontrado</p><a href="index.html" class="btn-full" style="max-width:200px;margin-top:12px">Voltar</a></div>'; return }
   renderPage()
   subscribeRealtime()
+  // Se jogo já está finished mas bolão ainda não foi finalizado, calcular agora
+  const _initMatch = bolaoData.bolao_matches?.[0]?.match
+  if (_initMatch?.status === 'finished' && (bolaoData.status === 'open' || bolaoData.status === 'active')) {
+    await calcPontosEFinalizarBolao(_initMatch.id)
+  }
 })
 
 function renderPage() {
@@ -263,8 +288,8 @@ function renderPage() {
           })()}
         </div>
         <div class="aff-row">
-          <a href="${CONFIG.SPORTINGBET}" target="_blank" class="aff-sb">⚡ Sportingbet</a>
-          <a href="${CONFIG.SUPERBET}"    target="_blank" class="aff-sup">⚡ Superbet</a>
+          <a href="${CONFIG.SPORTINGBET}" target="_blank" class="aff-sb" onclick="trackAffiliateClick(currentUser?.id,'sportingbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">⚡ Sportingbet</a>
+          <a href="${CONFIG.SUPERBET}"    target="_blank" class="aff-sup" onclick="trackAffiliateClick(currentUser?.id,'superbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">⚡ Superbet</a>
         </div>
         <div class="extra-row">
           <div class="fl" style="margin:0"><label>Placar exato (bônus +8pts)</label>
@@ -284,8 +309,8 @@ function renderPage() {
           <div class="cta-after">
             <p>🔥 Aposte de verdade no seu palpite!</p>
             <div class="pills">
-              <a href="${CONFIG.SPORTINGBET}" target="_blank" class="cta-pill pill-sb">Sportingbet — 1.90</a>
-              <a href="${CONFIG.SUPERBET}"    target="_blank" class="cta-pill pill-sup">Superbet — 1.95</a>
+              <a href="${CONFIG.SPORTINGBET}" target="_blank" class="cta-pill pill-sb" onclick="trackAffiliateClick(currentUser?.id,'sportingbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">Sportingbet — 1.90</a>
+              <a href="${CONFIG.SUPERBET}"    target="_blank" class="cta-pill pill-sup" onclick="trackAffiliateClick(currentUser?.id,'superbet',${match?.id ? `'${match.id}'` : 'null'},'${b.id}')">Superbet — 1.95</a>
             </div>
           </div>` : `
           <div id="predErr" class="err-box" style="margin-bottom:10px"></div>
@@ -420,10 +445,37 @@ async function vincularJogo() {
   if (bolaoData) renderPage()
 }
 
+async function calcPontosEFinalizarBolao(matchId) {
+  try {
+    await sb().rpc('calculate_prediction_points', { p_match_id: matchId })
+    await sb().rpc('finalize_bolao', { p_bolao_id: pid })
+  } catch(e) { console.error('Erro ao calcular pontos/finalizar bolão:', e) }
+  bolaoData = await getBolao(pid)
+  if (bolaoData) renderPage()
+}
+
 function subscribeRealtime() {
   if (realtimeChannel) { sb().removeChannel(realtimeChannel); realtimeChannel=null }
   realtimeChannel = sb().channel(`bolao_${pid}`)
     .on('postgres_changes',{event:'*',schema:'public',table:'participants',filter:`bolao_id=eq.${pid}`},async()=>{ bolaoData=await getBolao(pid); if(bolaoData) renderPage() })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'matches'},async(payload)=>{
+      const newStatus = payload?.new?.status
+      const matchId = payload?.new?.id
+      const bm = bolaoData?.bolao_matches ?? []
+      const isOurMatch = bm.some(bm => bm.match?.id === matchId)
+      if (!isOurMatch) return
+      if (newStatus === 'finished') {
+        showToast('🏁 Jogo finalizado! Calculando pontos…')
+        await calcPontosEFinalizarBolao(matchId)
+      } else if (newStatus === 'live') {
+        // Atualiza bolão para 'active' se ainda está 'open'
+        if (bolaoData?.status === 'open') {
+          await sb().from('boloes').update({ status: 'active' }).eq('id', pid).eq('status', 'open')
+        }
+        bolaoData = await getBolao(pid)
+        if (bolaoData) renderPage()
+      }
+    })
     .subscribe()
 }
 </script>

@@ -5,6 +5,8 @@
 <meta name="theme-color" content="#02171A"/>
 <title>BolãoPro — Entrar</title>
 <link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -12,60 +14,144 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
-<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
-body{display:block;background:var(--bg);}
-.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-.auth-box{background:var(--white);border:1px solid var(--border);border-radius:var(--r-xl);padding:36px 32px;width:100%;max-width:400px;box-shadow:var(--shadow-md);}
-.auth-logo{display:flex;flex-direction:column;align-items:center;gap:10px;margin-bottom:28px;}
-.auth-logo-mark{width:58px;height:58px;border-radius:16px;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:28px;}
-.auth-title{font-size:22px;font-weight:700;letter-spacing:-.3px;}
-.auth-sub{font-size:13px;color:var(--muted);}
-.tabs{display:flex;gap:4px;background:var(--bg);border-radius:var(--r-sm);padding:4px;margin-bottom:22px;}
-.tab{flex:1;padding:9px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);background:none;transition:all .15s;font-family:'Inter',sans-serif;}
-.tab.on{background:linear-gradient(135deg, var(--green) 0%, var(--green2) 100%);color:#fff;box-shadow:0 2px 6px rgba(0,223,129,.20);}
-.msg{border-radius:var(--r-sm);padding:10px 12px;font-size:12px;margin-bottom:14px;display:none;}
+/* ── Reset & base ─────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  display:flex;flex-direction:column;min-height:100vh;
+  background:var(--bg);font-family:var(--font-family);
+  overflow-x:hidden;
+}
+
+/* ── Splash hero (top) ────────────────────────── */
+.splash{
+  position:relative;flex:0 0 auto;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end;
+  padding:48px 24px 28px;
+  background:radial-gradient(ellipse 70% 120% at 50% 100%, rgba(0,223,129,.15) 0%, transparent 70%);
+  overflow:hidden;
+}
+/* Decorative circles */
+.splash::before{
+  content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:280px;height:280px;border-radius:50%;
+  border:1px solid rgba(0,223,129,.07);pointer-events:none;
+}
+.splash::after{
+  content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);
+  width:180px;height:180px;border-radius:50%;
+  border:1px solid rgba(0,223,129,.10);pointer-events:none;
+}
+
+/* Logo mark */
+.splash-mark{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(145deg, #04312E 0%, #032221 100%);
+  border:1.5px solid rgba(0,223,129,.3);
+  box-shadow:0 0 30px rgba(0,223,129,.18), 0 6px 24px rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;
+  position:relative;z-index:1;
+}
+.splash-wordmark{
+  text-align:center;position:relative;z-index:1;
+}
+.splash-wordmark h1{
+  font-size:26px;font-weight:800;letter-spacing:-.5px;
+  color:var(--text-primary);line-height:1;
+}
+.splash-wordmark h1 span{color:var(--accent-primary);}
+.splash-wordmark p{
+  margin-top:5px;font-size:12px;color:var(--text-muted);letter-spacing:.2px;
+}
+
+/* ── Auth card (bottom) ───────────────────────── */
+.auth-card{
+  flex:1;
+  background:var(--bg-secondary);
+  border-top:1px solid var(--border-subtle);
+  border-radius:24px 24px 0 0;
+  padding:22px 24px 36px;
+  position:relative;
+  box-shadow:0 -8px 40px rgba(0,0,0,.4);
+}
+
+/* Pill handle */
+.auth-card::before{
+  content:'';display:block;width:32px;height:3px;border-radius:2px;
+  background:rgba(0,223,129,.22);margin:0 auto 20px;
+}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;background:var(--bg);border-radius:10px;padding:4px;margin-bottom:22px;}
+.tab{
+  flex:1;padding:10px;border-radius:7px;border:none;cursor:pointer;
+  font-size:13px;font-weight:600;color:var(--text-muted);background:none;
+  transition:all .18s;font-family:var(--font-family);
+}
+.tab.on{
+  background:linear-gradient(135deg,var(--accent-primary) 0%,var(--accent-secondary) 100%);
+  color:#02171A;box-shadow:0 2px 10px rgba(0,223,129,.25);
+}
+
+/* Messages */
+.msg{border-radius:8px;padding:10px 12px;font-size:12px;margin-bottom:14px;display:none;}
 .msg.err{background:var(--red-lt);border:1px solid #FECACA;color:var(--red);}
 .msg.ok{background:var(--green-lt);border:1px solid var(--green-m);color:var(--green);}
+
+/* Footer link */
+.auth-back{text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px;}
+.auth-back a{color:var(--accent-primary);text-decoration:none;font-weight:600;}
 </style>
 </head>
 <body>
-<div class="auth-wrap">
-  <div class="auth-box">
-    <div class="auth-logo">
-      <div class="auth-logo-mark"><i data-lucide="trophy"></i></div>
-      <div style="text-align:center">
-        <div class="auth-title">BolãoPro</div>
-        <div class="auth-sub">Seu bolão, suas regras.</div>
-      </div>
-    </div>
-    <div class="tabs">
-      <button class="tab on" onclick="setTab('login',this)">Entrar</button>
-      <button class="tab" onclick="setTab('reg',this)">Cadastrar</button>
-    </div>
-    <div id="errMsg" class="msg err"></div>
-    <div id="okMsg"  class="msg ok"></div>
 
-    <!-- LOGIN -->
-    <div id="loginForm">
-      <div class="fl"><label>E-mail</label><input id="lEmail" type="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-      <div class="fl"><label>Senha</label><input id="lPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-      <button class="btn-full" id="lBtn" onclick="doLogin()">Entrar</button>
-    </div>
-
-    <!-- CADASTRO -->
-    <div id="regForm" style="display:none">
-      <div class="fl"><label>Usuário</label><input id="rUser" placeholder="seunome" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')"/></div>
-      <div class="fl"><label>E-mail</label><input id="rEmail" type="email" placeholder="seu@email.com"/></div>
-      <div class="fl"><label>Senha</label><input id="rPass" type="password" placeholder="Mínimo 6 caracteres"/></div>
-      <button class="btn-full" id="rBtn" onclick="doReg()">Criar Conta Grátis</button>
-    </div>
-
-    <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:18px">
-      <a href="index.html" style="color:var(--green)">← Voltar ao início</a>
-    </p>
+<!-- ── SPLASH HERO ── -->
+<div class="splash">
+  <div class="splash-mark">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="56" height="56">
+      <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+      <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+      <line x1="50"   y1="36"   x2="50"   y2="20"   stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+      <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+      <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+      <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+      <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="splash-wordmark">
+    <h1>Bolão<span>Pro</span></h1>
+    <p>Seu bolão, suas regras.</p>
   </div>
 </div>
+
+<!-- ── AUTH CARD ── -->
+<div class="auth-card">
+  <div class="tabs">
+    <button class="tab on" onclick="setTab('login',this)">Entrar</button>
+    <button class="tab" onclick="setTab('reg',this)">Cadastrar</button>
+  </div>
+  <div id="errMsg" class="msg err"></div>
+  <div id="okMsg"  class="msg ok"></div>
+
+  <!-- LOGIN -->
+  <div id="loginForm">
+    <div class="fl"><label>E-mail</label><input id="lEmail" type="email" placeholder="seu@email.com" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <div class="fl"><label>Senha</label><input id="lPass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="btn-full" id="lBtn" onclick="doLogin()">Entrar</button>
+  </div>
+
+  <!-- CADASTRO -->
+  <div id="regForm" style="display:none">
+    <div class="fl"><label>Usuário</label><input id="rUser" placeholder="seunome" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')"/></div>
+    <div class="fl"><label>E-mail</label><input id="rEmail" type="email" placeholder="seu@email.com"/></div>
+    <div class="fl"><label>Senha</label><input id="rPass" type="password" placeholder="Mínimo 6 caracteres"/></div>
+    <button class="btn-full" id="rBtn" onclick="doReg()">Criar Conta Grátis</button>
+  </div>
+
+  <p class="auth-back"><a href="index.html">← Continuar sem entrar</a></p>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="config.js"></script><script src="app.js"></script>
 <script>

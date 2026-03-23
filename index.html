@@ -5,6 +5,8 @@
 <meta name="theme-color" content="#02171A"/>
 <title>BolãoPro — Dashboard</title>
 <link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -18,13 +20,22 @@
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
   <a href="index.html" class="nav-item on"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
   <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -42,13 +53,22 @@
 <div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
 <aside class="drawer" id="drawer">
   <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><i data-lucide="trophy"></i></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
   <div class="nav-lbl">Menu</div>
   <a href="index.html" class="nav-item on"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
   <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -112,6 +132,7 @@
             <div class="sb-actions">
               <button class="sb-btn-primary" onclick="openModal('criar')">+ Criar Bolão</button>
               <a class="sb-btn-ghost" id="sbCar1" target="_blank">Apostar na Superbet →</a>
+              <a class="sb-btn-ghost" id="sbCar1" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Apostar na Superbet →</a>
             </div>
           </div>
           <div class="sb-deco">⚽</div>
@@ -125,6 +146,7 @@
             <div class="sb-sub">Brasileirão, Libertadores, Champions League e muito mais. Aposte com as melhores odds do mercado.</div>
             <div class="sb-actions">
               <a class="sb-btn-primary" id="sbCar2" target="_blank">Ver Odds Agora →</a>
+              <a class="sb-btn-primary" id="sbCar2" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Ver Odds Agora →</a>
               <a href="jogos.html" class="sb-btn-ghost">Ver Jogos →</a>
             </div>
           </div>
@@ -139,6 +161,7 @@
             <div class="sb-sub">Novo na Superbet? Cadastre-se agora e aproveite os bônus exclusivos para parceiros BolãoPro.</div>
             <div class="sb-actions">
               <a class="sb-btn-primary" id="sbCar3" target="_blank">Cadastrar na Superbet →</a>
+              <a class="sb-btn-primary" id="sbCar3" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Cadastrar na Superbet →</a>
               <button class="sb-btn-ghost" onclick="openModal('criar')">Criar Bolão →</button>
             </div>
           </div>
@@ -219,8 +242,8 @@
             <div class="aff-title">Aposte de verdade também</div>
             <div class="aff-sub">Odds reais nas melhores casas do Brasil.</div>
             <div class="aff-btns">
-              <a href="#" id="sbLink" target="_blank" class="aff-btn sb">⚡ Sportingbet<span class="aff-arrow">→</span></a>
-              <a href="#" id="supLink" target="_blank" class="aff-btn sup">⚡ Superbet<span class="aff-arrow">→</span></a>
+              <a href="#" id="sbLink" target="_blank" class="aff-btn sb" onclick="trackAffiliateClick(window.currentUser?.id,'sportingbet',null,null)">⚡ Sportingbet<span class="aff-arrow">→</span></a>
+              <a href="#" id="supLink" target="_blank" class="aff-btn sup" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">⚡ Superbet<span class="aff-arrow">→</span></a>
             </div>
           </div>
         </div>
@@ -246,7 +269,7 @@
     <a href="index.html" class="bn on"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
     <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
     <button class="bn-center" onclick="openModal('criar')"><div class="bn-circle">+</div></button>
-    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="trophy"></i></span>Ranking</a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="star"></i></span>Ranking</a>
     <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
   </div>
 </nav>
@@ -307,6 +330,7 @@
 <script src="config.js"></script><script src="app.js"></script>
 <script>
 let curFil='', curSplit='100% ao 1º', newBolId=null, _searchTimer
+window.currentUser = null
 
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sbLink').href  = CONFIG.SPORTINGBET
@@ -315,6 +339,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sbCar2').href = CONFIG.SUPERBET
   document.getElementById('sbCar3').href = CONFIG.SUPERBET
   const user = await initAuth()
+  window.currentUser = user
   if (user) {
     hideEl('sideLogin'); showEl('sideLogout')
     const p = await getProfile(user.id)
