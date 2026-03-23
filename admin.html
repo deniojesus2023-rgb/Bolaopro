@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>BolãoPro — Admin</title>
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="stylesheet" href="design-system.css"/>
 <link rel="stylesheet" href="shared.css"/>
 <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -85,6 +88,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item on"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -117,6 +121,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item on"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -696,12 +701,21 @@ async function carregarBoloes(filtro) {
     <td>${pillStatus(b.status)}</td>
     <td>
       <button class="act-btn" onclick="window.open('bolao.html?id=${b.id}','_blank')">👁️ Ver</button>
+      ${(b.status === 'active' || b.status === 'open') ? `<button class="act-btn grn" onclick="finalizarBolao('${b.id}','${esc(b.name)}')">🏆 Finalizar</button>` : ''}
       ${b.status !== 'cancelled' ? `<button class="act-btn red" onclick="cancelarBolao('${b.id}','${esc(b.name)}')">❌ Cancelar</button>` : ''}
     </td>
   </tr>`).join('')
 }
 
 function filtrarBoloes(filtro, el) { setFil('boloes', el); carregarBoloes(filtro) }
+
+async function finalizarBolao(id, nome) {
+  if (!confirm(`Finalizar bolão "${nome}"? Isso calculará pontuações e distribuirá prêmios.`)) return
+  const { error } = await sb().rpc('finalize_bolao', { p_bolao_id: id })
+  if (error) { showToast('Erro ao finalizar: ' + error.message); return }
+  showToast('✅ Bolão finalizado! Prêmios distribuídos.')
+  carregarBoloes('')
+}
 
 async function cancelarBolao(id, nome) {
   if (!confirm(`Cancelar bolão "${nome}"?`)) return
@@ -803,19 +817,16 @@ async function carregarPremiacoes() {
     <td><div style="display:flex;align-items:center;gap:8px;">
       <div class="adm-av">${(r.username??'?').slice(0,2).toUpperCase()}</div>
       <div><div style="font-weight:600">@${esc(r.username??'—')}</div>
-      <div style="font-size:11px;color:var(--muted)">${esc(r.full_name??'')}</div></div>
+      <div style="font-size:11px;color:var(--muted)">${r.position ? `#${r.position}º lugar` : ''}</div></div>
     </div></td>
     <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${esc(r.bolao_name??'')}">${esc(r.bolao_name??'—')}</td>
-    <td style="font-weight:700;color:var(--green);font-size:15px">${fmtBRL(r.prize_won)}</td>
+    <td style="font-weight:700;color:var(--green);font-size:15px">${fmtBRL(r.total_prize)}</td>
     <td><div style="display:flex;align-items:center;gap:6px;">
       <code style="font-size:12px;background:var(--bg);padding:3px 8px;border-radius:4px;border:1px solid var(--border)">${esc(r.pix_key??'—')}</code>
       ${r.pix_key ? `<button class="act-btn" onclick="navigator.clipboard.writeText('${esc(r.pix_key??'')}').then(()=>showToast('Chave Pix copiada!'))">📋</button>` : ''}
     </div></td>
-    <td>${r.prize_paid ? '<span class="pill pill-confirmed">✅ Pago</span>' : '<span class="pill pill-pending">⏳ Pendente</span>'}</td>
-    <td>${r.prize_paid
-      ? `<span style="font-size:11px;color:var(--muted)">${fmtDateTime(r.prize_paid_at)}</span>`
-      : `<button class="act-btn grn" onclick="marcarPremiacaoPaga('${r.participant_id}', this)">💸 Marcar como Pago</button>`
-    }</td>
+    <td><span class="pill pill-pending">⏳ Pendente</span></td>
+    <td><button class="act-btn grn" onclick="marcarPremiacaoPaga('${r.participant_id}', this)">💸 Marcar como Pago</button></td>
   </tr>`).join('')
 }
 
@@ -823,8 +834,7 @@ async function marcarPremiacaoPaga(participantId, btn) {
   if (!confirm('Confirmar que o Pix foi enviado para o ganhador?')) return
   btn.disabled = true; btn.textContent = 'Processando…'
   const { error } = await sb().rpc('admin_mark_prize_paid', {
-    p_participant_id: participantId,
-    p_admin_id: currentUser.id
+    p_participant_id: participantId
   })
   if (error) { showToast('Erro: ' + error.message); btn.disabled = false; btn.textContent = '💸 Marcar como Pago'; return }
   showToast('✅ Premiação marcada como paga! Ganhador foi notificado.')

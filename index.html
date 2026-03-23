@@ -5,6 +5,8 @@
 <meta name="theme-color" content="#02171A"/>
 <title>BolãoPro — Dashboard</title>
 <link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -33,6 +35,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -65,6 +68,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -127,7 +131,7 @@
             <div class="sb-sub">Dispute com amigos no BolãoPro e confirme seus palpites com odds reais na Superbet.</div>
             <div class="sb-actions">
               <button class="sb-btn-primary" onclick="openModal('criar')">+ Criar Bolão</button>
-              <a class="sb-btn-ghost" id="sbCar1" target="_blank">Apostar na Superbet →</a>
+              <a class="sb-btn-ghost" id="sbCar1" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Apostar na Superbet →</a>
             </div>
           </div>
           <div class="sb-deco">⚽</div>
@@ -140,7 +144,7 @@
             <div class="sb-title">Odds reais nas melhores partidas</div>
             <div class="sb-sub">Brasileirão, Libertadores, Champions League e muito mais. Aposte com as melhores odds do mercado.</div>
             <div class="sb-actions">
-              <a class="sb-btn-primary" id="sbCar2" target="_blank">Ver Odds Agora →</a>
+              <a class="sb-btn-primary" id="sbCar2" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Ver Odds Agora →</a>
               <a href="jogos.html" class="sb-btn-ghost">Ver Jogos →</a>
             </div>
           </div>
@@ -154,7 +158,7 @@
             <div class="sb-title">Deposite e ganhe bônus na Superbet</div>
             <div class="sb-sub">Novo na Superbet? Cadastre-se agora e aproveite os bônus exclusivos para parceiros BolãoPro.</div>
             <div class="sb-actions">
-              <a class="sb-btn-primary" id="sbCar3" target="_blank">Cadastrar na Superbet →</a>
+              <a class="sb-btn-primary" id="sbCar3" target="_blank" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">Cadastrar na Superbet →</a>
               <button class="sb-btn-ghost" onclick="openModal('criar')">Criar Bolão →</button>
             </div>
           </div>
@@ -235,8 +239,8 @@
             <div class="aff-title">Aposte de verdade também</div>
             <div class="aff-sub">Odds reais nas melhores casas do Brasil.</div>
             <div class="aff-btns">
-              <a href="#" id="sbLink" target="_blank" class="aff-btn sb">⚡ Sportingbet<span class="aff-arrow">→</span></a>
-              <a href="#" id="supLink" target="_blank" class="aff-btn sup">⚡ Superbet<span class="aff-arrow">→</span></a>
+              <a href="#" id="sbLink" target="_blank" class="aff-btn sb" onclick="trackAffiliateClick(window.currentUser?.id,'sportingbet',null,null)">⚡ Sportingbet<span class="aff-arrow">→</span></a>
+              <a href="#" id="supLink" target="_blank" class="aff-btn sup" onclick="trackAffiliateClick(window.currentUser?.id,'superbet',null,null)">⚡ Superbet<span class="aff-arrow">→</span></a>
             </div>
           </div>
         </div>
@@ -323,6 +327,7 @@
 <script src="config.js"></script><script src="app.js"></script>
 <script>
 let curFil='', curSplit='100% ao 1º', newBolId=null, _searchTimer
+window.currentUser = null
 
 document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sbLink').href  = CONFIG.SPORTINGBET
@@ -331,6 +336,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('sbCar2').href = CONFIG.SUPERBET
   document.getElementById('sbCar3').href = CONFIG.SUPERBET
   const user = await initAuth()
+  window.currentUser = user
   if (user) {
     hideEl('sideLogin'); showEl('sideLogout')
     const p = await getProfile(user.id)

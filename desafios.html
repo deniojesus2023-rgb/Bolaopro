@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="theme-color" content="#02171A"/>
+<title>BolãoPro — Desafios</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BolãoPro">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="design-system.css"/>
+<link rel="stylesheet" href="shared.css"/>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+/* ── HERO DESAFIOS ── */
+.ch-hero {
+  background: linear-gradient(135deg, #021A0E 0%, #043D1F 40%, #086B36 80%, #00DF8122 100%);
+  border: 1px solid rgba(0,223,129,.22);
+  border-radius: var(--r-xl);
+  padding: 32px 28px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.ch-hero::before {
+  content: '⚡';
+  position: absolute;
+  right: 28px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 96px;
+  opacity: .06;
+  pointer-events: none;
+}
+.ch-hero-text {}
+.ch-hero-title {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+.ch-hero-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 0;
+}
+.ch-hero-cta {
+  flex-shrink: 0;
+}
+.ch-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 22px;
+  background: var(--green);
+  color: #000;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0,223,129,.35);
+}
+.ch-hero-btn:hover {
+  background: #2CC295;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0,223,129,.45);
+}
+
+/* ── FILTROS ── */
+.ch-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.ch-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ch-sep {
+  width: 1px;
+  height: 28px;
+  background: rgba(0,223,129,.15);
+  margin: 0 4px;
+}
+.ch-tab {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(0,223,129,.18);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.ch-tab:hover {
+  background: rgba(0,223,129,.08);
+  color: var(--text);
+  border-color: rgba(0,223,129,.3);
+}
+.ch-tab.on {
+  background: rgba(0,223,129,.15);
+  color: var(--green);
+  border-color: rgba(0,223,129,.4);
+  font-weight: 600;
+}
+.ch-type-tab {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(0,223,129,.18);
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.ch-type-tab:hover {
+  background: rgba(0,223,129,.08);
+  color: var(--text);
+}
+.ch-type-tab.on {
+  background: rgba(0,223,129,.12);
+  color: var(--green);
+  border-color: rgba(0,223,129,.35);
+  font-weight: 600;
+}
+
+/* ── GRID CARDS ── */
+#challenges-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+/* ── CARD DESAFIO ── */
+.ch-card {
+  background: var(--card);
+  border: 1px solid rgba(0,223,129,.12);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: all .2s;
+  display: flex;
+  flex-direction: column;
+}
+.ch-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(0,0,0,.6), 0 0 0 1px rgba(0,223,129,.18);
+  border-color: rgba(0,223,129,.25);
+}
+.ch-card-top {
+  padding: 16px 16px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ch-badges {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ch-badge-status {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: .4px;
+  text-transform: uppercase;
+}
+.ch-badge-status.open {
+  background: rgba(0,223,129,.15);
+  color: var(--green);
+  border: 1px solid rgba(0,223,129,.3);
+}
+.ch-badge-status.active {
+  background: rgba(245,158,11,.15);
+  color: var(--gold);
+  border: 1px solid rgba(245,158,11,.3);
+}
+.ch-badge-status.finished {
+  background: rgba(100,116,139,.15);
+  color: #94A3B8;
+  border: 1px solid rgba(100,116,139,.25);
+}
+.ch-badge-verified {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: rgba(167,139,250,.15);
+  color: var(--sup);
+  border: 1px solid rgba(167,139,250,.3);
+}
+.ch-card-body {
+  padding: 14px 16px;
+  flex: 1;
+}
+.ch-influencer-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.ch-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00DF81, #2CC295);
+  border: 2px solid rgba(0,223,129,.3);
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #000;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.ch-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ch-influencer-info {}
+.ch-challenge-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+.ch-handle {
+  font-size: 12px;
+  color: var(--muted);
+}
+.ch-progress-wrap {
+  margin-bottom: 14px;
+}
+.ch-progress-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.ch-progress-label span:last-child {
+  font-weight: 600;
+  color: var(--text);
+}
+.ch-progress-bar {
+  height: 5px;
+  background: rgba(0,223,129,.1);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.ch-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00DF81, #2CC295);
+  border-radius: 99px;
+  transition: width .4s ease;
+}
+.ch-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.ch-entry {
+  font-size: 12px;
+  color: var(--muted);
+}
+.ch-entry span {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+.ch-deadline {
+  font-size: 11px;
+  color: var(--light);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ch-prize-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  background: rgba(0,223,129,.06);
+  border: 1px solid rgba(0,223,129,.12);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+}
+.ch-prize-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.ch-prize-label {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.2;
+}
+.ch-prize-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--green);
+  letter-spacing: -.5px;
+  text-shadow: 0 0 20px rgba(0,223,129,.4);
+}
+.ch-card-footer {
+  padding: 0 16px 16px;
+}
+.ch-btn-enter {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--r-sm);
+  background: var(--green);
+  color: #000;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(0,223,129,.2);
+}
+.ch-btn-enter:hover {
+  background: #2CC295;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,223,129,.35);
+}
+.ch-btn-result {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid rgba(100,116,139,.3);
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+}
+.ch-btn-result:hover {
+  border-color: rgba(0,223,129,.3);
+  color: var(--green);
+}
+
+/* ── SKELETON ── */
+.ch-skeleton {
+  background: var(--card);
+  border: 1px solid rgba(0,223,129,.08);
+  border-radius: var(--r-lg);
+  height: 320px;
+  overflow: hidden;
+  position: relative;
+}
+.ch-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(0,223,129,.05) 50%, transparent 100%);
+  animation: skel 1.4s ease-in-out infinite;
+}
+@keyframes skel {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── EMPTY STATE ── */
+.ch-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--muted);
+}
+.ch-empty-icon {
+  font-size: 52px;
+  margin-bottom: 16px;
+}
+.ch-empty-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.ch-empty-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+/* ── MODAL ENTRADA ── */
+.ch-modal-ovl {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.ch-modal-ovl.open {
+  display: flex;
+}
+.ch-modal {
+  background: var(--card);
+  border: 1px solid rgba(0,223,129,.2);
+  border-radius: var(--r-xl);
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.8);
+  overflow: hidden;
+}
+.ch-modal-head {
+  padding: 22px 22px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.ch-modal-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+.ch-modal-x {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  border: 1px solid rgba(0,223,129,.15);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .15s;
+}
+.ch-modal-x:hover {
+  background: rgba(0,223,129,.08);
+  color: var(--green);
+}
+.ch-modal-body {
+  padding: 0 22px 22px;
+}
+.ch-modal-challenge-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 18px;
+  padding: 10px 14px;
+  background: rgba(0,223,129,.07);
+  border: 1px solid rgba(0,223,129,.15);
+  border-radius: var(--r-sm);
+}
+.ch-modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,223,129,.08);
+  font-size: 13px;
+}
+.ch-modal-row:last-of-type {
+  border-bottom: none;
+}
+.ch-modal-lbl {
+  color: var(--muted);
+}
+.ch-modal-val {
+  font-weight: 700;
+  color: var(--text);
+}
+.ch-modal-val.green {
+  color: var(--green);
+}
+.ch-modal-val.red {
+  color: var(--red);
+}
+.ch-modal-actions {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ch-modal-confirm {
+  width: 100%;
+  height: 44px;
+  border-radius: var(--r-sm);
+  background: var(--green);
+  color: #000;
+  font-size: 14px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: all .15s;
+  box-shadow: 0 2px 12px rgba(0,223,129,.25);
+}
+.ch-modal-confirm:hover:not(:disabled) {
+  background: #2CC295;
+  box-shadow: 0 4px 16px rgba(0,223,129,.4);
+}
+.ch-modal-confirm:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+.ch-modal-cancel {
+  width: 100%;
+  height: 40px;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 500;
+  border: 1px solid rgba(0,223,129,.15);
+  cursor: pointer;
+  transition: all .15s;
+}
+.ch-modal-cancel:hover {
+  border-color: rgba(0,223,129,.3);
+  color: var(--text);
+}
+.ch-modal-err {
+  display: none;
+  background: rgba(248,113,113,.1);
+  border: 1px solid rgba(248,113,113,.25);
+  color: var(--red);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  font-size: 12.5px;
+  margin-top: 10px;
+}
+
+/* ── FOOTER LINK ── */
+.ch-influencer-cta {
+  text-align: center;
+  margin-top: 32px;
+  padding: 18px;
+  border-top: 1px solid rgba(0,223,129,.08);
+}
+.ch-influencer-cta a {
+  font-size: 12.5px;
+  color: var(--muted);
+  transition: color .15s;
+}
+.ch-influencer-cta a:hover {
+  color: var(--green);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .ch-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 20px;
+  }
+  .ch-hero::before { font-size: 64px; opacity: .04; }
+  .ch-hero-title { font-size: 21px; }
+  .ch-hero-cta { width: 100%; }
+  .ch-hero-btn { width: 100%; justify-content: center; }
+  #challenges-grid { grid-template-columns: 1fr; }
+  .ch-filters { gap: 6px; }
+}
+@media (max-width: 480px) {
+  .ch-sep { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item on"><span class="nav-icon"><i data-lucide="zap"></i></span>Desafios</a>
+  <div class="nav-lbl">Configurações</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="userCard" style="display:none">
+      <div class="u-av" id="sideAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- DRAWER -->
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item on"><span class="nav-icon"><i data-lucide="zap"></i></span>Desafios</a>
+  <div class="nav-lbl">Configurações</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot">
+    <div class="user-card" id="drawerUserCard" style="display:none">
+      <div class="u-av" id="drawerAv">?</div>
+      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title">Desafios</div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs && abrirNotifs()" title="Notificações" style="position:relative">
+        <i data-lucide="bell"></i>
+        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
+      </button>
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="admin.html" class="icon-btn" id="topAdminBtn" style="display:none" title="Painel Admin"><i data-lucide="shield"></i></a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- HERO BANNER -->
+    <div class="ch-hero fade-in">
+      <div class="ch-hero-text">
+        <div class="ch-hero-title">Me vença e ganhe dinheiro 💰</div>
+        <div class="ch-hero-sub">Enfrente influenciadores em palpites esportivos</div>
+      </div>
+      <div class="ch-hero-cta">
+        <a href="criar-desafio.html" class="ch-hero-btn">
+          <i data-lucide="zap" style="width:15px;height:15px"></i>
+          Criar Desafio
+        </a>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="ch-filters fade-in">
+      <div class="ch-filter-group" id="statusTabs">
+        <button class="ch-tab on" data-status="" onclick="applyFilter('',this)">Todos</button>
+        <button class="ch-tab" data-status="open" onclick="applyFilter('open',this)">Abertos</button>
+        <button class="ch-tab" data-status="active" onclick="applyFilter('active',this)">Em andamento</button>
+        <button class="ch-tab" data-status="finished" onclick="applyFilter('finished',this)">Finalizados</button>
+      </div>
+      <div class="ch-sep"></div>
+      <div class="ch-filter-group" id="typeTabs">
+        <button class="ch-type-tab on" data-type="" onclick="applyTypeFilter('',this)">Todos tipos</button>
+        <button class="ch-type-tab" data-type="ranking" onclick="applyTypeFilter('ranking',this)">🏆 Ranking</button>
+        <button class="ch-type-tab" data-type="beat_influencer" onclick="applyTypeFilter('beat_influencer',this)">⚡ Vencer Influencer</button>
+      </div>
+    </div>
+
+    <!-- GRID DE DESAFIOS -->
+    <div id="challenges-grid">
+      <!-- Skeletons de carregamento -->
+      <div class="ch-skeleton"></div>
+      <div class="ch-skeleton"></div>
+      <div class="ch-skeleton"></div>
+    </div>
+
+    <!-- FOOTER LINK INFLUENCER -->
+    <div class="ch-influencer-cta fade-in">
+      <a href="criar-desafio.html">Quer criar desafios? Torne-se um influencer →</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="bnav-inner">
+    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
+    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
+    <a href="desafios.html" class="bn-center on"><div class="bn-circle"><i data-lucide="zap"></i></div></a>
+    <a href="ranking.html" class="bn"><span class="bn-icon"><i data-lucide="star"></i></span>Ranking</a>
+    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
+  </div>
+</nav>
+
+<!-- MODAL: ENTRAR NO DESAFIO -->
+<div class="ch-modal-ovl" id="enter-modal" onclick="closeEnterModal(event)">
+  <div class="ch-modal">
+    <div class="ch-modal-head">
+      <div class="ch-modal-title">Entrar no Desafio</div>
+      <button class="ch-modal-x" onclick="closeEnterModal()"><i data-lucide="x" style="width:14px;height:14px"></i></button>
+    </div>
+    <div class="ch-modal-body">
+      <div class="ch-modal-challenge-name" id="modal-challenge-name">—</div>
+      <div class="ch-modal-row">
+        <span class="ch-modal-lbl">Valor de entrada</span>
+        <span class="ch-modal-val" id="modal-entry-fee">R$ 0,00</span>
+      </div>
+      <div class="ch-modal-row">
+        <span class="ch-modal-lbl">Seu saldo atual</span>
+        <span class="ch-modal-val green" id="modal-user-balance">R$ 0,00</span>
+      </div>
+      <div class="ch-modal-row">
+        <span class="ch-modal-lbl">Saldo após entrada</span>
+        <span class="ch-modal-val" id="modal-balance-after">R$ 0,00</span>
+      </div>
+      <div class="ch-modal-actions">
+        <button class="ch-modal-confirm" id="modal-confirm-btn" onclick="confirmEnterChallenge()">
+          Confirmar Pagamento
+        </button>
+        <button class="ch-modal-cancel" onclick="closeEnterModal()">Cancelar</button>
+      </div>
+      <div class="ch-modal-err" id="modal-err"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+<script>
+// ── Estado global ──
+let _allChallenges = []
+let _curStatus = ''
+let _curType = ''
+let _pendingChallengeId = null
+let _pendingEntryFee = 0
+let _currentUser = null
+let _userBalance = 0
+
+// ── Utilitários ──
+function fmtMoney(v) {
+  return 'R$ ' + Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+function fmtDate(iso) {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' })
+}
+function esc(s) {
+  if (!s) return ''
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast')
+  if (!t) return
+  t.textContent = msg
+  t.className = 'toast show' + (type === 'error' ? ' toast-error' : '')
+  clearTimeout(t._timer)
+  t._timer = setTimeout(() => t.classList.remove('show'), 3200)
+}
+
+// ── Carregar desafios ──
+async function loadChallenges(status) {
+  const grid = document.getElementById('challenges-grid')
+  grid.innerHTML = '<div class="ch-skeleton"></div><div class="ch-skeleton"></div><div class="ch-skeleton"></div>'
+
+  try {
+    const client = sb ? sb() : supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
+    let query = client
+      .from('challenges')
+      .select(`
+        id, name, description, status, type,
+        entry_fee, prize_amount, max_participants, current_participants,
+        deadline, created_at,
+        influencer_profiles (
+          id, handle, verified, avatar_url,
+          profiles ( id, username, avatar_url )
+        )
+      `)
+      .order('created_at', { ascending: false })
+
+    if (status) query = query.eq('status', status)
+
+    const { data, error } = await query
+    if (error) throw error
+
+    _allChallenges = data || []
+    renderFilteredChallenges()
+  } catch (err) {
+    console.error('loadChallenges error:', err)
+    grid.innerHTML = `
+      <div class="ch-empty">
+        <div class="ch-empty-icon">⚠️</div>
+        <div class="ch-empty-title">Erro ao carregar desafios</div>
+        <div class="ch-empty-sub">${esc(err.message || 'Tente novamente em instantes')}</div>
+        <button class="ch-hero-btn" style="margin:0 auto" onclick="loadChallenges(_curStatus)">Tentar novamente</button>
+      </div>`
+  }
+}
+
+// ── Filtrar e renderizar ──
+function renderFilteredChallenges() {
+  const grid = document.getElementById('challenges-grid')
+  let list = _allChallenges
+
+  if (_curStatus) list = list.filter(c => c.status === _curStatus)
+  if (_curType)   list = list.filter(c => c.type === _curType)
+
+  if (!list.length) {
+    grid.innerHTML = `
+      <div class="ch-empty">
+        <div class="ch-empty-icon">🏆</div>
+        <div class="ch-empty-title">Nenhum desafio por aqui ainda</div>
+        <div class="ch-empty-sub">Seja o primeiro a criar um desafio e disputar com seus seguidores!</div>
+        <a href="criar-desafio.html" class="ch-hero-btn" style="margin:0 auto;display:inline-flex">
+          <i data-lucide="zap" style="width:15px;height:15px"></i> Criar Desafio
+        </a>
+      </div>`
+    lucide.createIcons()
+    return
+  }
+
+  grid.innerHTML = list.map(c => renderChallengeCard(c)).join('')
+  lucide.createIcons()
+}
+
+// ── Renderizar card ──
+function renderChallengeCard(c) {
+  const ip = c.influencer_profiles || {}
+  const profile = ip.profiles || {}
+  const name = c.name || 'Desafio sem título'
+  const handle = ip.handle ? '@' + ip.handle : (profile.username ? '@' + profile.username : '')
+  const verified = ip.verified === true
+  const avatarUrl = ip.avatar_url || profile.avatar_url || null
+  const initials = (ip.handle || profile.username || 'IN').slice(0, 2).toUpperCase()
+  const current = Number(c.current_participants || 0)
+  const max = Number(c.max_participants || 0)
+  const pct = max > 0 ? Math.min(100, Math.round((current / max) * 100)) : 0
+  const entryFee = Number(c.entry_fee || 0)
+  const prize = Number(c.prize_amount || 0)
+  const deadline = fmtDate(c.deadline)
+  const status = c.status || 'open'
+  const type = c.type || 'ranking'
+
+  // Status badge
+  const statusMap = { open: ['open', 'Aberto'], active: ['active', 'Em andamento'], finished: ['finished', 'Finalizado'] }
+  const [statusCls, statusLabel] = statusMap[status] || ['open', 'Aberto']
+
+  // Avatar HTML
+  const avatarHtml = avatarUrl
+    ? `<img src="${esc(avatarUrl)}" alt="${esc(initials)}" onerror="this.parentElement.textContent='${esc(initials)}'">`
+    : initials
+
+  // Type label
+  const typeLabel = type === 'beat_influencer' ? '⚡ Vencer Influencer' : '🏆 Ranking'
+
+  // CTA button
+  const ctaBtn = status === 'finished'
+    ? `<a href="desafio.html?id=${esc(c.id)}" class="ch-btn-result">Ver Resultado →</a>`
+    : `<button class="ch-btn-enter" onclick="enterChallenge('${esc(c.id)}', ${entryFee})">Entrar no Desafio</button>`
+
+  return `
+  <div class="ch-card fade-in">
+    <div class="ch-card-top">
+      <div class="ch-badges">
+        <span class="ch-badge-status ${statusCls}">${esc(statusLabel)}</span>
+        ${verified ? '<span class="ch-badge-verified">Influencer Verificado ✓</span>' : ''}
+        <span style="font-size:10px;color:var(--muted);padding:3px 6px;background:rgba(0,223,129,.05);border:1px solid rgba(0,223,129,.1);border-radius:20px">${esc(typeLabel)}</span>
+      </div>
+    </div>
+    <div class="ch-card-body">
+      <div class="ch-influencer-row">
+        <div class="ch-avatar">${avatarHtml}</div>
+        <div class="ch-influencer-info">
+          <div class="ch-challenge-name">${esc(name)}</div>
+          ${handle ? `<div class="ch-handle">${esc(handle)}</div>` : ''}
+        </div>
+      </div>
+      <div class="ch-progress-wrap">
+        <div class="ch-progress-label">
+          <span>Participantes</span>
+          <span>${current}/${max > 0 ? max : '∞'}</span>
+        </div>
+        <div class="ch-progress-bar">
+          <div class="ch-progress-fill" style="width:${pct}%"></div>
+        </div>
+      </div>
+      <div class="ch-meta-row">
+        <div class="ch-entry">Entrada: <span>${fmtMoney(entryFee)}</span></div>
+        <div class="ch-deadline"><i data-lucide="calendar" style="width:11px;height:11px"></i> ${esc(deadline)}</div>
+      </div>
+      <div class="ch-prize-row">
+        <div class="ch-prize-icon">🏆</div>
+        <div style="flex:1">
+          <div class="ch-prize-label">Prêmio total</div>
+          <div class="ch-prize-value">${fmtMoney(prize)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="ch-card-footer">
+      ${ctaBtn}
+    </div>
+  </div>`
+}
+
+// ── Filtros de status ──
+function applyFilter(status, btn) {
+  _curStatus = status
+  document.querySelectorAll('#statusTabs .ch-tab').forEach(b => b.classList.remove('on'))
+  if (btn) btn.classList.add('on')
+  renderFilteredChallenges()
+}
+
+// ── Filtros de tipo ──
+function applyTypeFilter(type, btn) {
+  _curType = type
+  document.querySelectorAll('#typeTabs .ch-type-tab').forEach(b => b.classList.remove('on'))
+  if (btn) btn.classList.add('on')
+  renderFilteredChallenges()
+}
+
+// ── Entrar no desafio ──
+async function enterChallenge(challengeId, entryFee) {
+  if (!_currentUser) {
+    showToast('Faça login para participar de um desafio.', 'error')
+    setTimeout(() => { location.href = 'login.html' }, 1200)
+    return
+  }
+
+  _pendingChallengeId = challengeId
+  _pendingEntryFee = entryFee
+
+  // Buscar saldo do usuário
+  try {
+    const client = sb ? sb() : supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
+    const { data: profile } = await client
+      .from('profiles')
+      .select('balance')
+      .eq('id', _currentUser.id)
+      .single()
+    _userBalance = Number(profile?.balance || 0)
+  } catch { _userBalance = 0 }
+
+  // Encontrar nome do desafio
+  const challenge = _allChallenges.find(c => c.id === challengeId)
+  const name = challenge?.name || 'Desafio'
+  const balanceAfter = _userBalance - entryFee
+
+  document.getElementById('modal-challenge-name').textContent = name
+  document.getElementById('modal-entry-fee').textContent = fmtMoney(entryFee)
+  document.getElementById('modal-user-balance').textContent = fmtMoney(_userBalance)
+
+  const afterEl = document.getElementById('modal-balance-after')
+  afterEl.textContent = fmtMoney(balanceAfter)
+  afterEl.className = 'ch-modal-val' + (balanceAfter < 0 ? ' red' : '')
+
+  const confirmBtn = document.getElementById('modal-confirm-btn')
+  confirmBtn.disabled = balanceAfter < 0
+  if (balanceAfter < 0) {
+    showModalErr('Saldo insuficiente para entrar neste desafio.')
+  } else {
+    hideModalErr()
+  }
+
+  document.getElementById('enter-modal').classList.add('open')
+  lucide.createIcons()
+}
+
+async function confirmEnterChallenge() {
+  if (!_pendingChallengeId) return
+
+  const btn = document.getElementById('modal-confirm-btn')
+  btn.textContent = 'Processando…'
+  btn.disabled = true
+  hideModalErr()
+
+  try {
+    const client = sb ? sb() : supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
+    const { data, error } = await client.rpc('enter_challenge', {
+      p_challenge_id: _pendingChallengeId,
+      p_user_id: _currentUser.id
+    })
+    if (error) throw error
+
+    closeEnterModal()
+    showToast('✅ Você entrou no desafio!')
+    loadChallenges(_curStatus)
+  } catch (err) {
+    console.error('enter_challenge error:', err)
+    showModalErr(err.message || 'Erro ao entrar no desafio. Tente novamente.')
+    btn.textContent = 'Confirmar Pagamento'
+    btn.disabled = false
+  }
+}
+
+function closeEnterModal(e) {
+  if (e && e.target !== document.getElementById('enter-modal')) return
+  document.getElementById('enter-modal').classList.remove('open')
+  _pendingChallengeId = null
+  _pendingEntryFee = 0
+  hideModalErr()
+  const btn = document.getElementById('modal-confirm-btn')
+  btn.textContent = 'Confirmar Pagamento'
+  btn.disabled = false
+}
+
+function showModalErr(msg) {
+  const el = document.getElementById('modal-err')
+  el.textContent = msg
+  el.style.display = 'block'
+}
+function hideModalErr() {
+  document.getElementById('modal-err').style.display = 'none'
+}
+
+// ── Init ──
+document.addEventListener('DOMContentLoaded', async () => {
+  // Auth
+  try {
+    const user = await initAuth()
+    _currentUser = user
+    window.currentUser = user
+    if (user) {
+      if (typeof hideEl === 'function') hideEl('sideLogin')
+      if (typeof showEl === 'function') showEl('sideLogout')
+      const p = typeof getProfile === 'function' ? await getProfile(user.id) : null
+      const n = p?.username ?? user.email?.split('@')[0] ?? '?'
+      const topBtn = document.getElementById('topUserBtn')
+      const topName = document.getElementById('topUserName')
+      const topAv = document.getElementById('topUserAv')
+      if (topBtn) topBtn.style.display = 'flex'
+      if (topName) topName.textContent = n
+      if (topAv) topAv.textContent = n.slice(0, 2).toUpperCase()
+      const loginBtn = document.getElementById('topLoginBtn')
+      if (loginBtn) loginBtn.style.display = 'none'
+    }
+  } catch (e) { console.warn('auth init:', e) }
+
+  // Carregar desafios
+  await loadChallenges('')
+})
+</script>
+<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
+</body>
+</html>

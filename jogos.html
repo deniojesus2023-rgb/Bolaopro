@@ -4,6 +4,8 @@
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
 <title>BolãoPro — Jogos</title>
 <link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -116,6 +118,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item on"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -147,6 +150,7 @@
   <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
   <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
   <a href="jogos.html" class="nav-item on"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
   <div class="nav-lbl">Configurações</div>
   <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
   <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
@@ -229,9 +233,11 @@ let allJogos = []
 let curComp   = ''
 let curStatus = ''
 let realtimeChannel = null
+window.currentUser = null
 
 document.addEventListener('DOMContentLoaded', async () => {
   const user = await initAuth()
+  window.currentUser = user
   if (user) {
     hideEl('sideLogin'); showEl('sideLogout')
     const p = await getProfile(user.id)
@@ -385,34 +391,34 @@ function jogoCardHtml(j) {
   // Odds (corrigidas: todas da Sportingbet, botão Superbet separado)
   const oddsHtml = !isDone ? `
     <div class="odds-row">
-      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn">
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn" onclick="trackAffiliateClick(window.currentUser?.id,'sportingbet','${j.id}',null)">
         <div class="odd-lbl">${esc(j.home_team.split(' ')[0])}</div>
         <div class="odd-val">${j.odd_home_sportingbet ?? '—'}</div>
         <div class="odd-house">Sportingbet</div>
       </a>
-      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn">
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn" onclick="trackAffiliateClick(window.currentUser?.id,'sportingbet','${j.id}',null)">
         <div class="odd-lbl">Empate</div>
         <div class="odd-val">${j.odd_draw_sportingbet ?? '—'}</div>
         <div class="odd-house">Sportingbet</div>
       </a>
-      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn">
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="odd-btn" onclick="trackAffiliateClick(window.currentUser?.id,'sportingbet','${j.id}',null)">
         <div class="odd-lbl">${esc(j.away_team.split(' ')[0])}</div>
         <div class="odd-val">${j.odd_away_sportingbet ?? '—'}</div>
         <div class="odd-house">Sportingbet</div>
       </a>
     </div>
     <div class="odds-row" style="margin-top:-4px">
-      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn">
+      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn" onclick="trackAffiliateClick(window.currentUser?.id,'superbet','${j.id}',null)">
         <div class="odd-lbl">${esc(j.home_team.split(' ')[0])}</div>
         <div class="odd-val">${j.odd_home_superbet ?? '—'}</div>
         <div class="odd-house" style="color:var(--sup)">Superbet</div>
       </a>
-      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn">
+      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn" onclick="trackAffiliateClick(window.currentUser?.id,'superbet','${j.id}',null)">
         <div class="odd-lbl">Empate</div>
         <div class="odd-val">${j.odd_draw_superbet ?? '—'}</div>
         <div class="odd-house" style="color:var(--sup)">Superbet</div>
       </a>
-      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn">
+      <a href="${CONFIG.SUPERBET}" target="_blank" class="odd-btn" onclick="trackAffiliateClick(window.currentUser?.id,'superbet','${j.id}',null)">
         <div class="odd-lbl">${esc(j.away_team.split(' ')[0])}</div>
         <div class="odd-val">${j.odd_away_superbet ?? '—'}</div>
         <div class="odd-house" style="color:var(--sup)">Superbet</div>
@@ -458,8 +464,8 @@ function jogoCardHtml(j) {
     ${statsHtml}
     ${lineupsHtml}
     <div class="jogo-footer" style="margin-top:10px">
-      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="jf-sb">⚡ Sportingbet</a>
-      <a href="${CONFIG.SUPERBET}"    target="_blank" class="jf-sup">⚡ Superbet</a>
+      <a href="${CONFIG.SPORTINGBET}" target="_blank" class="jf-sb" onclick="trackAffiliateClick(window.currentUser?.id,'sportingbet','${j.id}',null)">⚡ Sportingbet</a>
+      <a href="${CONFIG.SUPERBET}"    target="_blank" class="jf-sup" onclick="trackAffiliateClick(window.currentUser?.id,'superbet','${j.id}',null)">⚡ Superbet</a>
       <a href="index.html" class="jf-bolao" data-home="${esc(j.home_team)}" data-away="${esc(j.away_team)}" onclick="openBolaoFromJogo(this.dataset.home,this.dataset.away);return false">⚽ Criar Bolão</a>
     </div>
   </div>`
