@@ -419,3 +419,226 @@ window.addEventListener('offline', () => {
 window.addEventListener('online', () => {
   showToast('✅ Conexão restaurada')
 })
+
+// ==========================================
+// CHALLENGES - Sistema de Desafios
+// ==========================================
+
+/**
+ * Busca desafios do Supabase com dados do influencer
+ */
+async function fetchChallenges(status = null) {
+  let query = supabase
+    .from('challenges')
+    .select(`
+      *,
+      influencer_profiles (
+        id,
+        instagram_handle,
+        verified,
+        total_earned,
+        profiles (
+          id,
+          nome,
+          avatar_url
+        )
+      )
+    `)
+    .order('created_at', { ascending: false });
+
+  if (status && status !== 'todos') {
+    query = query.eq('status', status);
+  } else {
+    query = query.in('status', ['aberto', 'em_andamento']);
+  }
+
+  const { data, error } = await query.limit(50);
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Busca participantes de um desafio com ranking
+ */
+async function fetchChallengeParticipants(challengeId) {
+  const { data, error } = await supabase
+    .from('challenge_participants')
+    .select(`
+      *,
+      profiles (
+        id,
+        nome,
+        avatar_url
+      )
+    `)
+    .eq('challenge_id', challengeId)
+    .order('pontuacao', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Busca palpites do usuário em um desafio
+ */
+async function fetchUserChallengePredictions(challengeId, userId) {
+  const { data, error } = await supabase
+    .from('challenge_predictions')
+    .select('*')
+    .eq('challenge_id', challengeId);
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Salva palpites do usuário num desafio
+ */
+async function saveChallengePrediction(challengeId, participantId, matchId, resultado, placarHome, placarAway) {
+  const { data, error } = await supabase
+    .from('challenge_predictions')
+    .upsert({
+      challenge_id: challengeId,
+      participant_id: participantId,
+      match_id: matchId,
+      resultado,
+      placar_home: placarHome,
+      placar_away: placarAway
+    }, {
+      onConflict: 'challenge_id,participant_id,match_id'
+    });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Entra num desafio (chama RPC que debita saldo)
+ */
+async function enterChallengeRPC(challengeId, userId) {
+  const { data, error } = await supabase
+    .rpc('enter_challenge', {
+      p_challenge_id: challengeId,
+      p_user_id: userId
+    });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Cria um novo desafio (para influencers)
+ */
+async function createChallenge(challengeData, selectedMatchIds) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Usuário não autenticado');
+
+  // Garante que existe perfil de influencer
+  let { data: influencerProfile } = await supabase
+    .from('influencer_profiles')
+    .select('id')
+    .eq('user_id', user.id)
+    .single();
+
+  if (!influencerProfile) {
+    const { data: newProfile, error: profileError } = await supabase
+      .from('influencer_profiles')
+      .insert({ user_id: user.id, ...challengeData.influencer })
+      .select()
+      .single();
+    if (profileError) throw profileError;
+    influencerProfile = newProfile;
+  }
+
+  // Cria o desafio
+  const { data: challenge, error: challengeError } = await supabase
+    .from('challenges')
+    .insert({
+      ...challengeData.challenge,
+      influencer_id: influencerProfile.id
+    })
+    .select()
+    .single();
+
+  if (challengeError) throw challengeError;
+
+  // Associa os jogos
+  if (selectedMatchIds && selectedMatchIds.length > 0) {
+    const matchLinks = selectedMatchIds.map(matchId => ({
+      challenge_id: challenge.id,
+      match_id: matchId
+    }));
+    const { error: matchError } = await supabase
+      .from('challenge_matches')
+      .insert(matchLinks);
+    if (matchError) throw matchError;
+  }
+
+  return challenge;
+}
+
+/**
+ * Busca saldo da carteira do usuário
+ */
+async function getUserWalletBalance(userId) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('saldo')
+    .eq('id', userId)
+    .single();
+
+  if (error) throw error;
+  return data?.saldo || 0;
+}
+
+/**
+ * Busca histórico de transações
+ */
+async function getWalletTransactions(userId, limit = 20) {
+  const { data, error } = await supabase
+    .from('wallet_transactions')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data || [];
+}
+
+/**
+ * Formata valor em reais
+ */
+function formatCurrency(value) {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  }).format(value || 0);
+}
+
+/**
+ * Calcula tempo restante até data
+ */
+function getTimeRemaining(targetDate) {
+  const now = new Date();
+  const target = new Date(targetDate);
+  const diff = target - now;
+
+  if (diff <= 0) return 'Encerrado';
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+
+  if (days > 0) return `${days}d ${hours}h restantes`;
+  if (hours > 0) return `${hours}h restantes`;
+  const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  return `${mins}min restantes`;
+}
+
+/**
+ * Retorna iniciais do nome para avatar placeholder
+ */
+function getInitials(nome) {
+  if (!nome) return '?';
+  return nome.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+}

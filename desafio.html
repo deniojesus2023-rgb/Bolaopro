@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<title>BolãoPro — Desafio</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BolãoPro">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="design-system.css"/>
+<link rel="stylesheet" href="shared.css"/>
+<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+/* ── HERO DESAFIO ── */
+.challenge-hero{background:linear-gradient(135deg,#0A1F17 0%,#0E1E18 60%,#071510 100%);border:1px solid rgba(0,223,129,.15);border-top:3px solid var(--green);border-radius:var(--r-lg);padding:28px;margin-bottom:20px;box-shadow:var(--shadow-md);position:relative;overflow:hidden;}
+.challenge-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:220px;height:220px;border-radius:50%;background:rgba(0,223,129,.05);pointer-events:none;}
+.hero-top{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+.influencer-avatar{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#00DF81,#2CC295);border:3px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#000;flex-shrink:0;overflow:hidden;box-shadow:0 0 0 4px rgba(0,223,129,.2);}
+.influencer-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.hero-info{flex:1;min-width:0;}
+.challenge-title{font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:6px;line-height:1.2;}
+.influencer-name{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+.verified-badge{background:rgba(0,223,129,.15);color:var(--green);font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;}
+.challenge-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.ctag{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.ctag-type{background:rgba(167,139,250,.15);color:#A78BFA;border:1px solid rgba(167,139,250,.2);}
+.ctag-status-open{background:rgba(0,223,129,.12);color:var(--green);border:1px solid rgba(0,223,129,.2);}
+.ctag-status-closed{background:rgba(245,158,11,.12);color:var(--gold);border:1px solid rgba(245,158,11,.2);}
+.ctag-status-finished{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.2);}
+.ctag-date{background:rgba(14,30,24,.8);color:var(--muted);border:1px solid var(--border);}
+.stats-chips{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;}
+.stat-chip{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--text);}
+.stat-chip span{color:var(--muted);font-weight:400;}
+.vacancies-bar{margin-bottom:16px;}
+.vac-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.vac-track{height:6px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden;}
+.vac-fill{height:100%;background:linear-gradient(90deg,var(--green),#2CC295);border-radius:3px;transition:width .6s ease;}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.btn-enter{height:46px;padding:0 28px;border-radius:var(--r-sm);background:var(--green);color:#000;font-size:14px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:none;transition:all .15s;box-shadow:0 4px 16px rgba(0,223,129,.3);}
+.btn-enter:hover:not(:disabled){background:#2CC295;transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,223,129,.4);}
+.btn-enter:disabled{background:rgba(14,30,24,.8);color:var(--muted);border:1px solid var(--border);cursor:default;box-shadow:none;}
+.btn-result{height:46px;padding:0 28px;border-radius:var(--r-sm);background:var(--gold-lt);color:var(--gold);border:1px solid rgba(245,158,11,.3);font-size:14px;font-weight:800;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:all .15s;}
+.btn-result:hover{background:rgba(245,158,11,.2);border-color:var(--gold);}
+.btn-manage{height:46px;padding:0 20px;border-radius:var(--r-sm);background:rgba(167,139,250,.12);color:#A78BFA;border:1px solid rgba(167,139,250,.25);font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:7px;cursor:pointer;transition:all .15s;}
+.btn-manage:hover{background:rgba(167,139,250,.2);}
+
+/* ── TABS ── */
+.tabs-nav{display:flex;gap:0;background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:5px;margin-bottom:20px;box-shadow:var(--shadow);}
+.tab-btn{flex:1;height:38px;border-radius:10px;font-size:13px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.tab-btn:hover{color:var(--text);}
+.tab-btn.active{background:rgba(0,223,129,.14);color:var(--green);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* ── MATCH CARD ── */
+.match-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:14px;box-shadow:var(--shadow);}
+.match-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.match-comp{font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);background:var(--bg);padding:3px 8px;border-radius:6px;text-transform:uppercase;}
+.match-datetime{font-size:11px;color:var(--muted);}
+.teams-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:16px;}
+.team{text-align:center;}
+.team-shield{width:52px;height:52px;border-radius:50%;background:var(--bg);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 7px;}
+.team-name{font-size:13px;font-weight:700;}
+.score-center{text-align:center;}
+.score-live{font-size:28px;font-weight:800;letter-spacing:2px;color:var(--text);}
+.score-vs{font-size:14px;font-weight:700;color:var(--light);letter-spacing:2px;}
+.pred-section{}
+.pred-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;}
+.pred-btn{background:var(--bg);border:2px solid var(--border);border-radius:var(--r-sm);padding:10px 8px;text-align:center;cursor:pointer;transition:all .15s;user-select:none;}
+.pred-btn:hover{border-color:rgba(0,223,129,.35);}
+.pred-btn.sel{background:var(--green-lt);border-color:var(--green);}
+.pred-lbl{font-size:9px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:2px;}
+.pred-team{font-size:12px;font-weight:700;color:var(--text);}
+.pred-btn.sel .pred-team{color:var(--green);}
+.score-inputs{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;}
+.score-input{width:52px;height:44px;border-radius:var(--r-sm);background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:20px;font-weight:800;text-align:center;outline:none;transition:border-color .15s;}
+.score-input:focus{border-color:var(--green);}
+.score-sep{font-size:22px;font-weight:800;color:var(--light);}
+.points-hint{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.pts-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;}
+.pts-result{background:rgba(0,223,129,.1);color:var(--green);}
+.pts-exact{background:rgba(245,158,11,.1);color:var(--gold);}
+.match-finished-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg);border-radius:var(--r-sm);padding:8px 12px;margin-top:8px;}
+.match-result-score{font-size:16px;font-weight:800;color:var(--text);}
+.match-pts-earned{font-size:12px;font-weight:700;}
+.pts-earned-good{color:var(--green);}
+.pts-earned-zero{color:var(--muted);}
+.no-participant-msg{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:var(--r-lg);padding:20px;text-align:center;color:var(--gold);font-size:13px;font-weight:600;}
+.save-preds-btn{width:100%;height:48px;border-radius:var(--r-sm);background:var(--green);color:#000;font-size:15px;font-weight:800;border:none;cursor:pointer;transition:all .15s;margin-top:8px;box-shadow:0 4px 16px rgba(0,223,129,.25);}
+.save-preds-btn:hover{background:#2CC295;transform:translateY(-1px);}
+.save-preds-btn:disabled{background:var(--border);color:var(--muted);cursor:default;box-shadow:none;transform:none;}
+
+/* ── RANKING ── */
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:22px;}
+.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);padding:16px 12px;text-align:center;gap:6px;box-shadow:var(--shadow);transition:all .2s;}
+.pod:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.pod.p1{background:var(--gold-lt);border-color:#FCD34D;border-top-color:var(--gold);order:2;}
+.pod.p2{background:rgba(148,163,184,.08);border-color:#CBD5E1;border-top-color:#94A3B8;order:1;}
+.pod.p3{background:rgba(201,125,52,.08);border-color:#FED7AA;border-top-color:#C97D34;order:3;}
+.pod-medal{font-size:22px;margin-bottom:2px;}
+.pod-av{width:50px;height:50px;border-radius:12px;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--green);}
+.pod.p1 .pod-av{width:58px;height:58px;border-color:#FCD34D;color:var(--gold);background:var(--gold-lt);}
+.pod-name{font-size:12px;font-weight:700;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.pod-pts{font-size:17px;font-weight:800;letter-spacing:-.5px;}
+.pod.p1 .pod-pts{font-size:20px;color:var(--gold);}
+.pod-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;background:rgba(245,158,11,.2);color:var(--gold);}
+.influencer-pod{border:2px solid var(--green);box-shadow:0 0 16px rgba(0,223,129,.2);}
+.rk-table{border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);}
+.rk-head{display:grid;grid-template-columns:44px 1fr 90px 90px;padding:11px 20px;border-bottom:1px solid var(--border);background:var(--bg);font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
+.rk-row{display:grid;grid-template-columns:44px 1fr 90px 90px;padding:13px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .12s,box-shadow .12s;background:var(--card);}
+.rk-row:last-child{border-bottom:none;}
+.rk-row:hover{background:rgba(0,223,129,.04);box-shadow:inset 3px 0 0 var(--green);}
+.rk-row.you{background:rgba(0,223,129,.07);box-shadow:inset 3px 0 0 var(--green);}
+.rk-pos{font-size:14px;font-weight:700;color:var(--light);text-align:center;}
+.rk-pos.p1{color:var(--gold);}
+.rk-pos.p2{color:#94A3B8;}
+.rk-pos.p3{color:#C97D34;}
+.rk-user{display:flex;align-items:center;gap:9px;}
+.rk-av{width:30px;height:30px;border-radius:50%;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--green);flex-shrink:0;}
+.rk-name{font-size:12px;font-weight:600;}
+.rk-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;background:rgba(0,223,129,.12);color:var(--green);margin-left:5px;}
+.rk-badge-inf{background:rgba(245,158,11,.15);color:var(--gold);}
+.rk-pts{font-size:14px;font-weight:700;color:var(--gold);text-align:center;}
+.rk-correct{font-size:12px;font-weight:600;color:var(--muted);text-align:center;}
+.live-update-info{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-bottom:12px;}
+
+/* ── REGRAS ── */
+.rules-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;box-shadow:var(--shadow);}
+.rules-section{margin-bottom:22px;}
+.rules-section:last-child{margin-bottom:0;}
+.rules-h{font-size:14px;font-weight:700;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.rules-text{font-size:13px;color:var(--muted);line-height:1.6;}
+.pts-table{width:100%;border-collapse:collapse;margin-top:10px;}
+.pts-table th{text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;padding:8px 12px;background:var(--bg);border-bottom:1px solid var(--border);}
+.pts-table td{padding:10px 12px;font-size:13px;border-bottom:1px solid rgba(0,223,129,.06);}
+.pts-table tr:last-child td{border-bottom:none;}
+.pts-val{font-weight:700;color:var(--green);}
+
+/* ── RESULTADO FINAL ── */
+.result-screen{display:none;text-align:center;padding:30px 20px;}
+.result-screen.show{display:block;}
+.confetti-wrap{position:relative;}
+.result-trophy{font-size:64px;margin-bottom:10px;animation:bounce 1s ease-in-out infinite alternate;}
+@keyframes bounce{from{transform:translateY(0) rotate(-5deg)}to{transform:translateY(-12px) rotate(5deg)}}
+.result-winner{font-size:24px;font-weight:800;color:var(--gold);letter-spacing:-.5px;margin-bottom:6px;}
+.result-sub{font-size:14px;color:var(--muted);margin-bottom:24px;}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:confetti-fall 3s ease-in-out infinite;}
+@keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(120px) rotate(720deg);opacity:0}}
+
+/* ── MODAL ── */
+.modal-ovl{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-ovl.open{display:flex;}
+.modal-box{background:var(--card);border:1px solid var(--border);border-radius:var(--r-xl);padding:28px;width:100%;max-width:420px;box-shadow:0 20px 60px rgba(0,0,0,.8);animation:modal-in .2s ease;}
+@keyframes modal-in{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:6px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+.modal-detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(0,223,129,.07);}
+.modal-detail-row:last-of-type{border-bottom:none;}
+.modal-detail-lbl{font-size:12px;color:var(--muted);}
+.modal-detail-val{font-size:13px;font-weight:700;}
+.modal-actions{display:flex;gap:10px;margin-top:20px;}
+.modal-confirm{flex:1;height:44px;border-radius:var(--r-sm);background:var(--green);color:#000;font-size:14px;font-weight:800;border:none;cursor:pointer;transition:all .15s;}
+.modal-confirm:hover{background:#2CC295;}
+.modal-confirm:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.modal-cancel{height:44px;padding:0 18px;border-radius:var(--r-sm);background:transparent;color:var(--muted);border:1px solid var(--border);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;}
+.modal-cancel:hover{border-color:var(--green);color:var(--text);}
+.modal-error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);border-radius:var(--r-sm);padding:10px 14px;font-size:12px;color:var(--red);margin-top:12px;display:none;}
+.modal-error.show{display:block;}
+.modal-error a{color:var(--green);text-decoration:underline;}
+
+/* ── SKELETON / LOADING ── */
+.skeleton{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:skel 1.4s infinite;border-radius:6px;}
+@keyframes skel{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.loading-hero{height:180px;border-radius:var(--r-lg);margin-bottom:20px;}
+.loading-tab{height:48px;border-radius:var(--r-lg);margin-bottom:20px;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .podium{gap:8px;}
+  .pod{padding:12px 8px;}
+  .pod-av{width:38px;height:38px;font-size:14px;}
+  .rk-head,.rk-row{grid-template-columns:36px 1fr 70px;}
+  .rk-head div:nth-child(3),.rk-row div:nth-child(3){display:none;}
+  .challenge-title{font-size:18px;}
+  .influencer-avatar{width:70px;height:70px;font-size:26px;}
+}
+@media(max-width:480px){
+  .tabs-nav{gap:2px;}
+  .tab-btn{font-size:11px;padding:0 4px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="s-logo"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Configurações</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
+  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot"><div class="user-card" id="userCard" style="display:none"><div class="u-av" id="sideAv">?</div><div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div></div></div>
+</aside>
+
+<!-- DRAWER -->
+<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
+  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
+  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
+  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
+  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
+</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
+  <div class="nav-lbl">Menu</div>
+  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
+  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
+  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
+  <a href="ranking.html" class="nav-item"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
+  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
+  <div class="nav-lbl">Configurações</div>
+  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
+  <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
+  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
+  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
+  <div class="sidebar-bot"><div class="user-card" id="drawerUserCard" style="display:none"><div class="u-av" id="drawerAv">?</div><div style="min-width:0"><div class="u-name" id="drawerName">…</div></div></div></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" id="hamburgerBtn" onclick="openDrawer()"><i data-lucide="menu"></i></button>
+      <div class="page-title" id="pageTitle">Desafio</div>
+    </div>
+    <div class="topbar-right">
+      <a href="desafios.html" class="btn-outline" style="height:38px;padding:0 14px;"><i data-lucide="arrow-left" style="width:14px;height:14px;"></i>&nbsp;Desafios</a>
+      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
+      <a href="admin.html" class="icon-btn" id="topAdminBtn" style="display:none" title="Admin"><i data-lucide="shield"></i></a>
+      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
+        <div class="top-user-av" id="topUserAv">?</div>
+        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
+      </a>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- LOADING STATE -->
+    <div id="loadingState">
+      <div class="skeleton loading-hero"></div>
+      <div class="skeleton loading-tab"></div>
+    </div>
+
+    <!-- CHALLENGE HERO -->
+    <div id="challengeHero" style="display:none">
+      <div class="challenge-hero">
+        <div class="hero-top">
+          <div class="influencer-avatar" id="infAvatar">?</div>
+          <div class="hero-info">
+            <h1 class="challenge-title" id="challengeTitle">Carregando…</h1>
+            <div class="influencer-name">
+              <span id="influencerName">…</span>
+              <span class="verified-badge" id="verifiedBadge" style="display:none">✓ Verificado</span>
+            </div>
+            <div class="challenge-tags" id="challengeTags"></div>
+            <div class="stats-chips" id="statsChips"></div>
+            <div class="vacancies-bar" id="vacanciesBar" style="display:none">
+              <div class="vac-labels">
+                <span id="vacLabel">0/0 vagas preenchidas</span>
+                <span id="vacPct">0%</span>
+              </div>
+              <div class="vac-track"><div class="vac-fill" id="vacFill" style="width:0%"></div></div>
+            </div>
+            <div class="hero-actions" id="heroActions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RESULTADO FINAL (mostrado se desafio finalizado) -->
+      <div id="resultScreen" class="result-screen">
+        <div class="confetti-wrap" id="confettiWrap">
+          <div class="result-trophy">🏆</div>
+        </div>
+        <div class="result-winner" id="resultWinner"></div>
+        <div class="result-sub" id="resultSub"></div>
+        <a href="desafios.html" class="btn-result" style="display:inline-flex;margin:0 auto;">Jogar Novamente</a>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('palpites')" id="tabBtnPalpites">⚽ Palpites</button>
+        <button class="tab-btn" onclick="switchTab('ranking')" id="tabBtnRanking">🏅 Ranking</button>
+        <button class="tab-btn" onclick="switchTab('regras')" id="tabBtnRegras">📋 Regras</button>
+      </div>
+
+      <!-- TAB: PALPITES -->
+      <div class="tab-content active" id="tab-palpites">
+        <div id="palpitesNotParticipant" class="no-participant-msg" style="display:none">
+          Entre no desafio para fazer seus palpites nos jogos.
+        </div>
+        <div id="matchesList"></div>
+        <button class="save-preds-btn" id="savePredBtn" onclick="savePredictions()" style="display:none">
+          Salvar Palpites
+        </button>
+      </div>
+
+      <!-- TAB: RANKING -->
+      <div class="tab-content" id="tab-ranking">
+        <div class="live-update-info">
+          <div class="live-dot"></div>
+          <span>Ranking atualizado em tempo real</span>
+        </div>
+        <div class="podium" id="podium"></div>
+        <div class="rk-table">
+          <div class="rk-head">
+            <div>#</div>
+            <div>Jogador</div>
+            <div style="text-align:center">Pontos</div>
+            <div style="text-align:center">Acertos</div>
+          </div>
+          <div id="rankingList"></div>
+        </div>
+      </div>
+
+      <!-- TAB: REGRAS -->
+      <div class="tab-content" id="tab-regras">
+        <div class="rules-card">
+          <div class="rules-section">
+            <div class="rules-h">📋 Regras do Desafio</div>
+            <div class="rules-text" id="rulesText">Carregando regras…</div>
+          </div>
+          <div class="rules-section">
+            <div class="rules-h">🎯 Sistema de Pontuação</div>
+            <table class="pts-table">
+              <thead><tr><th>Acerto</th><th>Pontos</th></tr></thead>
+              <tbody>
+                <tr><td>Acertar o vencedor / resultado</td><td class="pts-val">+3 pts</td></tr>
+                <tr><td>Acertar o placar exato</td><td class="pts-val">+5 pts</td></tr>
+                <tr><td>Errar o resultado</td><td style="color:var(--muted)">0 pts</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="rules-section">
+            <div class="rules-h">💰 Divisão do Prêmio</div>
+            <div class="rules-text" id="prizeText">Carregando…</div>
+          </div>
+          <div class="rules-section">
+            <div class="rules-h">📅 Encerramento</div>
+            <div class="rules-text" id="closingText">Carregando…</div>
+          </div>
+        </div>
+      </div>
+    </div><!-- /challengeHero -->
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- MODAL: ENTRAR NO DESAFIO -->
+<div class="modal-ovl" id="enterModal">
+  <div class="modal-box">
+    <div class="modal-title">Entrar no Desafio</div>
+    <div class="modal-sub">Confirme sua participação antes de prosseguir.</div>
+    <div class="modal-detail-row">
+      <span class="modal-detail-lbl">Desafio</span>
+      <span class="modal-detail-val" id="modalChallengeName">…</span>
+    </div>
+    <div class="modal-detail-row">
+      <span class="modal-detail-lbl">Valor de entrada</span>
+      <span class="modal-detail-val" id="modalEntryFee" style="color:var(--green)">R$ 0,00</span>
+    </div>
+    <div class="modal-detail-row">
+      <span class="modal-detail-lbl">Seu saldo atual</span>
+      <span class="modal-detail-val" id="modalBalance">R$ 0,00</span>
+    </div>
+    <div class="modal-detail-row" style="border-bottom:none">
+      <span class="modal-detail-lbl">Saldo após entrada</span>
+      <span class="modal-detail-val" id="modalBalanceAfter">R$ 0,00</span>
+    </div>
+    <div class="modal-error" id="modalError">
+      Saldo insuficiente. <a href="carteira.html">Adicione fundos →</a>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeEnterModal()">Cancelar</button>
+      <button class="modal-confirm" id="modalConfirmBtn" onclick="confirmEnter()">Confirmar Entrada</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="app.js"></script>
+<script>
+// ============================================================
+// desafio.html — JavaScript
+// ============================================================
+
+// ── State ────────────────────────────────────────────────────
+let currentUser = null
+let currentProfile = null
+let challengeData = null
+let challengeId = null
+let isParticipant = false
+let isOwner = false
+let participants = []
+let matchesData = []
+let userPredictions = {}
+let realtimeChannel = null
+
+// ── Utils ────────────────────────────────────────────────────
+function setEl(id, v) { const e = document.getElementById(id); if (e) e.textContent = v }
+function showEl(id) { const e = document.getElementById(id); if (e) e.style.display = '' }
+function hideEl(id) { const e = document.getElementById(id); if (e) e.style.display = 'none' }
+function fmtBRL(v) { return 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',') }
+function fmtDate(d) {
+  if (!d) return '—'
+  return new Date(d).toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' })
+}
+function fmtDateTime(d) {
+  if (!d) return '—'
+  return new Date(d).toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' })
+}
+function openDrawer() {
+  document.getElementById('drawer')?.classList.add('open')
+  document.getElementById('drawerOvl')?.classList.add('open')
+}
+function closeDrawer() {
+  document.getElementById('drawer')?.classList.remove('open')
+  document.getElementById('drawerOvl')?.classList.remove('open')
+}
+function getTimeRemaining(dataFim) {
+  if (!dataFim) return '—'
+  const now = new Date()
+  const end = new Date(dataFim)
+  const diff = end - now
+  if (diff <= 0) return 'Encerrado'
+  const days = Math.floor(diff / 86400000)
+  const hours = Math.floor((diff % 86400000) / 3600000)
+  if (days > 0) return `${days} dia${days > 1 ? 's' : ''} restante${days > 1 ? 's' : ''}`
+  return `${hours}h restante${hours !== 1 ? 's' : ''}`
+}
+function avatarInitials(name) {
+  if (!name) return '?'
+  return name.slice(0, 2).toUpperCase()
+}
+
+// ── Tab Switching ─────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'))
+  const btn = document.getElementById('tabBtn' + tab.charAt(0).toUpperCase() + tab.slice(1))
+  const content = document.getElementById('tab-' + tab)
+  if (btn) btn.classList.add('active')
+  if (content) content.classList.add('active')
+}
+
+// ── Load Challenge ────────────────────────────────────────────
+async function loadChallenge(id) {
+  const { data, error } = await sb()
+    .from('challenges')
+    .select(`
+      *,
+      influencer:influencer_profiles!influencer_id(
+        *,
+        profile:profiles!user_id(id, username, avatar_url, balance)
+      ),
+      challenge_matches(
+        *,
+        match:matches(*)
+      )
+    `)
+    .eq('id', id)
+    .single()
+  if (error || !data) {
+    document.getElementById('loadingState').innerHTML =
+      '<div style="text-align:center;padding:40px;color:var(--muted)">Desafio não encontrado.</div>'
+    return
+  }
+  challengeData = data
+  renderHero(data)
+  await loadParticipants(id)
+  await loadMatches(id)
+  if (currentUser) await loadUserPredictions(id, currentUser.id)
+  renderRulesTab(data)
+  hideEl('loadingState')
+  showEl('challengeHero')
+  if (window.lucide) lucide.createIcons()
+  // Auto-show result screen if finished
+  if (data.status === 'finished') renderResultScreen()
+}
+
+// ── Render Hero ───────────────────────────────────────────────
+function renderHero(data) {
+  const inf = data.influencer
+  const infProfile = inf?.profile
+  // Avatar
+  const avatarEl = document.getElementById('infAvatar')
+  if (inf?.avatar_url) {
+    avatarEl.innerHTML = `<img src="${inf.avatar_url}" alt="${inf.display_name || ''}">`
+  } else {
+    avatarEl.textContent = avatarInitials(inf?.display_name || infProfile?.username || 'IN')
+  }
+  // Title & name
+  setEl('challengeTitle', data.title || 'Desafio')
+  setEl('influencerName', inf?.display_name || infProfile?.username || 'Influencer')
+  document.getElementById('pageTitle').textContent = data.title || 'Desafio'
+  document.title = `BolãoPro — ${data.title || 'Desafio'}`
+  if (inf?.verified) showEl('verifiedBadge')
+  // Tags
+  const tagsEl = document.getElementById('challengeTags')
+  const statusClass = { open: 'ctag-status-open', closed: 'ctag-status-closed', finished: 'ctag-status-finished' }[data.status] || 'ctag-status-open'
+  const statusLabel = { open: '🟢 Aberto', closed: '🟡 Encerrado', finished: '🏁 Finalizado' }[data.status] || data.status
+  const typeLabel = { vencer_influencer: 'VS Influencer', bolao_classico: 'Bolão Clássico', desafio_grupo: 'Desafio Grupo' }[data.type] || data.type || 'Desafio'
+  tagsEl.innerHTML = `
+    <span class="ctag ctag-type">${typeLabel}</span>
+    <span class="ctag ${statusClass}">${statusLabel}</span>
+    <span class="ctag ctag-date">📅 Até ${fmtDate(data.end_date)}</span>
+  `
+  // Stats chips
+  const chips = document.getElementById('statsChips')
+  const prize = fmtBRL(data.prize_pool || 0)
+  const cur = data.current_participants || 0
+  const max = data.max_participants || 0
+  const remaining = getTimeRemaining(data.end_date)
+  chips.innerHTML = `
+    <span class="stat-chip">💰 ${prize} <span>prêmio</span></span>
+    <span class="stat-chip">👥 ${cur}${max ? '/' + max : ''} <span>vagas</span></span>
+    <span class="stat-chip">📅 ${remaining}</span>
+  `
+  // Vacancies bar
+  if (max > 0) {
+    showEl('vacanciesBar')
+    const pct = Math.min(100, Math.round((cur / max) * 100))
+    setEl('vacLabel', `${cur}/${max} vagas preenchidas`)
+    setEl('vacPct', `${pct}%`)
+    document.getElementById('vacFill').style.width = pct + '%'
+  }
+  // Actions
+  renderHeroActions(data)
+}
+
+function renderHeroActions(data) {
+  const el = document.getElementById('heroActions')
+  const infUserId = data.influencer?.profile?.id || data.influencer?.user_id
+  isOwner = currentUser && currentUser.id === infUserId
+  let html = ''
+  if (data.status === 'finished') {
+    html += `<button class="btn-result" onclick="switchTab('ranking')">Ver Resultado</button>`
+  } else if (isParticipant) {
+    html += `<button class="btn-enter" disabled>Você está participando ✓</button>`
+  } else if (data.status === 'open') {
+    const fee = data.entry_fee ? fmtBRL(data.entry_fee) : 'Grátis'
+    html += `<button class="btn-enter" onclick="openEnterModal()">Entrar por ${fee}</button>`
+  } else {
+    html += `<button class="btn-enter" disabled>Desafio encerrado</button>`
+  }
+  if (isOwner) {
+    html += `<a href="gerenciar-desafio.html?id=${challengeId}" class="btn-manage"><i data-lucide="settings" style="width:15px;height:15px"></i> Gerenciar</a>`
+  }
+  el.innerHTML = html
+}
+
+// ── Load Participants ─────────────────────────────────────────
+async function loadParticipants(id) {
+  const { data } = await sb()
+    .from('challenge_participants')
+    .select('*, profile:profiles!user_id(id, username, avatar_url)')
+    .eq('challenge_id', id)
+    .order('score', { ascending: false })
+  participants = data || []
+  isParticipant = currentUser ? participants.some(p => p.user_id === currentUser.id) : false
+  renderRanking(participants)
+}
+
+// ── Load Matches ──────────────────────────────────────────────
+async function loadMatches(id) {
+  const { data } = await sb()
+    .from('challenge_matches')
+    .select('*, match:matches(*)')
+    .eq('challenge_id', id)
+    .order('match(match_date)', { ascending: true })
+  matchesData = data || []
+  renderMatches()
+}
+
+// ── Load User Predictions ─────────────────────────────────────
+async function loadUserPredictions(challengeId, userId) {
+  const { data } = await sb()
+    .from('challenge_predictions')
+    .select('*')
+    .eq('challenge_id', challengeId)
+    .eq('user_id', userId)
+  userPredictions = {}
+  if (data) {
+    data.forEach(p => {
+      userPredictions[p.match_id] = {
+        result: p.predicted_result,
+        home_score: p.home_score,
+        away_score: p.away_score,
+        points_earned: p.points_earned
+      }
+    })
+  }
+  renderMatches()
+}
+
+// ── Render Matches ────────────────────────────────────────────
+function renderMatches() {
+  const container = document.getElementById('matchesList')
+  const savBtn = document.getElementById('savePredBtn')
+  const noPartMsg = document.getElementById('palpitesNotParticipant')
+  if (!isParticipant && currentUser) {
+    noPartMsg.style.display = 'block'
+    savBtn.style.display = 'none'
+  } else if (!currentUser) {
+    noPartMsg.style.display = 'block'
+    noPartMsg.innerHTML = '<a href="login.html" style="color:var(--green)">Faça login</a> para participar e fazer palpites.'
+    savBtn.style.display = 'none'
+  } else {
+    noPartMsg.style.display = 'none'
+    savBtn.style.display = 'block'
+  }
+  if (!matchesData.length) {
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted)">Nenhum jogo cadastrado neste desafio.</div>'
+    return
+  }
+  container.innerHTML = matchesData.map(cm => renderMatchCard(cm)).join('')
+}
+
+function renderMatchCard(cm) {
+  const m = cm.match
+  if (!m) return ''
+  const matchId = m.id
+  const pred = userPredictions[matchId] || {}
+  const now = new Date()
+  const matchDate = m.match_date ? new Date(m.match_date) : null
+  const isFinished = m.status === 'finished' || (matchDate && matchDate < now && m.home_score !== null)
+  const canPredict = isParticipant && !isFinished && challengeData?.status === 'open'
+  const selHome = pred.result === 'home' ? 'sel' : ''
+  const selDraw = pred.result === 'draw' ? 'sel' : ''
+  const selAway = pred.result === 'away' ? 'sel' : ''
+  const homeSc = pred.home_score !== undefined ? pred.home_score : ''
+  const awaySc = pred.away_score !== undefined ? pred.away_score : ''
+  let scoreCenter = `<div class="score-vs">VS</div>`
+  if (isFinished && m.home_score !== null) {
+    scoreCenter = `<div class="score-live">${m.home_score} : ${m.away_score}</div>`
+  }
+  const disabledAttr = canPredict ? '' : 'disabled'
+  const readonlyAttr = canPredict ? '' : 'readonly'
+  let finishedRow = ''
+  if (isFinished && pred.result) {
+    const ptsClass = pred.points_earned > 0 ? 'pts-earned-good' : 'pts-earned-zero'
+    const ptsLabel = pred.points_earned > 0 ? `+${pred.points_earned} pts` : '0 pts'
+    finishedRow = `<div class="match-finished-row">
+      <span style="font-size:12px;color:var(--muted)">Seu palpite: <b>${{home:'Time A',draw:'Empate',away:'Time B'}[pred.result]||'—'}</b></span>
+      <span class="match-pts-earned ${ptsClass}">${ptsLabel}</span>
+    </div>`
+  }
+  return `<div class="match-card" data-match-id="${matchId}">
+    <div class="match-header">
+      <span class="match-comp">${m.competition || 'Jogo'}</span>
+      <span class="match-datetime">${fmtDateTime(m.match_date)}</span>
+    </div>
+    <div class="teams-row">
+      <div class="team">
+        <div class="team-shield">${m.home_team_emoji || '🏠'}</div>
+        <div class="team-name">${m.home_team || 'Time A'}</div>
+      </div>
+      <div class="score-center">${scoreCenter}</div>
+      <div class="team">
+        <div class="team-shield">${m.away_team_emoji || '✈️'}</div>
+        <div class="team-name">${m.away_team || 'Time B'}</div>
+      </div>
+    </div>
+    ${canPredict || pred.result ? `<div class="pred-section">
+      <div class="pred-row">
+        <div class="pred-btn ${selHome}" onclick="selectResult('${matchId}','home',this)" ${!canPredict ? 'style="opacity:.5;cursor:default"' : ''}>
+          <div class="pred-lbl">Time A</div>
+          <div class="pred-team">${m.home_team || 'Casa'}</div>
+        </div>
+        <div class="pred-btn ${selDraw}" onclick="selectResult('${matchId}','draw',this)" ${!canPredict ? 'style="opacity:.5;cursor:default"' : ''}>
+          <div class="pred-lbl">Empate</div>
+          <div class="pred-team">X</div>
+        </div>
+        <div class="pred-btn ${selAway}" onclick="selectResult('${matchId}','away',this)" ${!canPredict ? 'style="opacity:.5;cursor:default"' : ''}>
+          <div class="pred-lbl">Time B</div>
+          <div class="pred-team">${m.away_team || 'Fora'}</div>
+        </div>
+      </div>
+      <div class="score-inputs">
+        <input class="score-input" type="number" min="0" max="99" placeholder="0"
+          value="${homeSc}" ${readonlyAttr}
+          data-match="${matchId}" data-side="home"
+          oninput="updateScore('${matchId}','home',this.value)">
+        <span class="score-sep">:</span>
+        <input class="score-input" type="number" min="0" max="99" placeholder="0"
+          value="${awaySc}" ${readonlyAttr}
+          data-match="${matchId}" data-side="away"
+          oninput="updateScore('${matchId}','away',this.value)">
+      </div>
+      <div class="points-hint">
+        <span class="pts-tag pts-result">Resultado certo: +3pts</span>
+        <span class="pts-tag pts-exact">Placar exato: +5pts</span>
+      </div>
+    </div>` : ''}
+    ${finishedRow}
+  </div>`
+}
+
+function selectResult(matchId, result, el) {
+  if (!isParticipant || challengeData?.status !== 'open') return
+  const card = el.closest('[data-match-id]')
+  if (!card) return
+  card.querySelectorAll('.pred-btn').forEach(b => b.classList.remove('sel'))
+  el.classList.add('sel')
+  if (!userPredictions[matchId]) userPredictions[matchId] = {}
+  userPredictions[matchId].result = result
+}
+
+function updateScore(matchId, side, value) {
+  if (!userPredictions[matchId]) userPredictions[matchId] = {}
+  userPredictions[matchId][side + '_score'] = parseInt(value) || 0
+}
+
+// ── Save Predictions ──────────────────────────────────────────
+async function savePredictions() {
+  if (!currentUser || !isParticipant) return
+  const btn = document.getElementById('savePredBtn')
+  btn.disabled = true
+  btn.textContent = 'Salvando…'
+  const upserts = Object.entries(userPredictions).map(([matchId, pred]) => ({
+    challenge_id: challengeId,
+    user_id: currentUser.id,
+    match_id: matchId,
+    predicted_result: pred.result || null,
+    home_score: pred.home_score !== undefined ? pred.home_score : null,
+    away_score: pred.away_score !== undefined ? pred.away_score : null
+  })).filter(u => u.predicted_result)
+  if (!upserts.length) {
+    btn.disabled = false
+    btn.textContent = 'Salvar Palpites'
+    alert('Selecione pelo menos um resultado.')
+    return
+  }
+  const { error } = await sb()
+    .from('challenge_predictions')
+    .upsert(upserts, { onConflict: 'challenge_id,user_id,match_id' })
+  if (error) {
+    alert('Erro ao salvar palpites: ' + error.message)
+    btn.disabled = false
+    btn.textContent = 'Salvar Palpites'
+    return
+  }
+  btn.textContent = 'Palpites Salvos ✓'
+  btn.style.background = 'rgba(0,223,129,.2)'
+  btn.style.color = 'var(--green)'
+  setTimeout(() => {
+    btn.disabled = false
+    btn.textContent = 'Salvar Palpites'
+    btn.style.background = ''
+    btn.style.color = ''
+  }, 2500)
+}
+
+// ── Render Ranking ────────────────────────────────────────────
+function renderRanking(parts) {
+  renderPodium(parts)
+  renderRankingList(parts)
+}
+
+function renderPodium(parts) {
+  const podEl = document.getElementById('podium')
+  const top3 = parts.slice(0, 3)
+  const infUserId = challengeData?.influencer?.profile?.id || challengeData?.influencer?.user_id
+  const medals = ['🥇', '🥈', '🥉']
+  const classes = ['p1', 'p2', 'p3']
+  if (!top3.length) {
+    podEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:20px">Nenhum participante ainda.</div>'
+    return
+  }
+  const order = top3.length === 3 ? [1, 0, 2] : top3.length === 2 ? [0, 1] : [0]
+  const orderedParts = order.map(i => top3[i]).filter(Boolean)
+  podEl.innerHTML = orderedParts.map((p, idx) => {
+    const realIdx = order[idx]
+    const isInf = p.user_id === infUserId
+    const isYou = currentUser && p.user_id === currentUser.id
+    const name = p.profile?.username || 'Jogador'
+    const av = avatarInitials(name)
+    const pts = p.score || 0
+    const infClass = isInf ? ' influencer-pod' : ''
+    return `<div class="pod ${classes[realIdx]}${infClass}">
+      <div class="pod-medal">${medals[realIdx]}</div>
+      <div class="pod-av">${av}</div>
+      <div class="pod-name">${isYou ? 'Você' : name}</div>
+      <div class="pod-pts">${pts} pts</div>
+      ${isInf ? '<span class="pod-badge">👑 Influencer</span>' : ''}
+      ${isYou && !isInf ? '<span class="pod-badge" style="background:rgba(0,223,129,.15);color:var(--green)">Você</span>' : ''}
+    </div>`
+  }).join('')
+}
+
+function renderRankingList(parts) {
+  const listEl = document.getElementById('rankingList')
+  const infUserId = challengeData?.influencer?.profile?.id || challengeData?.influencer?.user_id
+  if (!parts.length) {
+    listEl.innerHTML = '<div style="text-align:center;padding:24px;color:var(--muted)">Nenhum participante ainda.</div>'
+    return
+  }
+  listEl.innerHTML = parts.map((p, i) => {
+    const pos = i + 1
+    const posClass = pos === 1 ? 'p1' : pos === 2 ? 'p2' : pos === 3 ? 'p3' : ''
+    const isInf = p.user_id === infUserId
+    const isYou = currentUser && p.user_id === currentUser.id
+    const name = p.profile?.username || 'Jogador'
+    const av = avatarInitials(name)
+    const pts = p.score || 0
+    const correct = p.correct_predictions || 0
+    const youClass = isYou ? ' you' : ''
+    const posSymbol = pos === 1 ? '🥇' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : pos
+    return `<div class="rk-row${youClass}">
+      <div class="rk-pos ${posClass}">${posSymbol}</div>
+      <div class="rk-user">
+        <div class="rk-av">${av}</div>
+        <span class="rk-name">${isYou ? 'Você' : name}</span>
+        ${isInf ? '<span class="rk-badge rk-badge-inf">👑 Influencer</span>' : ''}
+      </div>
+      <div class="rk-pts">${pts}</div>
+      <div class="rk-correct">${correct} ✓</div>
+    </div>`
+  }).join('')
+}
+
+// ── Render Rules Tab ──────────────────────────────────────────
+function renderRulesTab(data) {
+  setEl('rulesText', data.rules || 'Nenhuma regra específica definida para este desafio.')
+  const prize = fmtBRL(data.prize_pool || 0)
+  const fee = fmtBRL(data.entry_fee || 0)
+  setEl('prizeText', `O prêmio total de ${prize} será distribuído ao(s) vencedor(es) ao final do desafio. O valor de entrada é de ${fee} por participante.`)
+  setEl('closingText', `O desafio encerra em ${fmtDate(data.end_date)}. Após o encerramento, os palpites serão avaliados com base nos resultados reais das partidas e o vencedor será anunciado automaticamente.`)
+}
+
+// ── Result Screen ─────────────────────────────────────────────
+function renderResultScreen() {
+  const screen = document.getElementById('resultScreen')
+  if (!screen) return
+  const winner = participants[0]
+  if (winner) {
+    const name = winner.profile?.username || 'Jogador'
+    const prize = fmtBRL(challengeData?.prize_pool || 0)
+    setEl('resultWinner', `🏆 ${name} venceu ${prize}!`)
+    setEl('resultSub', `Parabéns ao campeão! Confira o ranking completo abaixo.`)
+  }
+  screen.classList.add('show')
+  // Generate confetti
+  const wrap = document.getElementById('confettiWrap')
+  const colors = ['#00DF81', '#F59E0B', '#A78BFA', '#F87171', '#2CC295']
+  for (let i = 0; i < 20; i++) {
+    const piece = document.createElement('div')
+    piece.className = 'confetti-piece'
+    piece.style.left = Math.random() * 100 + '%'
+    piece.style.top = Math.random() * 60 + '%'
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)]
+    piece.style.animationDelay = Math.random() * 2 + 's'
+    piece.style.animationDuration = (2 + Math.random() * 2) + 's'
+    wrap.appendChild(piece)
+  }
+}
+
+// ── Realtime Ranking ──────────────────────────────────────────
+function subscribeToRanking(id) {
+  if (realtimeChannel) sb().removeChannel(realtimeChannel)
+  realtimeChannel = sb()
+    .channel(`challenge-ranking-${id}`)
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'challenge_participants',
+      filter: `challenge_id=eq.${id}`
+    }, async () => {
+      await loadParticipants(id)
+    })
+    .subscribe()
+}
+
+// ── Enter Modal ───────────────────────────────────────────────
+function openEnterModal() {
+  if (!currentUser) { location.href = 'login.html'; return }
+  const modal = document.getElementById('enterModal')
+  const fee = challengeData?.entry_fee || 0
+  const balance = currentProfile?.balance || 0
+  const balanceAfter = balance - fee
+  setEl('modalChallengeName', challengeData?.title || 'Desafio')
+  setEl('modalEntryFee', fmtBRL(fee))
+  setEl('modalBalance', fmtBRL(balance))
+  setEl('modalBalanceAfter', fmtBRL(Math.max(0, balanceAfter)))
+  const errEl = document.getElementById('modalError')
+  const confirmBtn = document.getElementById('modalConfirmBtn')
+  if (fee > 0 && balance < fee) {
+    errEl.classList.add('show')
+    confirmBtn.disabled = true
+  } else {
+    errEl.classList.remove('show')
+    confirmBtn.disabled = false
+  }
+  modal.classList.add('open')
+}
+
+function closeEnterModal() {
+  document.getElementById('enterModal')?.classList.remove('open')
+}
+
+async function confirmEnter() {
+  if (!currentUser || !challengeId) return
+  const btn = document.getElementById('modalConfirmBtn')
+  btn.disabled = true
+  btn.textContent = 'Processando…'
+  const { error } = await sb().rpc('enter_challenge', {
+    p_challenge_id: challengeId,
+    p_user_id: currentUser.id
+  })
+  if (error) {
+    btn.disabled = false
+    btn.textContent = 'Confirmar Entrada'
+    document.getElementById('modalError').classList.add('show')
+    document.getElementById('modalError').innerHTML = 'Erro: ' + error.message
+    return
+  }
+  closeEnterModal()
+  isParticipant = true
+  renderHeroActions(challengeData)
+  await loadParticipants(challengeId)
+  await loadUserPredictions(challengeId, currentUser.id)
+  renderMatches()
+  if (window.lucide) lucide.createIcons()
+}
+
+// ── Enter Challenge (alias) ───────────────────────────────────
+async function enterChallenge() { openEnterModal() }
+
+// ── Init ──────────────────────────────────────────────────────
+;(async function init() {
+  // Show hamburger on mobile
+  if (window.innerWidth < 768) {
+    const ham = document.getElementById('hamburgerBtn')
+    if (ham) ham.style.display = 'flex'
+  }
+  // Auth
+  currentUser = await initAuth()
+  if (currentUser) {
+    currentProfile = await getProfile(currentUser.id)
+    window.currentUser = currentUser
+  }
+  // Get challenge ID from URL
+  const params = new URLSearchParams(location.search)
+  challengeId = params.get('id')
+  if (!challengeId) {
+    document.getElementById('loadingState').innerHTML =
+      '<div style="text-align:center;padding:40px;color:var(--muted)">ID do desafio não encontrado na URL. <a href="desafios.html" style="color:var(--green)">Ver desafios</a></div>'
+    return
+  }
+  await loadChallenge(challengeId)
+  subscribeToRanking(challengeId)
+  if (window.lucide) lucide.createIcons()
+})()
+</script>
+</body>
+</html>
