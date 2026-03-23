@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>ApostaPro — Entrar</title>
+<meta name="theme-color" content="#00E676"/>
+<link rel="manifest" href="manifest.json"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<link rel="stylesheet" href="app.css"/>
+<style>
+.auth-wrap {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+}
+.auth-wrap::before {
+  content: '';
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,230,118,.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.auth-box {
+  width: 100%;
+  max-width: 380px;
+  position: relative;
+  z-index: 1;
+}
+.auth-logo {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.auth-logo a {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: -.5px;
+}
+.auth-logo a span { color: var(--green); }
+.auth-logo p {
+  font-size: 13px;
+  color: var(--muted2);
+  margin-top: 6px;
+}
+.auth-tabs {
+  display: flex;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 4px;
+  margin-bottom: 20px;
+}
+.auth-tab {
+  flex: 1;
+  height: 38px;
+  border-radius: var(--r-md);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  transition: all .15s;
+}
+.auth-tab.on {
+  background: var(--green);
+  color: #000;
+}
+.auth-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 24px;
+}
+.auth-form { display: none; }
+.auth-form.on { display: block; }
+
+.btn-green-full {
+  width: 100%;
+  height: 48px;
+  border-radius: var(--r-md);
+  background: linear-gradient(135deg, var(--green) 0%, var(--green2) 100%);
+  color: #000;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 4px;
+  box-shadow: 0 4px 16px rgba(0,230,118,.25);
+  transition: all .15s;
+}
+.btn-green-full:hover { box-shadow: 0 6px 24px rgba(0,230,118,.4); transform: translateY(-1px); }
+.btn-green-full:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+.divider-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 11px;
+  margin: 16px 0;
+}
+.divider-text::before, .divider-text::after {
+  content: ''; flex: 1;
+  height: 1px; background: var(--border);
+}
+
+.terms {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  margin-top: 14px;
+  line-height: 1.6;
+}
+.terms a { color: var(--muted2); text-decoration: underline; }
+
+.error-msg {
+  background: var(--red-lt);
+  border: 1px solid rgba(239,68,68,.3);
+  color: var(--red);
+  border-radius: var(--r-sm);
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  display: none;
+}
+.error-msg.on { display: block; }
+
+.benefit-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--muted2);
+}
+.benefit-row span:first-child { font-size: 16px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="auth-box">
+
+    <div class="auth-logo">
+      <a href="index.html">Aposta<span>Pro</span></a>
+      <p>Bolões com prêmios em dinheiro</p>
+    </div>
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tabLogin" onclick="switchTab('login')">Entrar</button>
+      <button class="auth-tab" id="tabRegister" onclick="switchTab('register')">Criar conta</button>
+    </div>
+
+    <div class="auth-card">
+
+      <!-- ERRO -->
+      <div class="error-msg" id="errorMsg"></div>
+
+      <!-- LOGIN -->
+      <form class="auth-form on" id="formLogin" onsubmit="handleLogin(event)">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="loginEmail" placeholder="seu@email.com" required autocomplete="email"/>
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="loginPass" placeholder="••••••••" required autocomplete="current-password"/>
+        </div>
+        <button type="submit" class="btn-green-full" id="btnLogin">
+          Entrar na minha conta
+        </button>
+        <div class="divider-text">ou</div>
+        <button type="button" class="btn btn-outline" onclick="switchTab('register')">
+          Criar conta grátis
+        </button>
+      </form>
+
+      <!-- REGISTRO -->
+      <form class="auth-form" id="formRegister" onsubmit="handleRegister(event)">
+        <div style="margin-bottom:18px">
+          <div class="benefit-row"><span>🏆</span><span>Prêmios em dinheiro toda semana</span></div>
+          <div class="benefit-row"><span>⚽</span><span>Bolões do Brasileirão, Copa e Champions</span></div>
+          <div class="benefit-row"><span>💰</span><span>Desbloqueado com 1 depósito de R$20</span></div>
+        </div>
+        <div class="field">
+          <label>Seu nome / apelido</label>
+          <input type="text" id="regName" placeholder="Como quer ser chamado?" required autocomplete="nickname"/>
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="regEmail" placeholder="seu@email.com" required autocomplete="email"/>
+        </div>
+        <div class="field">
+          <label>Senha</label>
+          <input type="password" id="regPass" placeholder="Mín. 6 caracteres" required minlength="6" autocomplete="new-password"/>
+        </div>
+        <button type="submit" class="btn-green-full" id="btnRegister">
+          Criar conta grátis →
+        </button>
+        <p class="terms">
+          Ao criar sua conta você concorda com os
+          <a href="#">Termos de Uso</a> e
+          <a href="#">Política de Privacidade</a>
+        </p>
+      </form>
+
+    </div><!-- /auth-card -->
+  </div><!-- /auth-box -->
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="config.js"></script>
+<script>
+// Redireciona se já logado
+;(async () => {
+  const user = await getUser()
+  if (user) window.location.href = 'dashboard.html'
+})()
+
+function switchTab(tab) {
+  const isLogin = tab === 'login'
+  document.getElementById('tabLogin').classList.toggle('on', isLogin)
+  document.getElementById('tabRegister').classList.toggle('on', !isLogin)
+  document.getElementById('formLogin').classList.toggle('on', isLogin)
+  document.getElementById('formRegister').classList.toggle('on', !isLogin)
+  showError('')
+}
+
+function showError(msg) {
+  const el = document.getElementById('errorMsg')
+  el.textContent = msg
+  el.classList.toggle('on', !!msg)
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId)
+  btn.disabled = loading
+  btn.textContent = loading ? 'Aguarde...' : btn.dataset.label || btn.textContent
+}
+
+async function handleLogin(e) {
+  e.preventDefault()
+  showError('')
+  const btn = document.getElementById('btnLogin')
+  btn.disabled = true
+  btn.textContent = 'Entrando...'
+
+  const email = document.getElementById('loginEmail').value.trim()
+  const pass  = document.getElementById('loginPass').value
+
+  const { error } = await _sb.auth.signInWithPassword({ email, password: pass })
+
+  if (error) {
+    showError('Email ou senha incorretos. Tente novamente.')
+    btn.disabled = false
+    btn.textContent = 'Entrar na minha conta'
+    return
+  }
+
+  window.location.href = 'dashboard.html'
+}
+
+async function handleRegister(e) {
+  e.preventDefault()
+  showError('')
+  const btn = document.getElementById('btnRegister')
+  btn.disabled = true
+  btn.textContent = 'Criando conta...'
+
+  const name  = document.getElementById('regName').value.trim()
+  const email = document.getElementById('regEmail').value.trim()
+  const pass  = document.getElementById('regPass').value
+
+  const { data, error } = await _sb.auth.signUp({
+    email,
+    password: pass,
+    options: { data: { username: name } }
+  })
+
+  if (error) {
+    showError(error.message === 'User already registered'
+      ? 'Este email já tem uma conta. Tente entrar.'
+      : 'Erro ao criar conta. Tente novamente.')
+    btn.disabled = false
+    btn.textContent = 'Criar conta grátis →'
+    return
+  }
+
+  // Cria perfil
+  if (data.user) {
+    await sb().from('profiles').upsert({
+      id: data.user.id,
+      username: name,
+      email,
+      deposit_verified: false
+    })
+  }
+
+  // Vai para tela de depósito
+  window.location.href = 'deposito.html'
+}
+</script>
+</body>
+</html>

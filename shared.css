@@ -338,7 +338,7 @@ svg.lucide { display:inline-block; vertical-align:middle; }
   position: relative;
   border-radius: var(--r-lg);
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 0;
   user-select: none;
 }
 .sb-track {
@@ -499,6 +499,7 @@ svg.lucide { display:inline-block; vertical-align:middle; }
   .sb-arrow { width: 28px; height: 28px; font-size: 17px; }
   .sb-content { padding-right: 38px; }
 }
+
 
 /* ==========================================
    CHALLENGES - Sistema de Desafios
@@ -797,3 +798,4 @@ svg.lucide { display:inline-block; vertical-align:middle; }
   text-align: center;
   margin-bottom: 1rem;
 }
+
