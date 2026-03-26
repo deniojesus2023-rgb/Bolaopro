@@ -1,0 +1,83 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur1"/>
+      <feColorMatrix in="blur1" type="matrix"
+        values="0 0 0 0 0  0 0 0 0 1  0 0 0 0 0.52  0 0 0 1 0" result="greenBlur"/>
+      <feGaussianBlur in="SourceAlpha" stdDeviation="14" result="blur2"/>
+      <feColorMatrix in="blur2" type="matrix"
+        values="0 0 0 0 0  0 0 0 0 1  0 0 0 0 0.52  0 0 0 0.5 0" result="greenBlur2"/>
+      <feMerge>
+        <feMergeNode in="greenBlur2"/>
+        <feMergeNode in="greenBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="zGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%"   stop-color="#E8FFE8"/>
+      <stop offset="25%"  stop-color="#80FF80"/>
+      <stop offset="60%"  stop-color="#00FF85"/>
+      <stop offset="100%" stop-color="#00BB55"/>
+    </linearGradient>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="55%">
+      <stop offset="0%"   stop-color="#003322" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#001108" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Icon background -->
+  <rect width="200" height="200" rx="44" fill="#111111"/>
+  <rect width="200" height="200" rx="44" fill="url(#bgGlow)"/>
+
+  <!-- Ambient glow blob -->
+  <ellipse cx="100" cy="105" rx="60" ry="55"
+    fill="#00FF85" opacity="0.08"
+    style="filter: blur(20px)"/>
+
+  <!-- Z shape — bold italic -->
+  <!-- Path: top-bar → diagonal → bottom-bar, with slight italic lean -->
+  <path d="
+    M 28,28
+    L 172,28
+    L 172,58
+    L 88,142
+    L 172,142
+    L 172,172
+    L 28,172
+    L 28,142
+    L 112,58
+    L 28,58
+    Z"
+    fill="url(#zGrad)"
+    filter="url(#glow)"
+  />
+
+  <!-- Lightning cuts through the Z diagonal -->
+  <!-- Upper slash -->
+  <polygon
+    points="116,58  102,85  116,76  102,103  124,58"
+    fill="#0D0D0D"
+    opacity="0.95"
+  />
+  <!-- Lower slash -->
+  <polygon
+    points="98,97  84,124  98,115  84,142  106,97"
+    fill="#0D0D0D"
+    opacity="0.95"
+  />
+
+  <!-- Top edge highlight (bright white streak) -->
+  <line x1="28" y1="28" x2="172" y2="28"
+    stroke="rgba(255,255,255,0.65)" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Bottom-right edge highlight -->
+  <line x1="172" y1="142" x2="172" y2="172"
+    stroke="rgba(255,255,255,0.25)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Particle sparks -->
+  <circle cx="52"  cy="78"  r="2.5" fill="#00FF85" opacity="0.7"/>
+  <circle cx="148" cy="62"  r="1.8" fill="#00FF85" opacity="0.55"/>
+  <circle cx="162" cy="110" r="1.2" fill="#00FF85" opacity="0.4"/>
+  <circle cx="40"  cy="148" r="1.5" fill="#00FF85" opacity="0.5"/>
+  <circle cx="130" cy="48"  r="1"   fill="#CCFFCC" opacity="0.6"/>
+</svg>
