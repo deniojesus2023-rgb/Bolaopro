@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>BolãoPro — Palpites</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    /* Progress bar no topo */
+    .picks-progress {
+      padding: 12px 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .picks-progress__labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+    .picks-progress__labels span:last-child { color: var(--neon-green); font-weight: 700; }
+
+    /* Card do jogo */
+    .pick-game-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-neon);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin: 16px;
+    }
+    .pick-game-card__league {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+    .pick-game-card__league-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--neon-green);
+    }
+    .pick-game-card__time {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .pick-game-card__teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .pick-team {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .pick-team__emblem {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: var(--bg-card-alt);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .pick-team__name { font-size: 0.9375rem; font-weight: 700; text-align: center; }
+    .pick-team__odds { font-size: 0.75rem; color: var(--text-muted); }
+    .pick-vs-block { padding: 0 12px; text-align: center; }
+    .pick-vs { font-size: 1rem; color: var(--text-muted); font-weight: 700; }
+
+    /* Opções de palpite */
+    .pick-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin: 16px;
+    }
+    .pick-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 16px 8px;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-weight: 700;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .pick-option__emoji { font-size: 1.75rem; }
+    .pick-option__label { font-size: 0.8125rem; text-align: center; line-height: 1.2; }
+    .pick-option__tag { font-size: 0.625rem; font-weight: 500; color: var(--text-muted); }
+
+    .pick-option:active { transform: scale(0.96); }
+    .pick-option.selected {
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      background: rgba(0,255,133,0.08);
+      box-shadow: 0 0 16px rgba(0,255,133,0.2);
+    }
+    .pick-option.selected .pick-option__tag { color: var(--neon-green-dim); }
+
+    /* Gamificação */
+    .gamification {
+      margin: 0 16px;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .gamification__left { display: flex; flex-direction: column; gap: 2px; }
+    .gamification__label { font-size: 0.75rem; color: var(--text-muted); }
+    .gamification__pts { font-size: 1.25rem; font-weight: 900; color: var(--neon-green); }
+    .gamification__right { text-align: right; }
+    .gamification__streak { font-size: 0.75rem; color: var(--text-secondary); }
+    .gamification__streak span { color: var(--neon-yellow); font-weight: 700; }
+
+    /* Nav inferior */
+    .pick-footer {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
+      background: var(--bg-primary);
+      border-top: 1px solid var(--border);
+    }
+    .pick-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    .pick-nav__dots { display: flex; gap: 6px; }
+    .pick-nav__dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.2s;
+    }
+    .pick-nav__dot.done { background: var(--neon-green); }
+    .pick-nav__dot.current { background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green); }
+
+    /* Success overlay */
+    .success-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,10,10,0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      gap: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .success-overlay.show { opacity: 1; pointer-events: all; }
+    .success-icon {
+      width: 96px; height: 96px;
+      background: rgba(0,255,133,0.1);
+      border: 3px solid var(--neon-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: var(--glow-green);
+    }
+    .success-title { font-size: 1.5rem; font-weight: 900; color: var(--neon-green); }
+    .success-sub { font-size: 0.9375rem; color: var(--text-secondary); text-align: center; }
+    .success-pts {
+      font-size: 3rem; font-weight: 900;
+      color: var(--neon-green);
+      text-shadow: var(--glow-green);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <button class="btn-icon" onclick="history.back()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+    </button>
+    <span class="header__title" id="headerTitle">Palpites</span>
+    <div class="badge badge-green" id="headerBadge">1/5</div>
+  </header>
+
+  <!-- Progress -->
+  <div class="picks-progress" style="margin-top: var(--header-height);">
+    <div class="picks-progress__labels">
+      <span id="progressLabel">Jogo 1 de 5</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-bar__fill" id="progressFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- Jogo Card -->
+  <div class="pick-game-card" id="gameCard">
+    <div class="pick-game-card__league">
+      <div class="pick-game-card__league-dot"></div>
+      <span id="gameLeague">Brasileirão Série A</span>
+    </div>
+    <div class="pick-game-card__time" id="gameTime">Sábado · 16:00</div>
+    <div class="pick-game-card__teams">
+      <div class="pick-team" id="homeTeam">
+        <div class="pick-team__emblem" id="homeEmoji">🔴</div>
+        <span class="pick-team__name" id="homeName">Flamengo</span>
+        <span class="pick-team__odds" id="homeOdds">Vitória</span>
+      </div>
+      <div class="pick-vs-block">
+        <div class="pick-vs">VS</div>
+      </div>
+      <div class="pick-team" id="awayTeam">
+        <div class="pick-team__emblem" id="awayEmoji">🟢</div>
+        <span class="pick-team__name" id="awayName">Palmeiras</span>
+        <span class="pick-team__odds" id="awayOdds">Vitória</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Opções -->
+  <div class="pick-options">
+    <button class="pick-option" id="optHome" onclick="selectPick('home')">
+      <span class="pick-option__emoji" id="optHomeEmoji">🔴</span>
+      <span class="pick-option__label" id="optHomeName">Flamengo</span>
+      <span class="pick-option__tag">Time da casa</span>
+    </button>
+    <button class="pick-option" id="optDraw" onclick="selectPick('draw')">
+      <span class="pick-option__emoji">🤝</span>
+      <span class="pick-option__label">Empate</span>
+      <span class="pick-option__tag">X</span>
+    </button>
+    <button class="pick-option" id="optAway" onclick="selectPick('away')">
+      <span class="pick-option__emoji" id="optAwayEmoji">🟢</span>
+      <span class="pick-option__label" id="optAwayName">Palmeiras</span>
+      <span class="pick-option__tag">Visitante</span>
+    </button>
+  </div>
+
+  <!-- Gamificação -->
+  <div class="gamification">
+    <div class="gamification__left">
+      <span class="gamification__label">Pontos por acerto</span>
+      <span class="gamification__pts" id="gamePts">+100 pts</span>
+    </div>
+    <div class="gamification__right">
+      <div class="gamification__streak">Sequência: <span id="streakVal">🔥 3</span></div>
+      <div style="font-size:0.75rem; color:var(--text-muted);">Bônus: <span style="color:var(--neon-yellow);" id="bonusVal">+50%</span></div>
+    </div>
+  </div>
+
+  <!-- Footer fixo -->
+  <div class="pick-footer">
+    <div class="pick-nav">
+      <span id="navCounter">1 de 5</span>
+      <div class="pick-nav__dots" id="navDots"></div>
+      <span id="navSkip" style="color:var(--neon-green); cursor:pointer;" onclick="skipGame()">Pular →</span>
+    </div>
+    <button class="btn btn-primary" id="confirmBtn" onclick="confirmPick()" disabled
+      style="opacity:0.4; transition: opacity 0.2s;">
+      Confirmar Palpite
+    </button>
+  </div>
+
+  <!-- Success overlay -->
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-icon">🎯</div>
+    <div class="success-title">Palpite Confirmado!</div>
+    <div class="success-sub">Você ganhou</div>
+    <div class="success-pts" id="successPts">+100 pts</div>
+    <div class="success-sub">Continue palpitando para aumentar sua pontuação</div>
+    <button class="btn btn-primary" style="max-width:220px; margin-top:8px;" onclick="nextGame()">
+      Próximo Jogo →
+    </button>
+    <button style="color:var(--text-muted); font-size:0.875rem; padding:8px;" onclick="goHome()">
+      Voltar ao início
+    </button>
+  </div>
+</body>
+</html>
+<script>
+  var games = [
+    { id:1, league:'Brasileirão Série A', homeTeam:'Flamengo',    homeEmoji:'🔴', awayTeam:'Palmeiras',     awayEmoji:'🟢', time:'Sab · 16:00' },
+    { id:2, league:'Brasileirão Série A', homeTeam:'Corinthians', homeEmoji:'⚫', awayTeam:'São Paulo',     awayEmoji:'🔴', time:'Sab · 18:30' },
+    { id:3, league:'Brasileirão Série A', homeTeam:'Grêmio',      homeEmoji:'🔵', awayTeam:'Internacional', awayEmoji:'🔴', time:'Dom · 16:00' },
+    { id:4, league:'Copa do Brasil',      homeTeam:'Atlético-MG', homeEmoji:'⚫', awayTeam:'Cruzeiro',      awayEmoji:'🔵', time:'Dom · 18:00' },
+    { id:5, league:'Brasileirão Série A', homeTeam:'Santos',      homeEmoji:'⚪', awayTeam:'Botafogo',      awayEmoji:'⚫', time:'Dom · 20:00' },
+  ];
+
+  var picks = JSON.parse(localStorage.getItem('bp_picks') || '{}');
+  var streak = parseInt(localStorage.getItem('bp_streak') || '0');
+  var totalPts = parseInt(localStorage.getItem('bp_points') || '0');
+
+  // Determina qual jogo mostrar (da URL ou próximo sem palpite)
+  var startId = parseInt(localStorage.getItem('bp_current_game') || '0');
+  var currentIdx = 0;
+  if (startId) {
+    for (var i = 0; i < games.length; i++) {
+      if (games[i].id === startId) { currentIdx = i; break; }
+    }
+  }
+
+  var selectedPick = null;
+
+  function buildDots() {
+    var container = document.getElementById('navDots');
+    container.innerHTML = games.map(function(g, i) {
+      var cls = picks[g.id] ? 'done' : (i === currentIdx ? 'current' : '');
+      return '<div class="pick-nav__dot ' + cls + '"></div>';
+    }).join('');
+  }
+
+  function loadGame(idx) {
+    currentIdx = idx;
+    selectedPick = null;
+    var g = games[idx];
+    var total = games.length;
+    var pct = Math.round((idx / total) * 100);
+
+    document.getElementById('headerBadge').textContent = (idx+1) + '/' + total;
+    document.getElementById('progressLabel').textContent = 'Jogo ' + (idx+1) + ' de ' + total;
+    document.getElementById('progressPct').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    document.getElementById('gameLeague').textContent = g.league;
+    document.getElementById('gameTime').textContent = g.time;
+    document.getElementById('homeEmoji').textContent = g.homeEmoji;
+    document.getElementById('homeName').textContent = g.homeTeam;
+    document.getElementById('awayEmoji').textContent = g.awayEmoji;
+    document.getElementById('awayName').textContent = g.awayTeam;
+    document.getElementById('optHomeEmoji').textContent = g.homeEmoji;
+    document.getElementById('optHomeName').textContent = g.homeTeam;
+    document.getElementById('optAwayEmoji').textContent = g.awayEmoji;
+    document.getElementById('optAwayName').textContent = g.awayTeam;
+    document.getElementById('navCounter').textContent = (idx+1) + ' de ' + total;
+
+    document.getElementById('navSkip').style.display = idx < total - 1 ? '' : 'none';
+
+    var bonus = streak >= 3 ? 50 : streak >= 2 ? 25 : 0;
+    document.getElementById('gamePts').textContent = '+' + (100 + bonus) + ' pts';
+    document.getElementById('streakVal').textContent = '🔥 ' + streak;
+    document.getElementById('bonusVal').textContent = bonus > 0 ? '+' + bonus + '%' : '-';
+
+    // Reset options
+    ['optHome','optDraw','optAway'].forEach(function(id) {
+      document.getElementById(id).classList.remove('selected');
+    });
+    var confirmBtn = document.getElementById('confirmBtn');
+    confirmBtn.disabled = true;
+    confirmBtn.style.opacity = '0.4';
+
+    // Restore existing pick
+    if (picks[g.id]) {
+      var map = { home:'optHome', draw:'optDraw', away:'optAway' };
+      if (map[picks[g.id]]) {
+        document.getElementById(map[picks[g.id]]).classList.add('selected');
+        selectedPick = picks[g.id];
+        confirmBtn.disabled = false;
+        confirmBtn.style.opacity = '1';
+      }
+    }
+
+    buildDots();
+  }
+
+  function selectPick(type) {
+    selectedPick = type;
+    ['optHome','optDraw','optAway'].forEach(function(id) {
+      document.getElementById(id).classList.remove('selected');
+    });
+    var map = { home:'optHome', draw:'optDraw', away:'optAway' };
+    document.getElementById(map[type]).classList.add('selected');
+    var btn = document.getElementById('confirmBtn');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  }
+
+  function confirmPick() {
+    if (!selectedPick) return;
+    var g = games[currentIdx];
+    picks[g.id] = selectedPick;
+    localStorage.setItem('bp_picks', JSON.stringify(picks));
+
+    var bonus = streak >= 3 ? 50 : streak >= 2 ? 25 : 0;
+    var earned = 100 + bonus;
+    totalPts += earned;
+    localStorage.setItem('bp_points', totalPts);
+
+    document.getElementById('successPts').textContent = '+' + earned + ' pts';
+    document.getElementById('successOverlay').classList.add('show');
+  }
+
+  function nextGame() {
+    document.getElementById('successOverlay').classList.remove('show');
+    var next = currentIdx + 1;
+    if (next < games.length) {
+      loadGame(next);
+    } else {
+      goHome();
+    }
+  }
+
+  function skipGame() {
+    var next = currentIdx + 1;
+    if (next < games.length) loadGame(next);
+    else goHome();
+  }
+
+  function goHome() {
+    localStorage.removeItem('bp_current_game');
+    window.location.href = 'home.html';
+  }
+
+  loadGame(currentIdx);
+</script>

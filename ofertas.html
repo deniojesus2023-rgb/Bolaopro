@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>BolãoPro — Ofertas Exclusivas</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    /* Banner VIP principal */
+    .offer-hero {
+      margin: 16px;
+      background: linear-gradient(135deg, #1A0D00 0%, #2D1A00 50%, #1A0D00 100%);
+      border: 1px solid var(--neon-yellow);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .offer-hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .offer-hero::after {
+      content: '🏆';
+      position: absolute;
+      right: 16px;
+      bottom: 16px;
+      font-size: 4rem;
+      opacity: 0.15;
+    }
+    .offer-hero__tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,215,0,0.15);
+      border: 1px solid rgba(255,215,0,0.4);
+      border-radius: 100px;
+      padding: 4px 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--neon-yellow);
+      margin-bottom: 14px;
+    }
+    .offer-hero__title {
+      font-size: 1.25rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .offer-hero__amount {
+      font-size: 2.25rem;
+      font-weight: 900;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 20px rgba(255,215,0,0.5);
+      margin-bottom: 4px;
+    }
+    .offer-hero__sub {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .offer-hero__benefits {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+    .benefit-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.875rem;
+    }
+    .benefit-row__icon { font-size: 1rem; }
+    .offer-hero .btn-primary {
+      background: var(--neon-yellow);
+      color: #000;
+      box-shadow: 0 0 16px rgba(255,215,0,0.4), 0 0 32px rgba(255,215,0,0.15);
+      animation: pulse-yellow 2s infinite;
+    }
+    @keyframes pulse-yellow {
+      0%,100% { box-shadow: 0 0 16px rgba(255,215,0,0.4); }
+      50%      { box-shadow: 0 0 28px rgba(255,215,0,0.7), 0 0 48px rgba(255,215,0,0.2); }
+    }
+    .offer-hero__disclaimer {
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    /* Outras ofertas */
+    .offers-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 0 16px;
+    }
+    .offer-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      transition: border-color var(--transition);
+    }
+    .offer-card:active { border-color: var(--border-neon); }
+    .offer-card__icon {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.75rem;
+      flex-shrink: 0;
+    }
+    .offer-card__body { flex: 1; }
+    .offer-card__title { font-size: 0.9375rem; font-weight: 700; margin-bottom: 4px; }
+    .offer-card__desc { font-size: 0.8125rem; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px; }
+    .offer-card__cta {
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--neon-green);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Steps */
+    .how-it-works {
+      margin: 20px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .how-title { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+    .step-list { display: flex; flex-direction: column; gap: 12px; }
+    .step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .step__num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(0,255,133,0.1);
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      font-size: 0.8125rem;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step__text { font-size: 0.875rem; color: var(--text-secondary); line-height: 1.5; padding-top: 4px; }
+    .step__text strong { color: var(--text-primary); }
+
+    /* WebView modal */
+    .webview-modal {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-primary);
+      z-index: 500;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+    .webview-modal.show { opacity: 1; pointer-events: all; }
+    .webview-header {
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      height: var(--header-height);
+      border-bottom: 1px solid var(--border);
+      gap: 12px;
+    }
+    .webview-header__title { flex: 1; font-size: 0.9375rem; font-weight: 600; }
+    .webview-header__url { font-size: 0.75rem; color: var(--text-muted); }
+    .webview-placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <span class="header__title">Ofertas Exclusivas</span>
+    <span class="badge badge-yellow">VIP</span>
+  </header>
+
+  <main class="page page--with-nav page--with-header">
+    <div class="content" style="padding: 0; padding-bottom: 16px; overflow-y: auto;">
+
+      <!-- Hero Oferta Principal -->
+      <div class="offer-hero">
+        <div class="offer-hero__tag">⚡ Oferta Exclusiva BolãoPro</div>
+        <div class="offer-hero__title">Bolão VIP —<br>Ganhe até</div>
+        <div class="offer-hero__amount">R$ 50.000</div>
+        <div class="offer-hero__sub">no Bolão da Semana com bônus de depósito</div>
+
+        <div class="offer-hero__benefits">
+          <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Bônus de <strong>100% no 1º depósito</strong></span></div>
+          <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Acesso ao <strong>Bolão VIP de R$ 50.000</strong></span></div>
+          <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Odds especiais para clientes BolãoPro</span></div>
+          <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Cashback de 10% toda semana</span></div>
+        </div>
+
+        <button class="btn btn-primary" onclick="openDeposit()">
+          💰 Depositar Agora e Ganhar Bônus
+        </button>
+        <p class="offer-hero__disclaimer">
+          * Bônus sujeito a rollover de 5x. Oferta válida para novos clientes. Jogue com responsabilidade.
+        </p>
+      </div>
+
+      <!-- Como funciona -->
+      <div class="how-it-works">
+        <div class="how-title">Como funciona em 3 passos</div>
+        <div class="step-list">
+          <div class="step">
+            <div class="step__num">1</div>
+            <div class="step__text">Clique em <strong>"Depositar Agora"</strong> e crie sua conta na casa parceira</div>
+          </div>
+          <div class="step">
+            <div class="step__num">2</div>
+            <div class="step__text">Faça seu <strong>primeiro depósito</strong> e receba o bônus automaticamente</div>
+          </div>
+          <div class="step">
+            <div class="step__num">3</div>
+            <div class="step__text">Volte ao BolãoPro e <strong>concorra ao prêmio de R$ 50.000</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outras ofertas -->
+      <div style="padding: 0 16px; margin-bottom: 12px;">
+        <div class="section-title">Outras Ofertas</div>
+      </div>
+      <div class="offers-grid">
+
+        <div class="offer-card" onclick="openDeposit()">
+          <div class="offer-card__icon" style="background: rgba(0,255,133,0.1);">🎁</div>
+          <div class="offer-card__body">
+            <div class="offer-card__title">Bônus de Boas-Vindas</div>
+            <div class="offer-card__desc">Ganhe 100% de bônus no seu primeiro depósito, até R$ 500.</div>
+            <div class="offer-card__cta">Ver oferta →</div>
+          </div>
+        </div>
+
+        <div class="offer-card" onclick="openDeposit()">
+          <div class="offer-card__icon" style="background: rgba(0,212,255,0.1);">💸</div>
+          <div class="offer-card__body">
+            <div class="offer-card__title">Cashback Semanal</div>
+            <div class="offer-card__desc">Receba 10% de volta em todas as suas apostas toda segunda-feira.</div>
+            <div class="offer-card__cta">Participar →</div>
+          </div>
+        </div>
+
+        <div class="offer-card" onclick="openDeposit()">
+          <div class="offer-card__icon" style="background: rgba(255,215,0,0.1);">🏅</div>
+          <div class="offer-card__body">
+            <div class="offer-card__title">Programa VIP</div>
+            <div class="offer-card__desc">Acumule pontos e troque por prêmios exclusivos e bônus maiores.</div>
+            <div class="offer-card__cta">Saber mais →</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="height: 16px;"></div>
+    </div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="meus-boloes.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <span>Meus Bolões</span>
+    </a>
+    <a href="ranking.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 20h2V8H7v12zm4 0h2V4h-2v16zm4 0h2v-8h-2v8z"/></svg>
+      <span>Ranking</span>
+    </a>
+    <a href="ofertas.html" class="bottom-nav__item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span>Ofertas</span>
+    </a>
+    <a href="perfil.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
+      <span>Perfil</span>
+    </a>
+  </nav>
+
+  <!-- WebView modal (simulação) -->
+  <div class="webview-modal" id="webviewModal">
+    <div class="webview-header">
+      <button class="btn-icon" onclick="closeDeposit()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M19 12H5M12 5l-7 7 7 7"/>
+        </svg>
+      </button>
+      <div>
+        <div class="webview-header__title">Casa Parceira</div>
+        <div class="webview-header__url">🔒 parceiro.bolaopro.com.br</div>
+      </div>
+    </div>
+    <div class="webview-placeholder">
+      <div style="font-size: 4rem;">💰</div>
+      <div style="font-size: 1.25rem; font-weight: 900;">Página de Depósito</div>
+      <div style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;">
+        Aqui será carregada a página da casa parceira via WebView para o usuário realizar o depósito e obter o bônus.
+      </div>
+      <button class="btn btn-primary" style="max-width: 240px; margin-top: 8px;" onclick="closeDeposit()">
+        ← Voltar ao BolãoPro
+      </button>
+    </div>
+  </div>
+
+  <script>
+    if (!localStorage.getItem('bp_session')) window.location.href = 'login.html';
+    function openDeposit() { document.getElementById('webviewModal').classList.add('show'); }
+    function closeDeposit() { document.getElementById('webviewModal').classList.remove('show'); }
+  </script>
+</body>
+</html>
