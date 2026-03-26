@@ -1,255 +1,266 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-<title>BolãoPro — Ranking</title>
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
-<link rel="apple-touch-icon" href="/icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="BolãoPro">
-<meta name="mobile-web-app-capable" content="yes">
-<link rel="stylesheet" href="design-system.css"/>
-<link rel="stylesheet" href="shared.css"/>
-<script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-<style>
-.podium{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px;}
-.pod{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;border:1px solid var(--border);border-top:3px solid var(--border);border-radius:var(--r-lg);padding:16px 12px;text-align:center;gap:6px;box-shadow:var(--shadow);transition:all .2s;}
-.pod:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
-.pod.g1{background:var(--gold-lt);border-color:#FCD34D;border-top-color:var(--gold);}
-.pod.g2{background:#F8FAFC;border-color:#CBD5E1;border-top-color:#94A3B8;}
-.pod.g3{background:#FFF7ED;border-color:#FED7AA;border-top-color:#C97D34;}
-.pod-av{width:44px;height:44px;border-radius:12px;background:var(--green-lt);border:2px solid var(--green-m);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:var(--green);}
-.pod-name{font-size:12px;font-weight:700;}
-.pod-pts{font-size:17px;font-weight:800;letter-spacing:-.5px;}
-.rk-table{border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);}
-.rk-head{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:11px 20px;border-bottom:1px solid var(--border);background:var(--bg);font-size:11px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase;}
-.rk-row-full{display:grid;grid-template-columns:44px 1fr 80px 80px 90px;padding:13px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background .12s, box-shadow .12s;background:var(--white);}
-.rk-row-full:last-child{border-bottom:none;}
-.rk-row-full:hover{background:var(--bg);box-shadow:inset 3px 0 0 var(--green);}
-.rk-row-full.you{background:var(--green-lt);}
-@media(max-width:600px){
-  .rk-head,.rk-row-full{grid-template-columns:36px 1fr 60px 90px;}
-  .rk-head div:nth-child(3),.rk-row-full div:nth-child(3){display:none;}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0A0A0A">
+  <title>BolãoPro — Ranking Global</title>
+  <link rel="stylesheet" href="app.css">
+  <style>
+    .podium {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      padding: 24px 16px 8px;
+    }
+    .podium__place {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .podium__place--2nd { order: -1; }
+    .podium__place--1st { }
+    .podium__place--3rd { order: 1; }
+
+    .podium__avatar-wrap { position: relative; }
+    .podium__crown {
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.25rem;
+    }
+    .podium__avatar {
+      border: 3px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      background: var(--bg-card-alt);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .podium__place--1st .podium__avatar { width: 72px; height: 72px; border-color: #FFD700; box-shadow: 0 0 16px rgba(255,215,0,0.4); }
+    .podium__place--2nd .podium__avatar { width: 60px; height: 60px; border-color: #C0C0C0; }
+    .podium__place--3rd .podium__avatar { width: 56px; height: 56px; border-color: #CD7F32; }
+
+    .podium__name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-align: center;
+      max-width: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .podium__pts { font-size: 0.75rem; color: var(--neon-green); font-weight: 700; }
+    .podium__bar {
+      border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      font-weight: 900;
+    }
+    .podium__place--1st .podium__bar { background: rgba(255,215,0,0.2); border: 1px solid rgba(255,215,0,0.4); width: 80px; height: 60px; }
+    .podium__place--2nd .podium__bar { background: rgba(192,192,192,0.15); border: 1px solid rgba(192,192,192,0.3); width: 70px; height: 44px; }
+    .podium__place--3rd .podium__bar { background: rgba(205,127,50,0.15); border: 1px solid rgba(205,127,50,0.3); width: 64px; height: 32px; }
+
+    /* Filtros */
+    .filter-chips {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-bottom: 16px;
+    }
+    .filter-chips::-webkit-scrollbar { display: none; }
+    .chip {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      transition: all var(--transition);
+    }
+    .chip.active {
+      background: rgba(0,255,133,0.1);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+    }
+
+    /* List */
+    .rank-list { display: flex; flex-direction: column; gap: 8px; padding: 0 16px; }
+
+    /* My position sticky card */
+    .my-rank-card {
+      margin: 0 16px 16px;
+      background: linear-gradient(135deg, #0D2018 0%, #0A1A12 100%);
+      border: 1px solid var(--neon-green);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0,255,133,0.15);
+    }
+    .my-rank-label {
+      font-size: 0.75rem;
+      color: var(--neon-green);
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+    .my-rank-name { font-size: 0.9375rem; font-weight: 700; }
+    .my-rank-pts { font-size: 1.25rem; font-weight: 900; color: var(--neon-green); }
+  </style>
 </head>
 <body>
-<aside class="sidebar">
-  <div class="s-logo"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
-  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
-  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
-  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
-  <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item on"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
-  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
-  <div class="nav-lbl">Configurações</div>
-  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
-  <a href="admin.html" class="nav-item" id="sideAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
-  <a href="login.html" class="nav-item" id="sideLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
-  <a href="#" class="nav-item" id="sideLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
-  <div class="sidebar-bot">
-    <div class="user-card" id="userCard" style="display:none">
-      <div class="u-av" id="sideAv">?</div>
-      <div style="min-width:0"><div class="u-name" id="sideName">…</div><div class="u-email" id="sideEmail">…</div></div>
-    </div>
-  </div>
-</aside>
-<div class="drawer-ovl" id="drawerOvl" onclick="closeDrawer()"></div>
-<aside class="drawer" id="drawer">
-  <div class="drawer-x" onclick="closeDrawer()"><i data-lucide="x"></i></div>
-  <div class="s-logo" style="margin-top:8px"><div class="s-logo-mark"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
-  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
-  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
-  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-</svg></div><div class="s-logo-name">Bolão<span>Pro</span></div></div>
-  <div class="nav-lbl">Menu</div>
-  <a href="index.html" class="nav-item"><span class="nav-icon"><i data-lucide="layout-dashboard"></i></span>Dashboard</a>
-  <a href="comunidade.html" class="nav-item"><span class="nav-icon"><i data-lucide="message-circle"></i></span>Comunidade</a>
-  <a href="meus-boloes.html" class="nav-item"><span class="nav-icon"><i data-lucide="users"></i></span>Meus Bolões</a>
-  <a href="ranking.html" class="nav-item on"><span class="nav-icon"><i data-lucide="star"></i></span>Ranking</a>
-  <a href="jogos.html" class="nav-item"><span class="nav-icon"><i data-lucide="calendar"></i></span>Jogos</a>
-  <a href="desafios.html" class="nav-item"><span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>Desafios</a>
-  <div class="nav-lbl">Configurações</div>
-  <a href="configuracoes.html" class="nav-item"><span class="nav-icon"><i data-lucide="settings"></i></span>Configurações</a>
-  <a href="admin.html" class="nav-item" id="drawerAdmin" style="display:none"><span class="nav-icon"><i data-lucide="shield"></i></span>Admin</a>
-  <a href="login.html" class="nav-item" id="drawerLogin"><span class="nav-icon"><i data-lucide="log-in"></i></span>Entrar</a>
-  <a href="#" class="nav-item" id="drawerLogout" style="display:none" onclick="signOut()"><span class="nav-icon"><i data-lucide="log-out"></i></span>Sair</a>
-  <div class="sidebar-bot">
-    <div class="user-card" id="drawerUserCard" style="display:none">
-      <div class="u-av" id="drawerAv">?</div>
-      <div style="min-width:0"><div class="u-name" id="drawerName">…</div></div>
-    </div>
-  </div>
-</aside>
-
-<div class="main">
-  <header class="topbar">
-    <div class="topbar-left">
-      <button class="hamburger" style="display:none" onclick="openDrawer()"><i data-lucide="menu"></i></button>
-      <div class="page-title">Ranking Global</div>
-    </div>
-    <div class="topbar-right">
-      <a href="#" id="sbLink" target="_blank" class="btn-outline" style="font-size:12px;border-color:rgba(234,88,12,.3);color:var(--sb)">⚡ Sportingbet</a>
-      <a href="#" id="supLink" target="_blank" class="btn-outline" style="font-size:12px;border-color:rgba(124,58,237,.3);color:var(--sup)">⚡ Superbet</a>
-      <button class="icon-btn" id="notifBtn" onclick="abrirNotifs()" title="Notificações" style="position:relative">
-        <i data-lucide="bell"></i>
-        <span id="notifBadge" style="display:none;position:absolute;top:4px;right:4px;background:#DC2626;color:#fff;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;align-items:center;justify-content:center;line-height:1"></span>
-      </button>
-      <a href="login.html" class="btn-outline" id="topLoginBtn">Entrar</a>
-      <a href="admin.html" class="icon-btn" id="topAdminBtn" style="display:none" title="Painel Admin"><i data-lucide="shield"></i></a>
-      <a href="perfil.html" class="top-user-btn" id="topUserBtn" style="display:none">
-        <div class="top-user-av" id="topUserAv">?</div>
-        <span style="font-size:12px;font-weight:600" id="topUserName">…</span>
-      </a>
-    </div>
+  <header class="header">
+    <span class="header__title">Ranking Global</span>
+    <div class="badge badge-green" id="totalPlayers">—</div>
   </header>
 
-  <div class="content">
-    <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Os melhores palpiteiros da plataforma</p>
+  <main class="page page--with-nav page--with-header">
+    <div class="content" style="padding: 0; padding-bottom: 16px;">
 
-    <!-- PÓDIO -->
-    <div class="podium" id="podium">
-      <div style="grid-column:span 3;display:flex;justify-content:center;padding:20px"><div class="spin"></div></div>
-    </div>
+      <!-- Pódio top 3 -->
+      <div class="podium" id="podium"></div>
 
-    <!-- BANNER AFILIADOS -->
-    <div style="background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:var(--shadow)">
-      <div>
-        <div style="font-size:13px;font-weight:700">Multiplique seus ganhos com apostas reais!</div>
-        <div style="font-size:12px;color:var(--muted)">Odds exclusivas para participantes do BolãoPro</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <a href="#" id="sbBanner" target="_blank" class="btn-outline" style="font-size:12px;color:var(--sb);border-color:rgba(234,88,12,.3)">⚡ Sportingbet</a>
-        <a href="#" id="supBanner" target="_blank" class="btn-outline" style="font-size:12px;color:var(--sup);border-color:rgba(124,58,237,.3)">⚡ Superbet</a>
-      </div>
-    </div>
-
-    <!-- TABELA -->
-    <div class="rk-table card">
-      <div class="rk-head">
-        <div style="text-align:center">#</div>
-        <div>Jogador</div>
-        <div style="text-align:center">Bolões</div>
-        <div style="text-align:center">Vitórias</div>
-        <div style="text-align:right">Pontos</div>
-      </div>
-      <div id="rkBody"><div class="empty"><div class="spin"></div></div></div>
-    </div>
-
-    <!-- CTA -->
-    <div class="card card-pad" style="margin-top:18px;text-align:center">
-      <div style="font-size:28px;margin-bottom:10px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" style="display:block">
-  <circle cx="50" cy="48" r="28" fill="none" stroke="#00DF81" stroke-width="3.5"/>
-  <polygon points="50,36 61.4,44.3 57.1,57.7 42.9,57.7 38.6,44.3" fill="#00DF81"/>
-  <line x1="50" y1="36" x2="50" y2="20" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="61.4" y1="44.3" x2="76.6" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="57.1" y1="57.7" x2="66.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="42.9" y1="57.7" x2="33.5" y2="70.7" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-  <line x1="38.6" y1="44.3" x2="23.4" y2="39.4" stroke="#00DF81" stroke-width="2.8" stroke-linecap="round"/>
-</svg></div>
-      <div style="font-size:16px;font-weight:700;margin-bottom:6px">Quer entrar para o ranking?</div>
-      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Crie ou participe de bolões e acumule pontos para subir.</p>
-      <a href="index.html" class="btn-full" style="max-width:220px;margin:0 auto;display:flex">Ver Bolões →</a>
-    </div>
-  </div>
-</div>
-
-<nav class="bnav">
-  <div class="bnav-inner">
-    <a href="index.html" class="bn"><span class="bn-icon"><i data-lucide="home"></i></span>Início</a>
-    <a href="comunidade.html" class="bn"><span class="bn-icon"><i data-lucide="message-circle"></i></span>Feed</a>
-    <a href="index.html" class="bn-center"><div class="bn-circle"><i data-lucide="plus"></i></div></a>
-    <a href="ranking.html" class="bn on"><span class="bn-icon"><i data-lucide="star"></i></span>Ranking</a>
-    <button class="bn" onclick="openDrawer()"><span class="bn-icon"><i data-lucide="menu"></i></span>Menu</button>
-  </div>
-</nav>
-
-<div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="config.js"></script>
-<script src="app.js"></script>
-<script>
-const M = {1:'🥇',2:'🥈',3:'🥉'}
-
-document.addEventListener('DOMContentLoaded', async () => {
-  document.getElementById('sbLink').href    = CONFIG.SPORTINGBET
-  document.getElementById('supLink').href   = CONFIG.SUPERBET
-  document.getElementById('sbBanner').href  = CONFIG.SPORTINGBET
-  document.getElementById('supBanner').href = CONFIG.SUPERBET
-
-  const user = await initAuth()
-  if (user) {
-    hideEl('sideLogin'); showEl('sideLogout')
-    const p = await getProfile(user.id)
-    const n = p?.username ?? user.email?.split('@')[0] ?? '?'
-    setEl('topUserName', n); setEl('topUserAv', n.slice(0,2).toUpperCase())
-  }
-
-  const list = await getRanking(50)
-  renderPodium(list.slice(0, 3))
-  renderTable(list, user?.id)
-})
-
-function renderPodium(top) {
-  if (!top.length) { document.getElementById('podium').innerHTML = ''; return }
-  // Ordem visual: 2º, 1º, 3º
-  const order  = [top[1], top[0], top[2]].filter(Boolean)
-  const cls    = ['g2','g1','g3']
-  const colors = ['#94A3B8','#D97706','#C97D34']
-  const pos    = [2, 1, 3]
-
-  document.getElementById('podium').innerHTML = order.map((p, i) => `
-    <div class="pod ${cls[i]}">
-      <span style="font-size:26px">${M[pos[i]]}</span>
-      <div class="pod-av">${(p.username ?? '?').slice(0,2).toUpperCase()}</div>
-      <div class="pod-name">@${esc(p.username ?? 'Jogador')}</div>
-      <div class="pod-pts" style="color:${colors[i]}">${(p.total_points ?? 0).toLocaleString()} pts</div>
-    </div>`).join('')
-}
-
-function renderTable(list, myId) {
-  if (!list.length) {
-    document.getElementById('rkBody').innerHTML = '<div class="empty"><p>Sem dados ainda</p></div>'
-    return
-  }
-  document.getElementById('rkBody').innerHTML = list.map((p, i) => {
-    const pos  = i + 1
-    const isMe = p.id === myId
-    return `
-    <div class="rk-row-full ${isMe ? 'you' : ''}">
-      <div style="text-align:center;font-size:14px">${M[pos] ?? pos}</div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="rk-av">${(p.username ?? '?').slice(0,2).toUpperCase()}</div>
-        <div>
-          <div style="font-size:13px;font-weight:600">
-            @${esc(p.username ?? 'Jogador')}
-            ${isMe ? '<span style="font-size:9px;background:var(--green-lt);color:var(--green);padding:1px 5px;border-radius:3px;margin-left:4px">você</span>' : ''}
-          </div>
+      <!-- Minha posição -->
+      <div class="my-rank-card" id="myRankCard">
+        <div style="font-size: 1.5rem; font-weight: 900; color: var(--neon-green); width:32px; text-align:center;" id="myPos">—</div>
+        <div style="flex:1;">
+          <div class="my-rank-label">Sua posição</div>
+          <div class="my-rank-name" id="myName">Você</div>
         </div>
+        <div class="my-rank-pts" id="myPts">0 pts</div>
       </div>
-      <div style="text-align:center;font-size:13px;color:var(--muted)">${p.total_boloes ?? 0}</div>
-      <div style="text-align:center;font-size:13px;font-weight:700;color:var(--green)">${p.total_wins ?? 0}</div>
-      <div style="text-align:right;font-size:14px;font-weight:800;color:var(--gold)">${(p.total_points ?? 0).toLocaleString()}</div>
-    </div>`
-  }).join('')
-}
-</script>
-<script>if('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js')</script>
+
+      <!-- Filtros -->
+      <div class="filter-chips">
+        <button class="chip active" onclick="setFilter('semanal', this)">Semanal</button>
+        <button class="chip" onclick="setFilter('mensal', this)">Mensal</button>
+        <button class="chip" onclick="setFilter('geral', this)">Geral</button>
+        <button class="chip" onclick="setFilter('amigos', this)">Amigos</button>
+      </div>
+
+      <!-- Lista -->
+      <div class="rank-list" id="rankList"></div>
+
+    </div>
+  </main>
+
+  <!-- Bottom Nav -->
+  <nav class="bottom-nav">
+    <a href="home.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="meus-boloes.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <span>Meus Bolões</span>
+    </a>
+    <a href="ranking.html" class="bottom-nav__item active">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 20h2V8H7v12zm4 0h2V4h-2v16zm4 0h2v-8h-2v8z"/></svg>
+      <span>Ranking</span>
+    </a>
+    <a href="ofertas.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <span>Ofertas</span>
+    </a>
+    <a href="perfil.html" class="bottom-nav__item">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
+      <span>Perfil</span>
+    </a>
+  </nav>
 </body>
 </html>
+<script>
+  if (!localStorage.getItem('bp_session')) window.location.href = 'login.html';
+
+  var emojis = ['👑','🦁','🐉','🔥','⚡','🎯','💎','🏆','🌟','⭐'];
+  var names  = ['CraqueJão','ZéPalpite','FutMestre','GolDoRei','CaravanaDo10','BolãoKing','PalpiteAce','VitoriaFC','CampeoFC','FenômenoX'];
+  var myPts  = parseInt(localStorage.getItem('bp_points') || '0');
+
+  function makePlayer(pos, pts, name, emoji) {
+    return { pos:pos, name: name || names[pos-1] || 'Jogador'+pos, pts: pts || Math.max(0, 5000 - (pos-1)*120 + Math.floor(Math.random()*80)), emoji: emoji || emojis[(pos-1)%emojis.length] };
+  }
+
+  function buildRanking(showMe) {
+    var players = [];
+    for (var i = 1; i <= 20; i++) players.push(makePlayer(i));
+    // Insere o usuário
+    if (showMe) {
+      var myPos = 34;
+      players.splice(myPos - 1, 0, { pos: myPos, name:'Você', pts: myPts, emoji:'😎', isMe: true });
+    }
+    return players;
+  }
+
+  var currentFilter = 'semanal';
+  var players = buildRanking(true);
+
+  function renderPodium() {
+    var top3 = players.slice(0,3);
+    var order = [top3[1], top3[0], top3[2]]; // 2nd, 1st, 3rd
+    var classes = ['2nd','1st','3rd'];
+    var colors  = ['#C0C0C0','#FFD700','#CD7F32'];
+    var heights = ['44px','60px','32px'];
+    var crowns  = ['🥈','👑','🥉'];
+    document.getElementById('podium').innerHTML = order.map(function(p, i) {
+      if (!p) return '';
+      return '<div class="podium__place podium__place--' + classes[i] + '">'
+        + '<div class="podium__avatar-wrap">'
+        +   '<div class="podium__crown">' + crowns[i] + '</div>'
+        +   '<div class="podium__avatar" style="border-color:' + colors[i] + '">' + p.emoji + '</div>'
+        + '</div>'
+        + '<div class="podium__name">' + p.name + '</div>'
+        + '<div class="podium__pts">' + p.pts.toLocaleString('pt-BR') + ' pts</div>'
+        + '<div class="podium__bar" style="height:' + heights[i] + '">' + p.pos + 'º</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  function renderMyCard() {
+    var myPtsVal = parseInt(localStorage.getItem('bp_points') || '0');
+    document.getElementById('myPos').textContent = '34º';
+    document.getElementById('myName').textContent = 'Você';
+    document.getElementById('myPts').textContent = myPtsVal.toLocaleString('pt-BR') + ' pts';
+  }
+
+  function renderList() {
+    var list = players.slice(3);
+    document.getElementById('totalPlayers').textContent = players.length + ' jogadores';
+    document.getElementById('rankList').innerHTML = list.map(function(p) {
+      var posClass = p.pos === 1 ? 'rank-pos--gold' : p.pos === 2 ? 'rank-pos--silver' : p.pos === 3 ? 'rank-pos--bronze' : '';
+      return '<div class="rank-item' + (p.isMe ? ' rank-item--me' : '') + '">'
+        + '<div class="rank-pos ' + posClass + '">' + p.pos + '</div>'
+        + '<div style="width:36px;height:36px;border-radius:50%;background:var(--bg-card-alt);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">' + p.emoji + '</div>'
+        + '<div style="flex:1;">'
+        +   '<div style="font-size:0.9375rem;font-weight:' + (p.isMe ? '700' : '500') + ';color:' + (p.isMe ? 'var(--neon-green)' : 'var(--text-primary)') + ';">' + p.name + '</div>'
+        +   '<div style="font-size:0.75rem;color:var(--text-muted);">' + p.pts.toLocaleString('pt-BR') + ' pontos</div>'
+        + '</div>'
+        + (p.isMe ? '<span class="badge badge-green">Você</span>' : '')
+        + '</div>';
+    }).join('');
+  }
+
+  function setFilter(filter, el) {
+    currentFilter = filter;
+    document.querySelectorAll('.chip').forEach(function(c) { c.classList.remove('active'); });
+    el.classList.add('active');
+    players = buildRanking(true);
+    renderPodium();
+    renderList();
+  }
+
+  renderPodium();
+  renderMyCard();
+  renderList();
+</script>
