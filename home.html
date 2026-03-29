@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0A0A0A">
+  <meta name="theme-color" content="#020307">
   <title>Zagga — Home</title>
   <link rel="stylesheet" href="app.css">
   <style>
     /* Banner do Bolão da Semana */
     .weekly-banner {
-      background: linear-gradient(135deg, #0D2018 0%, #0F2D1C 50%, #0A1A12 100%);
-      border: 1px solid var(--neon-green);
+      background: linear-gradient(135deg, #10100A 0%, #181808 50%, #0D0D05 100%);
+      border: 1px solid var(--accent);
       border-radius: var(--radius-lg);
       padding: 20px;
       position: relative;
@@ -22,20 +22,20 @@
       position: absolute;
       top: -40px; right: -40px;
       width: 140px; height: 140px;
-      background: radial-gradient(circle, rgba(0,255,133,0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(248,255,19,0.15) 0%, transparent 70%);
       border-radius: 50%;
     }
     .weekly-banner__tag {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(0,255,133,0.15);
-      border: 1px solid rgba(0,255,133,0.3);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
       border-radius: 100px;
       padding: 4px 12px;
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--neon-green);
+      color: var(--accent);
       margin-bottom: 12px;
     }
     .weekly-banner__title {
@@ -47,8 +47,8 @@
     .weekly-banner__prize {
       font-size: 2rem;
       font-weight: 900;
-      color: var(--neon-green);
-      text-shadow: var(--glow-green);
+      color: var(--accent);
+      text-shadow: var(--glow-accent);
       margin-bottom: 4px;
     }
     .weekly-banner__sub {
