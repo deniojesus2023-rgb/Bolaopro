@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0A0A0A">
-  <title>BolãoPro</title>
+  <meta name="theme-color" content="#020307">
+  <title>Zagga</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="app.css">
   <style>
@@ -34,7 +34,7 @@
       position: absolute;
       width: 160px;
       height: 160px;
-      background: radial-gradient(circle, rgba(0,255,133,0.25) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(248,255,19,0.25) 0%, transparent 70%);
       border-radius: 50%;
       animation: pulse-neon 2s infinite;
     }
@@ -44,6 +44,7 @@
       height: 120px;
       border-radius: 28px;
       overflow: hidden;
+      border: 2px solid rgba(248,255,19,0.3);
     }
     .splash__icon img {
       width: 100%;
@@ -52,9 +53,9 @@
     }
     .splash__brand {
       font-size: 2.5rem;
-      font-weight: 900;
-      color: var(--neon-green);
-      text-shadow: var(--glow-green);
+      font-weight: 800;
+      color: var(--accent);
+      text-shadow: var(--glow-accent);
       letter-spacing: -1px;
     }
     .splash__slogan {
@@ -72,7 +73,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--neon-green);
+      background: var(--accent);
       animation: blink 1.2s infinite;
     }
     .splash__dot:nth-child(2) { animation-delay: 0.2s; }
@@ -84,11 +85,11 @@
     <div class="splash__logo-wrap">
       <div class="splash__glow"></div>
       <div class="splash__icon">
-        <img src="logo.svg" alt="BolãoPro Logo">
+        <img src="logo.svg" alt="Zagga Logo">
       </div>
     </div>
     <div>
-      <div class="splash__brand text-center">BolãoPro</div>
+      <div class="splash__brand text-center">Zagga</div>
       <div class="splash__slogan text-center">Seu Palpite Vale Prêmio!</div>
     </div>
     <div class="splash__loader">

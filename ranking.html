@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0A0A0A">
-  <title>BolãoPro — Ranking Global</title>
+  <meta name="theme-color" content="#020307">
+  <title>Zagga — Ranking Global</title>
   <link rel="stylesheet" href="app.css">
   <style>
     .podium {
@@ -55,7 +55,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .podium__pts { font-size: 0.75rem; color: var(--neon-green); font-weight: 700; }
+    .podium__pts { font-size: 0.75rem; color: var(--accent); font-weight: 700; }
     .podium__bar {
       border-radius: var(--radius-sm) var(--radius-sm) 0 0;
       display: flex;
@@ -90,9 +90,9 @@
       transition: all var(--transition);
     }
     .chip.active {
-      background: rgba(0,255,133,0.1);
-      border-color: var(--neon-green);
-      color: var(--neon-green);
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
     }
 
     /* List */
@@ -101,23 +101,23 @@
     /* My position sticky card */
     .my-rank-card {
       margin: 0 16px 16px;
-      background: linear-gradient(135deg, #0D2018 0%, #0A1A12 100%);
-      border: 1px solid var(--neon-green);
+      background: linear-gradient(135deg, #151510 0%, #0F0F0A 100%);
+      border: 1px solid var(--accent);
       border-radius: var(--radius-md);
       padding: 14px 16px;
       display: flex;
       align-items: center;
       gap: 12px;
-      box-shadow: 0 4px 20px rgba(0,255,133,0.15);
+      box-shadow: 0 4px 20px rgba(248,255,19,0.15);
     }
     .my-rank-label {
       font-size: 0.75rem;
-      color: var(--neon-green);
+      color: var(--accent);
       font-weight: 700;
       margin-bottom: 2px;
     }
     .my-rank-name { font-size: 0.9375rem; font-weight: 700; }
-    .my-rank-pts { font-size: 1.25rem; font-weight: 900; color: var(--neon-green); }
+    .my-rank-pts { font-size: 1.25rem; font-weight: 900; color: var(--accent); }
   </style>
 </head>
 <body>
@@ -134,7 +134,7 @@
 
       <!-- Minha posição -->
       <div class="my-rank-card" id="myRankCard">
-        <div style="font-size: 1.5rem; font-weight: 900; color: var(--neon-green); width:32px; text-align:center;" id="myPos">—</div>
+        <div style="font-size: 1.5rem; font-weight: 900; color: var(--accent); width:32px; text-align:center;" id="myPos">—</div>
         <div style="flex:1;">
           <div class="my-rank-label">Sua posição</div>
           <div class="my-rank-name" id="myName">Você</div>
@@ -243,7 +243,7 @@
         + '<div class="rank-pos ' + posClass + '">' + p.pos + '</div>'
         + '<div style="width:36px;height:36px;border-radius:50%;background:var(--bg-card-alt);display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;">' + p.emoji + '</div>'
         + '<div style="flex:1;">'
-        +   '<div style="font-size:0.9375rem;font-weight:' + (p.isMe ? '700' : '500') + ';color:' + (p.isMe ? 'var(--neon-green)' : 'var(--text-primary)') + ';">' + p.name + '</div>'
+        +   '<div style="font-size:0.9375rem;font-weight:' + (p.isMe ? '700' : '500') + ';color:' + (p.isMe ? 'var(--accent)' : 'var(--text-primary)') + ';">' + p.name + '</div>'
         +   '<div style="font-size:0.75rem;color:var(--text-muted);">' + p.pts.toLocaleString('pt-BR') + ' pontos</div>'
         + '</div>'
         + (p.isMe ? '<span class="badge badge-green">Você</span>' : '')

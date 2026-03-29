@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0A0A0A">
-  <title>BolãoPro — Bem-vindo</title>
+  <meta name="theme-color" content="#020307">
+  <title>Zagga — Bem-vindo</title>
   <link rel="stylesheet" href="app.css">
   <style>
-    body { overflow: hidden; }
+    body { overflow: hidden; background: var(--bg-primary); }
     .onboarding {
       display: flex;
       flex-direction: column;
@@ -46,30 +46,28 @@
       position: absolute;
       inset: 0;
       border-radius: 50%;
-      opacity: 0.15;
+      opacity: 0.12;
     }
     .slide__art-icon {
       font-size: 6rem;
       position: relative;
       z-index: 1;
-      filter: drop-shadow(0 0 16px rgba(0,255,133,0.5));
+      filter: drop-shadow(0 0 20px rgba(248,255,19,0.5));
     }
 
-    /* Slide 1 */
-    .slide:nth-child(1) .slide__art-bg { background: radial-gradient(circle, var(--neon-green) 0%, transparent 70%); }
-    /* Slide 2 */
-    .slide:nth-child(2) .slide__art-bg { background: radial-gradient(circle, var(--neon-blue) 0%, transparent 70%); }
-    /* Slide 3 */
-    .slide:nth-child(3) .slide__art-bg { background: radial-gradient(circle, var(--neon-yellow) 0%, transparent 70%); }
+    /* All slides use accent yellow glow */
+    .slide:nth-child(1) .slide__art-bg { background: radial-gradient(circle, var(--accent) 0%, transparent 70%); }
+    .slide:nth-child(2) .slide__art-bg { background: radial-gradient(circle, var(--accent) 0%, transparent 70%); }
+    .slide:nth-child(3) .slide__art-bg { background: radial-gradient(circle, var(--accent) 0%, transparent 70%); }
 
     .slide__text { text-align: center; }
     .slide__title {
       font-size: 1.75rem;
-      font-weight: 900;
+      font-weight: 800;
       line-height: 1.2;
       margin-bottom: 12px;
     }
-    .slide__title span { color: var(--neon-green); }
+    .slide__title span { color: var(--accent); }
     .slide__desc {
       font-size: 1rem;
       color: var(--text-secondary);
@@ -91,9 +89,9 @@
       width: 6px;
     }
     .dot.active {
-      background: var(--neon-green);
+      background: var(--accent);
       width: 24px;
-      box-shadow: 0 0 8px var(--neon-green);
+      box-shadow: 0 0 8px var(--accent);
     }
 
     /* Footer */

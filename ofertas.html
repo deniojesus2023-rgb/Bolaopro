@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0A0A0A">
-  <title>BolãoPro — Ofertas Exclusivas</title>
+  <meta name="theme-color" content="#020307">
+  <title>Zagga — Ofertas Exclusivas</title>
   <link rel="stylesheet" href="app.css">
   <style>
     /* Banner VIP principal */
     .offer-hero {
       margin: 16px;
-      background: linear-gradient(135deg, #1A0D00 0%, #2D1A00 50%, #1A0D00 100%);
-      border: 1px solid var(--neon-yellow);
+      background: linear-gradient(135deg, #131308 0%, #1C1C08 50%, #131308 100%);
+      border: 1px solid var(--accent);
       border-radius: var(--radius-lg);
       padding: 24px;
       position: relative;
@@ -22,7 +22,7 @@
       position: absolute;
       top: -60px; right: -60px;
       width: 180px; height: 180px;
-      background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(248,255,19,0.2) 0%, transparent 70%);
       border-radius: 50%;
     }
     .offer-hero::after {
@@ -37,13 +37,13 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: rgba(255,215,0,0.15);
-      border: 1px solid rgba(255,215,0,0.4);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
       border-radius: 100px;
       padding: 4px 12px;
       font-size: 0.75rem;
       font-weight: 700;
-      color: var(--neon-yellow);
+      color: var(--accent);
       margin-bottom: 14px;
     }
     .offer-hero__title {
@@ -55,8 +55,8 @@
     .offer-hero__amount {
       font-size: 2.25rem;
       font-weight: 900;
-      color: var(--neon-yellow);
-      text-shadow: 0 0 20px rgba(255,215,0,0.5);
+      color: var(--accent);
+      text-shadow: var(--glow-accent);
       margin-bottom: 4px;
     }
     .offer-hero__sub {
@@ -78,14 +78,10 @@
     }
     .benefit-row__icon { font-size: 1rem; }
     .offer-hero .btn-primary {
-      background: var(--neon-yellow);
+      background: var(--accent);
       color: #000;
-      box-shadow: 0 0 16px rgba(255,215,0,0.4), 0 0 32px rgba(255,215,0,0.15);
-      animation: pulse-yellow 2s infinite;
-    }
-    @keyframes pulse-yellow {
-      0%,100% { box-shadow: 0 0 16px rgba(255,215,0,0.4); }
-      50%      { box-shadow: 0 0 28px rgba(255,215,0,0.7), 0 0 48px rgba(255,215,0,0.2); }
+      box-shadow: 0 0 16px rgba(248,255,19,0.4), 0 0 32px rgba(248,255,19,0.15);
+      animation: pulse-neon 2s infinite;
     }
     .offer-hero__disclaimer {
       font-size: 0.6875rem;
@@ -111,7 +107,7 @@
       align-items: center;
       transition: border-color var(--transition);
     }
-    .offer-card:active { border-color: var(--border-neon); }
+    .offer-card:active { border-color: var(--accent-border); }
     .offer-card__icon {
       width: 56px; height: 56px;
       border-radius: var(--radius-md);
@@ -127,7 +123,7 @@
     .offer-card__cta {
       font-size: 0.8125rem;
       font-weight: 700;
-      color: var(--neon-green);
+      color: var(--accent);
       display: flex;
       align-items: center;
       gap: 4px;
@@ -151,9 +147,9 @@
     .step__num {
       width: 28px; height: 28px;
       border-radius: 50%;
-      background: rgba(0,255,133,0.1);
-      border: 1px solid var(--neon-green);
-      color: var(--neon-green);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent);
+      color: var(--accent);
       font-size: 0.8125rem;
       font-weight: 900;
       display: flex;
@@ -210,7 +206,7 @@
 
       <!-- Hero Oferta Principal -->
       <div class="offer-hero">
-        <div class="offer-hero__tag">⚡ Oferta Exclusiva BolãoPro</div>
+        <div class="offer-hero__tag">⚡ Oferta Exclusiva Zagga</div>
         <div class="offer-hero__title">Bolão VIP —<br>Ganhe até</div>
         <div class="offer-hero__amount">R$ 50.000</div>
         <div class="offer-hero__sub">no Bolão da Semana com bônus de depósito</div>
@@ -218,7 +214,7 @@
         <div class="offer-hero__benefits">
           <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Bônus de <strong>100% no 1º depósito</strong></span></div>
           <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Acesso ao <strong>Bolão VIP de R$ 50.000</strong></span></div>
-          <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Odds especiais para clientes BolãoPro</span></div>
+          <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Odds especiais para clientes Zagga</span></div>
           <div class="benefit-row"><span class="benefit-row__icon">✅</span> <span>Cashback de 10% toda semana</span></div>
         </div>
 
@@ -244,7 +240,7 @@
           </div>
           <div class="step">
             <div class="step__num">3</div>
-            <div class="step__text">Volte ao BolãoPro e <strong>concorra ao prêmio de R$ 50.000</strong></div>
+            <div class="step__text">Volte ao Zagga e <strong>concorra ao prêmio de R$ 50.000</strong></div>
           </div>
         </div>
       </div>
@@ -256,7 +252,7 @@
       <div class="offers-grid">
 
         <div class="offer-card" onclick="openDeposit()">
-          <div class="offer-card__icon" style="background: rgba(0,255,133,0.1);">🎁</div>
+          <div class="offer-card__icon" style="background: var(--accent-dim);">🎁</div>
           <div class="offer-card__body">
             <div class="offer-card__title">Bônus de Boas-Vindas</div>
             <div class="offer-card__desc">Ganhe 100% de bônus no seu primeiro depósito, até R$ 500.</div>
@@ -322,7 +318,7 @@
       </button>
       <div>
         <div class="webview-header__title">Casa Parceira</div>
-        <div class="webview-header__url">🔒 parceiro.bolaopro.com.br</div>
+        <div class="webview-header__url">🔒 parceiro.zagga.com.br</div>
       </div>
     </div>
     <div class="webview-placeholder">
@@ -332,7 +328,7 @@
         Aqui será carregada a página da casa parceira via WebView para o usuário realizar o depósito e obter o bônus.
       </div>
       <button class="btn btn-primary" style="max-width: 240px; margin-top: 8px;" onclick="closeDeposit()">
-        ← Voltar ao BolãoPro
+        ← Voltar ao Zagga
       </button>
     </div>
   </div>

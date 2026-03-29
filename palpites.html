@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0A0A0A">
-  <title>BolãoPro — Palpites</title>
+  <meta name="theme-color" content="#020307">
+  <title>Zagga — Palpites</title>
   <link rel="stylesheet" href="app.css">
   <style>
     /* Progress bar no topo */
@@ -20,12 +20,12 @@
       font-size: 0.75rem;
       color: var(--text-secondary);
     }
-    .picks-progress__labels span:last-child { color: var(--neon-green); font-weight: 700; }
+    .picks-progress__labels span:last-child { color: var(--accent); font-weight: 700; }
 
     /* Card do jogo */
     .pick-game-card {
       background: var(--bg-card);
-      border: 1px solid var(--border-neon);
+      border: 1px solid var(--accent-border);
       border-radius: var(--radius-lg);
       padding: 20px;
       margin: 16px;
@@ -41,7 +41,7 @@
     .pick-game-card__league-dot {
       width: 6px; height: 6px;
       border-radius: 50%;
-      background: var(--neon-green);
+      background: var(--accent);
     }
     .pick-game-card__time {
       font-size: 0.8125rem;
@@ -104,12 +104,12 @@
 
     .pick-option:active { transform: scale(0.96); }
     .pick-option.selected {
-      border-color: var(--neon-green);
-      color: var(--neon-green);
-      background: rgba(0,255,133,0.08);
-      box-shadow: 0 0 16px rgba(0,255,133,0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+      box-shadow: 0 0 16px rgba(248,255,19,0.2);
     }
-    .pick-option.selected .pick-option__tag { color: var(--neon-green-dim); }
+    .pick-option.selected .pick-option__tag { color: var(--accent); }
 
     /* Gamificação */
     .gamification {
@@ -124,7 +124,7 @@
     }
     .gamification__left { display: flex; flex-direction: column; gap: 2px; }
     .gamification__label { font-size: 0.75rem; color: var(--text-muted); }
-    .gamification__pts { font-size: 1.25rem; font-weight: 900; color: var(--neon-green); }
+    .gamification__pts { font-size: 1.25rem; font-weight: 900; color: var(--accent); }
     .gamification__right { text-align: right; }
     .gamification__streak { font-size: 0.75rem; color: var(--text-secondary); }
     .gamification__streak span { color: var(--neon-yellow); font-weight: 700; }
@@ -158,8 +158,8 @@
       background: var(--border);
       transition: background 0.2s;
     }
-    .pick-nav__dot.done { background: var(--neon-green); }
-    .pick-nav__dot.current { background: var(--neon-green); box-shadow: 0 0 6px var(--neon-green); }
+    .pick-nav__dot.done { background: var(--accent); }
+    .pick-nav__dot.current { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
 
     /* Success overlay */
     .success-overlay {
@@ -179,21 +179,21 @@
     .success-overlay.show { opacity: 1; pointer-events: all; }
     .success-icon {
       width: 96px; height: 96px;
-      background: rgba(0,255,133,0.1);
-      border: 3px solid var(--neon-green);
+      background: var(--accent-dim);
+      border: 3px solid var(--accent);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 3rem;
-      box-shadow: var(--glow-green);
+      box-shadow: var(--glow-accent);
     }
-    .success-title { font-size: 1.5rem; font-weight: 900; color: var(--neon-green); }
+    .success-title { font-size: 1.5rem; font-weight: 900; color: var(--accent); }
     .success-sub { font-size: 0.9375rem; color: var(--text-secondary); text-align: center; }
     .success-pts {
       font-size: 3rem; font-weight: 900;
-      color: var(--neon-green);
-      text-shadow: var(--glow-green);
+      color: var(--accent);
+      text-shadow: var(--glow-accent);
     }
   </style>
 </head>
@@ -280,7 +280,7 @@
     <div class="pick-nav">
       <span id="navCounter">1 de 5</span>
       <div class="pick-nav__dots" id="navDots"></div>
-      <span id="navSkip" style="color:var(--neon-green); cursor:pointer;" onclick="skipGame()">Pular →</span>
+      <span id="navSkip" style="color:var(--accent); cursor:pointer;" onclick="skipGame()">Pular →</span>
     </div>
     <button class="btn btn-primary" id="confirmBtn" onclick="confirmPick()" disabled
       style="opacity:0.4; transition: opacity 0.2s;">
